@@ -41,9 +41,10 @@
       '(("From" . "hotmail")
         ("From" . "yahoo.com")
         ("From" . "adler.orangeandbronze.com")
+        ("From" . "trac@orangeandbronze.com")
         ("Message-Id" . ".nnrss>$")))
 (setq bbdb-notice-hook '(bbdb-auto-notes-hook))
-(setq bbdb/mail-auto-create-p t)
+(setq bbdb/mail-auto-create-p (quote bbdb-ignore-some-messages-hook))
 (setq bbdb/news-auto-create-p (quote bbdb-ignore-some-messages-hook))
 
 (setq bbdb-offer-save 'savenoprompt)

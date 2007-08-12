@@ -5,11 +5,48 @@
 ;; bsh-jar
 (setq bsh-jar "/usr/share/java/bsh.jar")
 
+;; DON'T TIMEOUT IMMEDIATELY -- a minute should be enough for Maven
+;; projects, due to our hack of using prj.el files there with a
+;; classpath of *all* libraries in ~/.m2/repository
+(setq bsh-eval-timeout 60)
+
 ;; Plugins
 (setq jde-plugins-directory "~/elisp/jde-plugins")
 
 ;; Project context switching settings
 (setq jde-project-context-switching-enabled-p t)
+
+;; Use ant
+(setq jde-build-function (quote (jde-ant-build)))
+(setq jde-ant-read-target t)
+
+(setq jde-check-version-flag nil)
+
+;; Needed for flymake support
+(setq jde-compiler
+      '(("eclipse java compiler server" "/usr/share/java/ecj.jar")))
+(setq jde-ecj-command-line-args
+      '("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/usr/lib/jvm/java-6-sun/jre/lib/rt.jar" "-deprecation"))
+(setq jde-flymake-jikes-app-name "ecj")
+
+;; Our installed JDKs
+(setq jde-jdk-registry 
+      '(("6.0" . "/usr/lib/jvm/java-6-sun/")
+        ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
+        ("1.4" . "/usr/lib/jvm/java-gcj/")))
+
+;; Known library paths
+(setq jde-lib-directory-names '("^lib" "^jar" "^java"))
+
+;; FIXME: Maven support still broken
+(setq jde-maven-project-file-name "pom.xml")
+
+;; For when running, run VM in -server
+(setq jde-run-option-hotspot-type 'server)
+
+;; Turn off "which method" in modeline
+(setq jde-which-method-mode nil)
+
 
 (defun jars-in-below-directory (directory)
   "List the .jar files in DIRECTORY and in its sub-directories."

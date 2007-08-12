@@ -8,7 +8,6 @@
  '(browse-url-browser-function (quote browse-url-epiphany))
  '(browse-url-firefox-new-window-is-tab nil)
  '(browse-url-new-window-flag t)
- '(bsh-eval-timeout 60)
  '(canlock-password "50fb069cd36ade85200c3c4f79a8e38ccb9db285")
  '(cperl-electric-keywords t)
  '(cperl-hairy t)
@@ -31,17 +30,6 @@
  '(global-semantic-idle-scheduler-mode nil nil (semantic-idle))
  '(indent-tabs-mode nil)
  '(indicate-buffer-boundaries (quote left))
- '(jde-ant-read-target t)
- '(jde-build-function (quote (jde-ant-build)))
- '(jde-check-version-flag nil)
- '(jde-compiler (quote (("eclipse java compiler server" "/usr/share/java/ecj.jar"))))
- '(jde-ecj-command-line-args (quote ("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/usr/lib/jvm/java-6-sun/jre/lib/rt.jar" "-deprecation")))
- '(jde-flymake-jikes-app-name "ecj")
- '(jde-jdk-registry (quote (("6.0" . "/usr/lib/jvm/java-6-sun/") ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/") ("1.4" . "/usr/lib/jvm/java-gcj/"))))
- '(jde-lib-directory-names (quote ("^lib" "^jar" "^java")))
- '(jde-maven-project-file-name "pom.xml")
- '(jde-run-option-hotspot-type (quote server))
- '(jde-which-method-mode nil)
  '(lj-default-username "jmibanez")
  '(lj-fill-function (quote lj-fill-by-paragraph))
  '(menu-bar-mode nil)
@@ -67,10 +55,16 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(flymake-errline ((((class color)) (:underline "OrangeRed"))))
- '(flymake-warnline ((((class color)) (:underline "yellow"))))
- '(mode-line ((t (:background "grey40" :foreground "black" :box (:line-width -1 :style released-button)))))
- '(mode-line-inactive ((t (:inherit mode-line :background "grey20"))))
  '(org-hide ((((background dark)) (:foreground "#0a0a38")))))
+;;--(custom-set-faces
+;;--  ;; custom-set-faces was added by Custom.
+;;--  ;; If you edit it by hand, you could mess it up, so be careful.
+;;--  ;; Your init file should contain only one such instance.
+;;--  ;; If there is more than one, they won't work right.
+;;-- '(flymake-errline ((((class color)) (:underline "OrangeRed"))))
+;;-- '(flymake-warnline ((((class color)) (:underline "yellow"))))
+;;-- '(mode-line ((t (:background "grey40" :foreground "black" :box (:line-width -1 :style released-button)))))
+;;-- '(mode-line-inactive ((t (:inherit mode-line :background "grey20"))))
+;;-- '(org-hide ((((background dark)) (:foreground "#0a0a38")))))
 
 

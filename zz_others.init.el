@@ -24,7 +24,7 @@
 ;; Color theme
 (require 'color-theme)
 (color-theme-initialize)
-(color-theme-charcoal-black)
+(color-theme-charcoal-black-ext)
 
 
 ;;(require 'planner)

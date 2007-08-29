@@ -1,4 +1,6 @@
 ;; Custom / Customize
+(setq custom-file "~/.emacs.init/custom.init.el")
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -34,12 +36,6 @@
  '(lj-fill-function (quote lj-fill-by-paragraph))
  '(menu-bar-mode nil)
  '(mm-url-use-external t)
- '(newsticker-heading-format "%L
-%t %d %s")
- '(newsticker-hide-old-items-in-newsticker-buffer t)
- '(newsticker-html-renderer (quote w3m-region))
- '(newsticker-show-descriptions-of-new-items t)
- '(newsticker-url-list (quote (("Sacha Chua" "http://sachachua.com/notebook/wiki/blog.rdf" nil 86400 nil) ("Planet GNOME" "http://planet.gnome.org/rss20.xml" nil 3600 nil) ("Slashdot" "http://rss.slashdot.org/Slashdot/slashdot" nil 86400 nil))))
  '(scheme-mit-dialect nil)
  '(scheme-program-name "mzscheme")
  '(scroll-bar-mode nil)
@@ -55,7 +51,9 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(newsticker-feed-face ((t (:foreground "misty rose" :weight bold :height 1.5 :family "helvetica"))))
  '(org-hide ((((background dark)) (:foreground "#0a0a38")))))
+
 ;;--(custom-set-faces
 ;;--  ;; custom-set-faces was added by Custom.
 ;;--  ;; If you edit it by hand, you could mess it up, so be careful.

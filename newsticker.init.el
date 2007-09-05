@@ -2,7 +2,10 @@
 
 ;; Format/Layout
 (setq newsticker-heading-format "%t %d %s")
-(setq newsticker-item-format "%d :: %t")
+(setq newsticker-item-format "
+
+%d :: %t
+")
 (setq newsticker-desc-format "%c
 
 ")
@@ -15,6 +18,7 @@
 ;; News feeds
 (setq newsticker-url-list
       '(("Sacha Chua" "http://sachachua.com/notebook/wiki/blog.rdf" nil 86400 nil)
+        ("Eugene Villar" "http://vaes9.codedgraphic.com/default.atom.xml" nil 3600 nil)
         ("The Fishbowl" "http://fishbowl.pastiche.org/index.rdf" nil 86400 nil)
         ("Sam Newman's blog (magpiebrain)" "http://feeds.feedburner.com/Magpiebrain" nil 86400 nil)
         ("Groklaw" "http://www.groklaw.net/backend/GrokLaw.rdf" nil 86400 nil)

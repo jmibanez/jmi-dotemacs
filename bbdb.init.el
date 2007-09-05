@@ -3,7 +3,7 @@
 (require 'bbdb-autoloads)
 (require 'bbdb)
 
-(bbdb-initialize 'gnus 'message)
+(bbdb-initialize 'gnus 'message 'w3)
 
 ;;If you don't live in Northern America, you should disable the 
 ;;syntax check for telephone numbers by saying
@@ -41,6 +41,9 @@
       '(("From" . "hotmail")
         ("From" . "yahoo.com")
         ("From" . "adler.orangeandbronze.com")
+        ("From" . "facebook.com")
+        ("From" . "facebookmail.com")
+        ("From" . "do-not-reply@onbsl.grouphub.com")
         ("From" . "trac@orangeandbronze.com")
         ("Message-Id" . ".nnrss>$")))
 (setq bbdb-notice-hook '(bbdb-auto-notes-hook))
@@ -48,3 +51,4 @@
 (setq bbdb/news-auto-create-p (quote bbdb-ignore-some-messages-hook))
 
 (setq bbdb-offer-save 'savenoprompt)
+

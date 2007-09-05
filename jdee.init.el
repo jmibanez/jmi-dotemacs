@@ -1,6 +1,7 @@
 ;; JDEE initializations
 
 (require 'jde)
+(require 'cedet)
 
 ;; bsh-jar
 (setq bsh-jar "/usr/share/java/bsh.jar")
@@ -17,12 +18,16 @@
 (setq jde-project-context-switching-enabled-p t)
 
 ;; Use ant
-(setq jde-build-function (quote (jde-ant-build)))
+(setq jde-build-function '(jde-ant-build))
 (setq jde-ant-read-target t)
 
 (setq jde-check-version-flag nil)
 
 ;; Needed for flymake support
+;; Use ECJ as our compiler server
+
+(require 'jde-eclipse-compiler-server)
+
 (setq jde-compiler
       '(("eclipse java compiler server" "/usr/share/java/ecj.jar")))
 (setq jde-ecj-command-line-args
@@ -30,10 +35,12 @@
 (setq jde-flymake-jikes-app-name "ecj")
 
 ;; Our installed JDKs
-(setq jde-jdk-registry 
+(setq jde-jdk-registry
       '(("6.0" . "/usr/lib/jvm/java-6-sun/")
         ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
         ("1.4" . "/usr/lib/jvm/java-gcj/")))
+
+(setq jde-jdk '("6.0"))
 
 ;; Known library paths
 (setq jde-lib-directory-names '("^lib" "^jar" "^java"))
@@ -46,6 +53,9 @@
 
 ;; Turn off "which method" in modeline
 (setq jde-which-method-mode nil)
+
+;; XRef
+(setq jde-xref-db-base-directory "/home/jmibanez/")
 
 
 (defun jars-in-below-directory (directory)

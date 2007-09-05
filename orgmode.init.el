@@ -1,5 +1,7 @@
 ;; orgmode
 
+(require 'org)
+
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
@@ -31,6 +33,10 @@
 ;;(setq org-todo-keywords
 ;;      '((sequence "TODO" "FEEDBACK" "|" "DONE" "DELEGATED" "CANCELLED")))
 
+(setq org-todo-keywords
+      '("TODO" "WAITING" "DONE"))
+(setq org-todo-interpretation 'sequence)
+
 
 
 ;;(setq org-todo-keywords
@@ -55,6 +61,18 @@
 (setq org-archive-location
       "~/doc/personal/tasks/archive/%s::")
 
+;; Abbrevs (Trac, etc.)
+(setq org-link-abbrev-alist
+      '(("trac" . "https://issues.orangeandbronze.com/")))
+
+
+
+;; Fix Gnus to display in the same frame, possibly
+(if (assq 'gnus org-link-frame-setup)
+    (setcdr (assq 'gnus org-link-frame-setup)
+            #'gnus)
+  (append org-link-frame-setup '((gnus . #'gnus))))
+
 ;; Go map outline-magic
 ;; (add-hook 'outline-mode-hook
 ;;           (lambda ()
@@ -65,4 +83,19 @@
           (lambda ()
             (require 'outline-magic)
             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+
+;; Newsticker customization -- hook scripts
+
+(defun jmi/newsticker-gen-orgmode-link ()
+  (let* ((buffer (current-buffer)))
+    ;; Get the mode of the current buffer
+    (if (eq major-mode 'newsticker-mode)
+        (progn
+          (message "Got link")
+          (identity "rss::")))))
+
+
+(add-hook 'org-create-file-search-functions
+          #'jmi/newsticker-gen-orgmode-link)
+
 

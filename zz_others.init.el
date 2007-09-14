@@ -49,7 +49,9 @@
 (put 'narrow-to-page 'disabled nil)
 
 ;; Turn on iswitchb
-(iswitchb-mode 1)
+;;(iswitchb-mode 1)
+
+(ido-mode)
 
 ;; (mouse-wheel-mode)
 ;; (setq pop-up-windows nil)
@@ -76,3 +78,6 @@
 (setq midnight-mode t)
 
 
+;; Tramp customizations
+(require 'tramp)
+(setq tramp-default-method "scp")

@@ -27,7 +27,8 @@
             "~/doc/personal/tasks/tasks.org"
             "Miscellany")
         (?j "* %T %?\n\n  %i\n  %a"
-            "~/doc/personal/tasks/personal.org")))
+            "~/doc/personal/tasks/personal.org"
+            "Journal")))
 
 ;; TODO states
 ;;(setq org-todo-keywords

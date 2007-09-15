@@ -51,7 +51,8 @@
 ;; Turn on iswitchb
 ;;(iswitchb-mode 1)
 
-(ido-mode)
+(require 'ido)
+(ido-mode t)
 
 ;; (mouse-wheel-mode)
 ;; (setq pop-up-windows nil)

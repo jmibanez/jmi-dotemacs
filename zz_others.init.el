@@ -49,10 +49,7 @@
 (put 'narrow-to-page 'disabled nil)
 
 ;; Turn on iswitchb
-;;(iswitchb-mode 1)
-
-(require 'ido)
-(ido-mode t)
+(iswitchb-mode 1)
 
 ;; (mouse-wheel-mode)
 ;; (setq pop-up-windows nil)

@@ -2,13 +2,25 @@
 
 (defun jmi/open-tasks (key)
   "Open org-mode file based on key"
-  (interactive "cWhich task [l-Links t-Tasks p-Personal w-Work/ONBSL]")
+  (interactive "cWhich task [l:Links t:Tasks i:Personal w:Work/ONBSL p:Projects]")
   (let ((org-mode-task-dir "~/doc/personal/tasks/"))
     (case key
       (?l (find-file (concat org-mode-task-dir "links.org")))
       (?t (find-file (concat org-mode-task-dir "tasks.org")))
-      (?p (find-file (concat org-mode-task-dir "personal.org")))
+      (?i (find-file (concat org-mode-task-dir "personal.org")))
       (?w (find-file (concat org-mode-task-dir "onbsl.org")))
+      (?p (call-interactively #'jmi/open-tasks-projects))
+      (otherwise (message "Task key not found.")))))
+
+(defun jmi/open-tasks-projects (key)
+  (interactive "cWhich project [a:ABS-CBN b:BNSP i:ISAP-COCAF r:Rover v:VOIP-Class]")
+  (let ((org-mode-task-dir "~/doc/personal/tasks/work-projects/"))
+    (case key
+      (?a (find-file (concat org-mode-task-dir "abs-cbn.org")))
+      (?b (find-file (concat org-mode-task-dir "bnsp.org")))
+      (?i (find-file (concat org-mode-task-dir "isapcocaf.org")))
+      (?r (find-file (concat org-mode-task-dir "rover.org")))
+      (?v (find-file (concat org-mode-task-dir "voip.org")))
       (otherwise (message "Task key not found.")))))
 
 ;; User function: Toggle http_proxy in process-environment. Used so I

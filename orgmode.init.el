@@ -1,5 +1,10 @@
 ;; orgmode
 
+;; We're using upstream instead of the Emacs distribution; as such,
+;; use the one in our loadpath
+(add-to-list 'load-path "~/elisp/org-mode")
+(load-file "~/elisp/org-mode/org-install.elc")
+
 (require 'org)
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -21,12 +26,12 @@
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
 (setq org-remember-templates
-      '((?n "* %?\n  %i\n  %a"
+      '(("Note Links" ?n "* %?\n  %i\n  %a"
             "~/doc/personal/tasks/links.org")
-        (?t "* TODO %?\n  %i\n  %a"
+        ("TODO" ?t "* TODO %?\n  %i\n  %a"
             "~/doc/personal/tasks/tasks.org"
             "Miscellany")
-        (?j "* %T %?\n\n  %i\n  %a"
+        ("Journal Item (Personal)" ?j "* %T %?\n\n  %i\n  %a"
             "~/doc/personal/tasks/personal.org"
             "Journal")))
 

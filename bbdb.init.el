@@ -25,6 +25,7 @@
          ("pinoyjug" . "pinoyjug")
          ("linux" . "linux")
          ("xorg" . "xorg")
+         ("git" . "git")
          ("emacs" . "emacs")
          ("dashboard-hackers" . "beagle/dashboard")
          ("jmibanez" . "personal mail"))

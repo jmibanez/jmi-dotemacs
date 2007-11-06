@@ -12,10 +12,17 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
 
-(setq org-agenda-files (list "~/doc/personal/tasks/tasks.org"
-                             "~/doc/personal/tasks/personal.org"
-                             "~/doc/personal/tasks/links.org"
-                             "~/doc/personal/tasks/onbsl.org"))
+(setq org-agenda-files (append (mapcar (lambda (proj)
+                                       (concat "~/doc/personal/tasks/work-projects/" proj))
+                                     '("abs-cbn.org"
+                                       "bnsp.org"
+                                       "isapcocaf.org"
+                                       "rover.org"
+                                       "voip.org"))
+                               (list "~/doc/personal/tasks/tasks.org"
+                                     "~/doc/personal/tasks/personal.org"
+                                     "~/doc/personal/tasks/links.org"
+                                     "~/doc/personal/tasks/onbsl.org")))
 
 (setq org-directory "~/doc/personal/tasks/")
 (setq org-default-notes-file "~/doc/personal/tasks/personal.org")

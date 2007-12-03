@@ -47,6 +47,7 @@
         ("From" . "noreply")
         ("From" . "do-not-reply@onbsl.grouphub.com")
         ("From" . "trac@orangeandbronze.com")
+        ("From" . "svn@orangeandbronze.com")
         ("From" . "sysads@orangeandbronze.com")
         ("Message-Id" . ".nnrss>$")))
 (setq bbdb-notice-hook '(bbdb-auto-notes-hook))

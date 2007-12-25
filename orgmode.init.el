@@ -12,20 +12,12 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
 
-(setq org-agenda-files (append (mapcar (lambda (proj)
-                                       (concat "~/doc/personal/tasks/work-projects/" proj))
-                                     '("abs-cbn.org"
-                                       "bnsp.org"
-                                       "isapcocaf.org"
-                                       "rover.org"
-                                       "voip.org"))
-                               (list "~/doc/personal/tasks/tasks.org"
-                                     "~/doc/personal/tasks/personal.org"
-                                     "~/doc/personal/tasks/links.org"
-                                     "~/doc/personal/tasks/onbsl.org")))
+(setq org-agenda-files '("~/doc/personal/tasks/tasks.org"
+                         "~/doc/personal/tasks/personal.org"
+                         "~/doc/personal/tasks/work.org"))
 
 (setq org-directory "~/doc/personal/tasks/")
-(setq org-default-notes-file "~/doc/personal/tasks/personal.org")
+(setq org-default-notes-file "~/doc/personal/tasks/notes.org")
 
 (setq remember-handler-functions '(org-remember-handler))
 (setq remember-annotation-functions '(org-remember-annotation))
@@ -33,24 +25,27 @@
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
 (setq org-remember-templates
-      '(("Note Links" ?n "* %?\n  %i\n  %a"
-            "~/doc/personal/tasks/links.org")
-        ("TODO" ?t "* TODO %?\n  %i\n  %a"
-            "~/doc/personal/tasks/tasks.org"
-            "Miscellany")
-        ("Journal Item (Personal)" ?j "* %T %?\n\n  %i\n  %a"
-            "~/doc/personal/tasks/personal.org"
-            "Journal")))
+      '(("TODO (General)" ?t "* TODO %?\n  %i\n  %a"
+         "~/doc/personal/tasks/tasks.org"
+         "Inbox")
+        ("TODO (Work)" ?w "* TODO %?\n  %i\n  %a"
+         "~/doc/personal/tasks/work.org"
+         "Inbox")
+        ("Journal (Personal)" ?j "* %T %?\n\n  %i\n  %a"
+         "~/doc/personal/tasks/personal.org"
+         "Journal")
+        ("Journal (Work)" ?k "* %T %?\n\n  %i\n  %a"
+         "~/doc/personal/tasks/work.org"
+         "Journal")
+        ("Note" ?n "* %?\n  %i\n  %a"
+         "~/doc/personal/tasks/notes.org"
+         "Inbox")
+        ))
 
 ;; TODO states
-;;(setq org-todo-keywords
-;;      '((sequence "TODO" "FEEDBACK" "|" "DONE" "DELEGATED" "CANCELLED")))
-
 (setq org-todo-keywords
-      '("TODO" "WAITING" "DONE"))
-(setq org-todo-interpretation 'sequence)
-
-
+      '((sequence "TODO" "WAITING" "|" "DONE" "DELEGATED" "CANCELLED")
+        (sequence "TICKET" "ACCEPTED" "|" "CLOSED")))
 
 ;;(setq org-todo-keywords
 ;;      '((sequence "TODO" "|" "DONE")

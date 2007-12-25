@@ -2,24 +2,23 @@
 
 (defun jmi/open-tasks (key)
   "Open org-mode file based on key"
-  (interactive "cWhich task [l:Links t:Tasks i:Personal w:Work/ONBSL p:Projects]")
+  (interactive "cWhich task [l:Links t:Tasks i:Personal w:Work/ONBSL p:Projects x:Expenses]")
   (let ((org-mode-task-dir "~/doc/personal/tasks/"))
     (case key
-      (?l (find-file (concat org-mode-task-dir "links.org")))
+      (?w (find-file (concat org-mode-task-dir "work.org")))
       (?t (find-file (concat org-mode-task-dir "tasks.org")))
-      (?i (find-file (concat org-mode-task-dir "personal.org")))
-      (?w (find-file (concat org-mode-task-dir "onbsl.org")))
-      (?p (call-interactively #'jmi/open-tasks-projects))
+      (?p (find-file (concat org-mode-task-dir "personal.org")))
+      (?l (find-file (concat org-mode-task-dir "links.org")))
+      (?n (call-interactively #'jmi/open-tasks-notes))
       (otherwise (message "Task key not found.")))))
 
-(defun jmi/open-tasks-projects (key)
-  (interactive "cWhich project [a:ABS-CBN b:BNSP i:ISAP-COCAF r:Rover v:VOIP-Class]")
-  (let ((org-mode-task-dir "~/doc/personal/tasks/work-projects/"))
+(defun jmi/open-tasks-notes (key)
+  (interactive "cNote page [a:ABS-CBN b:BNSP i:ISAP-COCAF v:VOIP-Class]")
+  (let ((org-mode-task-dir "~/doc/personal/task-notes/work-projects/"))
     (case key
       (?a (find-file (concat org-mode-task-dir "abs-cbn.org")))
       (?b (find-file (concat org-mode-task-dir "bnsp.org")))
       (?i (find-file (concat org-mode-task-dir "isapcocaf.org")))
-      (?r (find-file (concat org-mode-task-dir "rover.org")))
       (?v (find-file (concat org-mode-task-dir "voip.org")))
       (otherwise (message "Task key not found.")))))
 

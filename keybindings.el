@@ -2,7 +2,7 @@
 
 (defun jmi/open-tasks (key)
   "Open org-mode file based on key"
-  (interactive "cWhich task [l:Links t:Tasks i:Personal w:Work/ONBSL p:Projects x:Expenses]")
+  (interactive "cWhich task [w:Work t:GenTasks p:Personal l:Links n:Notes]")
   (let ((org-mode-task-dir "~/doc/personal/tasks/"))
     (case key
       (?w (find-file (concat org-mode-task-dir "work.org")))

@@ -31,6 +31,9 @@
         ("TODO (Work)" ?w "* TODO %?\n  %i\n  %a"
          "~/doc/personal/tasks/work.org"
          "Inbox")
+        ("Ticket (Work)" ?i "* TICKET %?\n  %i\n  %a"
+         "~/doc/personal/tasks/work.org"
+         "Inbox")
         ("Journal (Personal)" ?j "* %T %?\n\n  %i\n  %a"
          "~/doc/personal/tasks/personal.org"
          "Journal")
@@ -51,6 +54,14 @@
 ;;      '((sequence "TODO" "|" "DONE")
 ;;        (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
 ;;        (sequence "|" "CANCELED")))
+
+
+;; Stuck projects
+(setq org-stuck-projects
+      '("+LEVEL=2/-DONE"
+        ("TODO" "WAITING")
+        nil
+        ""))
 
 
 ;; Insinuate diary
@@ -91,6 +102,9 @@
           (lambda ()
             (require 'outline-magic)
             (define-key outline-minor-mode-map [(f10)] 'outline-cycle)))
+
+;; Email link: No subject lines
+(setq org-email-link-description-format "Email %c")
 
 ;; Newsticker customization -- hook scripts
 

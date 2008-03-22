@@ -79,3 +79,27 @@
 ;; Tramp customizations
 (require 'tramp)
 (setq tramp-default-method "scp")
+
+;; mailto: links
+;; courtesy of John Sullivan http://journal.wjsullivan.net/185095.html
+(defun jmi/mailto (url)
+  "Follow a mailto URL, prompting for a posting style."
+  (let ((gnus-newsgroup-name
+         (completing-read "Use posting style of group: "
+                          gnus-active-hashtb nil
+                          (gnus-read-active-file-p))))
+    (setq url (url-unhex-string url))
+    (browse-url-mail url))
+  ;; message-mail does not do anything with the body argument, so we have to.
+  (if (string-match (regexp-quote "?") url)
+      (let* ((start (match-end 0))
+             (args (url-parse-query-string
+                    (substring url start nil)))
+             (body (cadr (assoc-string "body" args t))))
+        (when body
+          (switch-to-buffer (car (message-buffers)))
+          (save-excursion
+            (message-goto-body)
+            (insert body))))))
+
+

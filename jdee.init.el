@@ -209,3 +209,35 @@ Thus ARG can also contain additional grep options."
                          font-lock-function-name-face
                        font-lock-variable-name-face))))))))
 
+
+
+;; Project file helper for multi-module Maven projects
+(defmacro jmi/load-multi-module-pom (base-path pom-path-list other-variable-setters)
+  "Macro to load multi-module projects into JDEE. BASE-PATH is
+the path to the root of the multi-module project, POM-PATH-LIST
+is a list of paths to the submodule pom.xml (relative to
+BASE-PATH). Pass in a list of JDEE variables to set in OTHER-VARIABLE-SETTERS."
+  (let ((tempvar (make-symbol "my-full-classpath"))
+        (tempvar2 (make-symbol "my-sourcepath")))
+    `(progn
+       (require 'pom-parser)
+       (setq ,tempvar  '("/usr/share/java"))
+       (setq ,tempvar2  '())
+       (mapcar
+        (lambda (pom-name)
+          (progn
+            (message "Reading %s" pom-name)
+            (with-pom (concat ,base-path pom-name)
+              (pom-set-jde-variables *pom-node*))
+            (setq ,tempvar (append ,tempvar jde-global-classpath))
+            (if (stringp jde-sourcepath)
+                (setq ,tempvar2 (append ,tempvar2 (list jde-sourcepath)))
+              (setq ,tempvar2 (append ,tempvar2 jde-sourcepath)))))
+        ,pom-path-list)
+       (jde-set-variables
+        ,@other-variable-setters
+        '(jde-global-classpath ,tempvar)
+        '(jde-sourcepath ,tempvar2)))))
+        
+
+  

@@ -217,27 +217,27 @@ Thus ARG can also contain additional grep options."
 the path to the root of the multi-module project, POM-PATH-LIST
 is a list of paths to the submodule pom.xml (relative to
 BASE-PATH). Pass in a list of JDEE variables to set in OTHER-VARIABLE-SETTERS."
-  (let ((tempvar (make-symbol "my-full-classpath"))
-        (tempvar2 (make-symbol "my-sourcepath")))
+  (let ((my-classpath (make-symbol "my-full-classpath"))
+        (my-sourcepath (make-symbol "my-sourcepath")))
     `(progn
        (require 'pom-parser)
-       (setq ,tempvar  '("/usr/share/java"))
-       (setq ,tempvar2  '())
+       (setq ,my-classpath  '("/usr/share/java"))
+       (setq ,my-sourcepath  '())
        (mapcar
         (lambda (pom-name)
           (progn
             (message "Reading %s" pom-name)
             (with-pom (concat ,base-path pom-name)
               (pom-set-jde-variables *pom-node*))
-            (setq ,tempvar (append ,tempvar jde-global-classpath))
+            (setq ,my-classpath (append ,my-classpath jde-global-classpath))
             (if (stringp jde-sourcepath)
-                (setq ,tempvar2 (append ,tempvar2 (list jde-sourcepath)))
-              (setq ,tempvar2 (append ,tempvar2 jde-sourcepath)))))
+                (setq ,my-sourcepath (append ,my-sourcepath (list jde-sourcepath)))
+              (setq ,my-sourcepath (append ,my-sourcepath jde-sourcepath)))))
         ,pom-path-list)
        (jde-set-variables
         ,@other-variable-setters
-        '(jde-global-classpath ,tempvar)
-        '(jde-sourcepath ,tempvar2)))))
+        '(jde-global-classpath ,my-classpath)
+        '(jde-sourcepath ,my-sourcepath)))))
         
 
   

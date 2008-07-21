@@ -31,12 +31,12 @@
 (setq jde-compiler
       '(("eclipse java compiler server" "/usr/share/java/ecj.jar")))
 (setq jde-ecj-command-line-args
-      '("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/usr/lib/jvm/java-6-sun/jre/lib/rt.jar" "-deprecation"))
+      '("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/usr/lib/jvm/java-6-openjdk/jre/lib/rt.jar" "-deprecation"))
 (setq jde-flymake-jikes-app-name "ecj")
 
 ;; Our installed JDKs
 (setq jde-jdk-registry
-      '(("6.0" . "/usr/lib/jvm/java-6-sun/")
+      '(("6.0" . "/usr/lib/jvm/java-6-openjdk/")
         ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
         ("1.4" . "/usr/lib/jvm/java-gcj/")))
 

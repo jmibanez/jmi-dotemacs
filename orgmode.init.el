@@ -12,9 +12,18 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
 
-(setq org-agenda-files '("~/doc/personal/tasks/tasks.org"
-                         "~/doc/personal/tasks/personal.org"
-                         "~/doc/personal/tasks/work.org"))
+
+(setq jmi/default-task-directory
+      "~/doc/personal/tasks/")
+
+(defun jmi/traverse-and-list-task-directory (task-dir)
+  (directory-files task-dir t ".org$"))
+
+(setq org-agenda-files (jmi/traverse-and-list-task-directory jmi/default-task-directory))
+
+;;(setq org-agenda-files '("~/doc/personal/tasks/tasks.org"
+;;                         "~/doc/personal/tasks/personal.org"
+;;                         "~/doc/personal/tasks/work.org"))
 
 (setq org-directory "~/doc/personal/tasks/")
 (setq org-default-notes-file "~/doc/personal/tasks/notes.org")
@@ -121,3 +130,30 @@
           #'jmi/newsticker-gen-orgmode-link)
 
 
+;; Automatically add .org files in the jmi/default-task-directory
+
+(setq jmi/new-org-buffers-list nil)
+
+(defun jmi/notice-new-org-file ()
+  (let* ((buffer (current-buffer))
+         (bfile-name (buffer-file-name buffer)))
+    (if (and (> (string-match ".org$" bfile-name) -1)
+             (equal (file-name-directory bfile-name)
+                    (expand-file-name jmi/default-task-directory)))
+        (progn
+          (setq jmi/new-org-mode-file-p t)
+          (message "Noticed %s" bfile-name)
+          (add-to-list 'jmi/new-org-buffers-list buffer)
+          nil))))
+
+(defun jmi/add-new-org-file-to-list ()
+  (let* ((buffer (current-buffer))
+         (bfile-name (buffer-file-name buffer)))
+    (if (memq buffer jmi/new-org-buffers-list)
+        (progn
+          (add-to-list 'org-agenda-files bfile-name)
+          (setq jmi/new-org-buffers-list (delete buffer jmi/new-org-buffers-list))))))
+
+;; Hook to new file visits
+(add-hook 'find-file-not-found-functions 'jmi/notice-new-org-file)
+(add-hook 'after-save-hook 'jmi/add-new-org-file-to-list)

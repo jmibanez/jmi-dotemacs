@@ -17,7 +17,7 @@
       "~/doc/personal/tasks/")
 
 (defun jmi/traverse-and-list-task-directory (task-dir)
-  (directory-files task-dir t ".org$"))
+  (directory-files task-dir t "\\.org$"))
 
 (setq org-agenda-files (jmi/traverse-and-list-task-directory jmi/default-task-directory))
 
@@ -137,7 +137,7 @@
 (defun jmi/notice-new-org-file ()
   (let* ((buffer (current-buffer))
          (bfile-name (buffer-file-name buffer)))
-    (if (and (> (string-match ".org$" bfile-name) -1)
+    (if (and (string-match "\\.org$" bfile-name)
              (equal (file-name-directory bfile-name)
                     (expand-file-name jmi/default-task-directory)))
         (progn

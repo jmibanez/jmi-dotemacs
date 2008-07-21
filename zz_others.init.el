@@ -103,3 +103,5 @@
             (insert body))))))
 
 
+;; Disable auto-develock as it's irritating.
+(setq develock-auto-enable nil)

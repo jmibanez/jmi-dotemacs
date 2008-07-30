@@ -34,25 +34,18 @@
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
 (setq org-remember-templates
-      '(("TODO (General)" ?t "* TODO %?\n  %i\n  %a"
-         "~/doc/personal/tasks/tasks.org"
-         "Inbox")
-        ("TODO (Work)" ?w "* TODO %?\n  %i\n  %a"
-         "~/doc/personal/tasks/work.org"
-         "Inbox")
-        ("Ticket (Work)" ?i "* TICKET %?\n  %i\n  %a"
-         "~/doc/personal/tasks/work.org"
-         "Inbox")
-        ("Journal (Personal)" ?j "* %T %?\n\n  %i\n  %a"
-         "~/doc/personal/tasks/personal.org"
-         "Journal")
-        ("Journal (Work)" ?k "* %T %?\n\n  %i\n  %a"
-         "~/doc/personal/tasks/work.org"
+      '(("Tasks" ?t "* TODO %?\n  %i\n  %a"
+         "~/doc/personal/tasks/inbox.org"
+         "Tasks")
+        ("Work Ticket" ?i "* TICKET %?\n  %i\n  %a"
+         "~/doc/personal/tasks/inbox.org"
+         "Tickets")
+        ("Journal" ?j "* %T %?\n\n  %i\n  %a"
+         "~/doc/personal/tasks/inbox.org"
          "Journal")
         ("Note" ?n "* %?\n  %i\n  %a"
-         "~/doc/personal/tasks/notes.org"
-         "Inbox")
-        ))
+         "~/doc/personal/tasks/inbox.org"
+         "Notes")))
 
 ;; TODO states
 (setq org-todo-keywords

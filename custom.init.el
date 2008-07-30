@@ -32,6 +32,7 @@
  '(global-semantic-idle-scheduler-mode nil nil (semantic-idle))
  '(indent-tabs-mode nil)
  '(indicate-buffer-boundaries (quote left))
+ '(initial-buffer-choice t)
  '(lj-default-username "jmibanez")
  '(lj-fill-function (quote lj-fill-by-paragraph))
  '(menu-bar-mode nil)

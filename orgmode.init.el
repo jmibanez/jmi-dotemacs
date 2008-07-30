@@ -130,6 +130,12 @@
           #'jmi/newsticker-gen-orgmode-link)
 
 
+;; Rescan .org files
+(defun jmi/org-rescan-agenda-files ()
+  "Rescan and rebuild org-agenda-files list"
+  (interactive)
+  (jmi/traverse-and-list-task-directory jmi/default-task-directory))
+
 ;; Automatically add .org files in the jmi/default-task-directory
 
 (setq jmi/new-org-buffers-list nil)

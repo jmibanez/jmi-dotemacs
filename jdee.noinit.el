@@ -3,13 +3,19 @@
 (require 'jde)
 (require 'cedet)
 
+;; Hack: In Ubuntu (Debian?), html-helper-mode unfortunately packages
+;; a tempo.el that interferes with the tempo.el provided in later
+;; Emacs. Because of this, force loading the one that came with our Emacs
+;; FIXME: PS: We're on emacs-snapshot, fix this for released
+(load-file (concat "/usr/share/emacs/" (substring emacs-version 0 -2) "/lisp/tempo.elc"))
+
 ;; bsh-jar
 (setq bsh-jar "/usr/share/java/bsh.jar")
 
 ;; DON'T TIMEOUT IMMEDIATELY -- a minute should be enough for Maven
 ;; projects, due to our hack of using prj.el files there with a
 ;; classpath of *all* libraries in ~/.m2/repository
-(setq bsh-eval-timeout 60)
+(setq bsh-eval-timeout 90)
 
 ;; Plugins
 (setq jde-plugins-directory "~/elisp/jde-plugins")
@@ -36,7 +42,7 @@
 
 ;; Our installed JDKs
 (setq jde-jdk-registry
-      '(("6.0" . "/usr/lib/jvm/java-6-openjdk/")
+      '(("6.0" . "/usr/lib/jvm/java-6-sun/")
         ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
         ("1.4" . "/usr/lib/jvm/java-gcj/")))
 
@@ -46,7 +52,7 @@
 (setq jde-lib-directory-names '("^lib" "^jar" "^java"))
 
 ;; FIXME: Maven support still broken
-(setq jde-maven-project-file-name "pom.xml")
+;;(setq jde-maven-project-file-name "pom.xml")
 
 ;; For when running, run VM in -server
 (setq jde-run-option-hotspot-type 'server)
@@ -212,13 +218,14 @@ Thus ARG can also contain additional grep options."
 
 
 ;; Project file helper for multi-module Maven projects
-(defmacro jmi/load-multi-module-pom (base-path pom-path-list other-variable-setters)
+(defmacro jmi/deprecated-load-multi-module-pom (base-path pom-path-list other-variable-setters)
   "Macro to load multi-module projects into JDEE. BASE-PATH is
 the path to the root of the multi-module project, POM-PATH-LIST
 is a list of paths to the submodule pom.xml (relative to
 BASE-PATH). Pass in a list of JDEE variables to set in OTHER-VARIABLE-SETTERS."
   (let ((my-classpath (make-symbol "my-full-classpath"))
-        (my-sourcepath (make-symbol "my-sourcepath")))
+        (my-sourcepath (make-symbol "my-sourcepath"))
+        (my-testsourcepath (make-symbol "my-testsourcepath")))
     `(progn
        (require 'pom-parser)
        (setq ,my-classpath  '("/usr/share/java"))
@@ -234,6 +241,16 @@ BASE-PATH). Pass in a list of JDEE variables to set in OTHER-VARIABLE-SETTERS."
                 (setq ,my-sourcepath (append ,my-sourcepath (list jde-sourcepath)))
               (setq ,my-sourcepath (append ,my-sourcepath jde-sourcepath)))))
         ,pom-path-list)
+
+       ;; Hack my-sourcepath to include test directories
+       (setq ,my-testsourcepath (mapcar
+                                 (lambda (path)
+                                   (progn
+                                     (if (string-match "src\/main" path)
+                                         (replace-in-string path "src\/main" "src/test"))))
+                                 ,my-sourcepath))
+
+       (setq ,my-sourcepath (append ,my-sourcepath ,my-testsourcepath))
        (jde-set-variables
         ,@other-variable-setters
         '(jde-global-classpath ,my-classpath)

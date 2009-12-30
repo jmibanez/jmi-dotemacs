@@ -42,6 +42,7 @@
  '(scheme-program-name "mzscheme")
  '(sql-oracle-program "~/scripts/ssh-sqlplus.sh")
  '(transient-mark-mode t)
+ '(w3m-command "/opt/local/bin/w3m")
  '(w3m-default-display-inline-images t)
  '(w3m-tab-width 4)
  '(w3m-use-cookies t)

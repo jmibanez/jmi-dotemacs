@@ -29,6 +29,12 @@
 ;; Load paths
 (jmi/dotemacs-do-module "loadpaths.el")
 
+;; Color theme
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-charcoal-black-ext)
+;; (color-theme-deep-blue)
+
 ;; Load all init modules
 (mapc 'load-file
       (sort (jmi/list-init-files jmi/my-emacs-init-path)

@@ -21,10 +21,6 @@
 (require 'vc-git)
 (add-to-list 'vc-handled-backends 'git)
 
-;; Color theme
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black-ext)
 
 
 ;;(require 'planner)

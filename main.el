@@ -4,6 +4,11 @@
 (server-start)
 ;; (gnuserv-start)
 
+;; As early as possible, disable menu, scroll, and tool bar
+(tool-bar-mode -1)
+;; (menu-bar-mode -1)
+(scroll-bar-mode -1)
+
 ;; Basic init funs
 (defmacro jmi/dotemacs-do-module (filename)
   (load-file (concat jmi/my-emacs-init-path filename)))

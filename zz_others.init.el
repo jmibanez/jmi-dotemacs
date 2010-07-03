@@ -18,10 +18,6 @@
 ;; Other init
 (require 'ljupdate)
 (require 'git)
-(require 'vc-git)
-(add-to-list 'vc-handled-backends 'git)
-
-
 
 ;;(require 'planner)
 ;;(require 'planner-notes-index)

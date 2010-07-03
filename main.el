@@ -9,6 +9,9 @@
 ;; (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
+;; Blink the cursor
+(blink-cursor-mode 1)
+
 ;; Basic init funs
 (defmacro jmi/dotemacs-do-module (filename)
   (load-file (concat jmi/my-emacs-init-path filename)))

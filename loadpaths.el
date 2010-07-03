@@ -10,3 +10,4 @@
 ;;(add-to-list 'load-path "~/elisp/sacha-dev/emacs-wiki")
 ;;(add-to-list 'load-path "~/elisp/sacha-dev/remember")
 
+(load-file "~/elisp/cedet/common/cedet.el")

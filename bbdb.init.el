@@ -3,7 +3,7 @@
 (require 'bbdb-autoloads)
 (require 'bbdb)
 
-(bbdb-initialize 'gnus 'message 'w3)
+(bbdb-initialize 'gnus 'message)
 
 ;;If you don't live in Northern America, you should disable the 
 ;;syntax check for telephone numbers by saying

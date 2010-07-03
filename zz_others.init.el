@@ -1,18 +1,18 @@
 ;; For pymacs-- am using it for developing Ozone
 
-(setq jmibanez-pymacs-dir (expand-file-name "~/pymacs/"))
-
-(eval-after-load "pymacs"
-  '(add-to-list 'pymacs-load-path jmibanez-pymacs-dir))
-
-(defun jmlisp-maybe-pymacs-reload ()
-  (let ((pymacsdir jmibanez-pymacs-dir))
-        (when (and (string-equal (file-name-directory buffer-file-name)
-                                 pymacsdir)
-                   (string-match "\\.py\\'" buffer-file-name))
-          (pymacs-load (substring buffer-file-name 0 -3)))))
-
-(add-hook 'after-save-hook 'jmlisp-maybe-pymacs-reload)
+;; (setq jmibanez-pymacs-dir (expand-file-name "~/pymacs/"))
+;; 
+;; (eval-after-load "pymacs"
+;;   '(add-to-list 'pymacs-load-path jmibanez-pymacs-dir))
+;; 
+;; (defun jmlisp-maybe-pymacs-reload ()
+;;   (let ((pymacsdir jmibanez-pymacs-dir))
+;;         (when (and (string-equal (file-name-directory buffer-file-name)
+;;                                  pymacsdir)
+;;                    (string-match "\\.py\\'" buffer-file-name))
+;;           (pymacs-load (substring buffer-file-name 0 -3)))))
+;; 
+;; (add-hook 'after-save-hook 'jmlisp-maybe-pymacs-reload)
 
 
 ;; Other init

@@ -2,8 +2,8 @@
 
 ;; We're using upstream instead of the Emacs distribution; as such,
 ;; use the one in our loadpath
-(add-to-list 'load-path "~/elisp/org-mode")
-(load-file "~/elisp/org-mode/org-install.elc")
+;;(add-to-list 'load-path "~/elisp/org-mode")
+;;(load-file "~/elisp/org-mode/org-install.elc")
 
 (require 'org)
 

@@ -7,10 +7,10 @@
 ;; a tempo.el that interferes with the tempo.el provided in later
 ;; Emacs. Because of this, force loading the one that came with our Emacs
 ;; FIXME: PS: We're on emacs-snapshot, fix this for released
-(load-file (concat "/usr/share/emacs/" (substring emacs-version 0 -2) "/lisp/tempo.elc"))
+;; (load-file (concat "/usr/share/emacs/" (substring emacs-version 0 -2) "/lisp/tempo.elc"))
 
 ;; bsh-jar
-(setq bsh-jar "/usr/share/java/bsh.jar")
+(setq bsh-jar "/opt/local/share/java/bsh.jar")
 
 ;; DON'T TIMEOUT IMMEDIATELY -- a minute should be enough for Maven
 ;; projects, due to our hack of using prj.el files there with a
@@ -35,18 +35,24 @@
 (require 'jde-eclipse-compiler-server)
 
 (setq jde-compiler
-      '(("eclipse java compiler server" "/usr/share/java/ecj.jar")))
+      '(("eclipse java compiler server" "/opt/local/share/java/eclipse-ecj.jar")))
+;;(setq jde-compiler '("javac server"))
 (setq jde-ecj-command-line-args
-      '("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/usr/lib/jvm/java-6-openjdk/jre/lib/rt.jar" "-deprecation"))
+      '("-d" "none" "-source" "1.5" "-target" "1.5" "-bootclasspath" "/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar" "-deprecation"))
 (setq jde-flymake-jikes-app-name "ecj")
 
 ;; Our installed JDKs
-(setq jde-jdk-registry
-      '(("6.0" . "/usr/lib/jvm/java-6-sun/")
-        ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
-        ("1.4" . "/usr/lib/jvm/java-gcj/")))
+;; (setq jde-jdk-registry
+;;       '(("6.0" . "/usr/lib/jvm/java-6-sun/")
+;;         ("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun/")
+;;         ("1.4" . "/usr/lib/jvm/java-gcj/")))
 
-(setq jde-jdk '("6.0"))
+(setq jde-jdk-registry
+      '(("1.6.0" . "/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0")
+        ("1.5.0" . "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0")
+        ("1.4.2" . "/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2")))
+
+(setq jde-jdk '("1.6.0"))
 
 ;; Known library paths
 (setq jde-lib-directory-names '("^lib" "^jar" "^java"))
@@ -61,7 +67,7 @@
 (setq jde-which-method-mode nil)
 
 ;; XRef
-(setq jde-xref-db-base-directory "/home/jmibanez/")
+(setq jde-xref-db-base-directory "/Users/jmibanez/")
 
 
 (defun jars-in-below-directory (directory)

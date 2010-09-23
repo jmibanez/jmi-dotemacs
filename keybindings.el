@@ -53,6 +53,9 @@ in process_environment."
 (global-set-key '[f7] 'bookmark-jump)
 (global-set-key '[S-f7] 'bookmark-set)
 
+;; Use shift-arrow for window motion
+(windmove-default-keybindings)
+
 ;;(define-prefix-command 'my-keys)
 ;;(global-set-key '[f8] 'my-keys)
 ;;(global-set-key '[f8 c]  'planner-create-task-from-buffer)

@@ -50,8 +50,13 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "Grey15" :foreground "Grey" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :family "Inconsolata"))))
+ '(cursor ((t (:background "Grey" :inverse-video t))))
+ '(fixed-pitch ((t (:family "andale mono"))))
  '(newsticker-feed-face ((t (:foreground "misty rose" :weight bold :height 1.5 :family "helvetica"))))
- '(org-hide ((((background dark)) (:foreground "#0a0a38")))))
+ '(org-hide ((((background dark)) (:foreground "Grey15")))))
+
+;; '(org-hide ((((background dark)) (:foreground "#0a0a38")))))
 
 ;;--(custom-set-faces
 ;;--  ;; custom-set-faces was added by Custom.

@@ -1,7 +1,7 @@
 ;; JDEE initializations
 
-(require 'jde)
 (require 'cedet)
+(require 'jde)
 
 ;; Hack: In Ubuntu (Debian?), html-helper-mode unfortunately packages
 ;; a tempo.el that interferes with the tempo.el provided in later

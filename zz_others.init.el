@@ -65,8 +65,9 @@
 (require 'jde-eclipse-compiler-server)
 ;; (jde-flymake-jikes-app-name)
 
-(setq midnight-mode t)
+;; (setq midnight-mode t)
 
+(require 'midnight)
 
 ;; Tramp customizations
 (require 'tramp)

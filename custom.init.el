@@ -35,6 +35,7 @@
  '(lj-default-username "jmibanez")
  '(lj-fill-function (quote lj-fill-by-paragraph))
  '(mm-url-use-external t)
+ '(ns-pop-up-frames nil)
  '(scheme-mit-dialect nil)
  '(scheme-program-name "mzscheme")
  '(sql-oracle-program "~/scripts/ssh-sqlplus.sh")

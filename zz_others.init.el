@@ -44,7 +44,7 @@
 (iswitchb-mode 1)
 
 ;; (mouse-wheel-mode)
-;; (setq pop-up-windows nil)
+(setq pop-up-windows t)
 
 ;; F10 pipe the message as spam
 ;; (global-set-key [(f10)]

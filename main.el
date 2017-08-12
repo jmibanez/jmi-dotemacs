@@ -35,11 +35,167 @@
 ;; Load paths
 (jmi/dotemacs-do-module "loadpaths.el")
 
-;; Color theme
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black-ext)
-;; (color-theme-deep-blue)
+;; Packages/Packaging
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+(defvar jmi/packages '(2048-game
+                       ac-cider-compliment
+                       alert
+                       async
+                       auto-complete
+                       autodisass-java-bytecode
+                       back-button
+                       bbdb
+                       button-lock
+                       chicken-scheme
+                       chronos
+                       circe
+                       cider
+                       clj-refactor
+                       clojure-mode
+                       d-mode
+                       dash
+                       dash-at-point
+                       deferred
+                       dockerfile-mode
+                       edn
+                       emacs-eclim
+                       emms
+                       emojify
+                       epl
+                       f
+                       fic-mode
+                       fish-mode
+                       fixmee
+                       flx
+                       flycheck
+                       flycheck-dmd-dub
+                       flycheck-pos-tip
+                       flycheck-pyflakes
+                       flycheck-rust
+                       flymake-easy
+                       flymake-python-pyflakes
+                       fringe-helper
+                       fullframe
+                       gh
+                       gist
+                       git-commit
+                       github-notifier
+                       github-pullrequest
+                       gntp
+                       go-autocomplete
+                       go-eldoc
+                       go-guru
+                       go-mode
+                       go-projectile
+                       go-rename
+                       groovy-mode
+                       helm
+                       helm-chronos
+                       helm-cmd-t
+                       helm-dash
+                       helm-git
+                       helm-git-files
+                       helm-package
+                       helm-projectile-all
+                       helm-rails
+                       helm-spotify
+                       helm-themes
+                       ht
+                       inflections
+                       javap-mode
+                       jinja2-mode
+                       let-alist
+                       list-utils
+                       log4e
+                       logito
+                       lua-mode
+                       magit-filenotify
+                       magit-find-file
+                       magit-gh-pulls
+                       magit-gitflow
+                       marshal
+                       mode-icons
+                       multi
+                       nav-flash
+                       noflet
+                       nyan-mode
+                       oauth2
+                       org-present
+                       paredit
+                       password-generator
+                       pcache
+                       peg
+                       persistent-soft
+                       persp-projectile
+                       perspective
+                       pkg-info
+                       popup
+                       popwin
+                       pos-tip
+                       protobuf-mode
+                       python-django
+                       pyvenv
+                       queue
+                       rainbow-delimiters
+                       request
+                       s
+                       scheme-complete
+                       scratch-palette
+                       seq
+                       session
+                       slamhound
+                       smartrep
+                       spinner
+                       sr-speedbar
+                       string-utils
+                       tabbar
+                       tabbar-ruler
+                       tabulated-list
+                       thrift
+                       twittering-mode
+                       ucs-utils
+                       yasnippet-bundle
+ 
+                       ;; Themes
+                       clues-theme
+                       color-theme
+                       cyberpunk-theme
+                       noctilux-theme
+                       zenburn-theme
+                       underwater-theme
+                       subatomic-theme
+                       firebelly-theme
+                       color-theme-solarized
+                       bubbleberry-theme
+                       ample-zen-theme
+                       ample-theme
+                       afternoon-theme)
+  "Selected packages")
+
+;; Shamelessly taken from Aaron Bedra:
+;; http://aaronbedra.com/emacs.d/
+(defun abedra/packages-installed-p ()
+  (loop for pkg in jmi/packages
+        when (not (package-installed-p pkg)) do (return nil)
+        finally (return t)))
+
+(unless (abedra/packages-installed-p)
+  (message "%s" "Refreshing package database...")
+  (package-refresh-contents)
+  (dolist (pkg jmi/packages)
+    (when (not (package-installed-p pkg))
+      (package-install pkg))))
+
+(set-frame-parameter nil 'background-mode 'dark)
+(load-theme 'solarized t)
+
 
 ;; Load all init modules
 (mapc 'load-file

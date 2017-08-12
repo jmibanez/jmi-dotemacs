@@ -58,12 +58,6 @@
 ;;(add-hook 'jde-mode-hook #'java-mode-indent-annotations-setup)
 
 
-(setq g-user-email "jmibanez@gmail.com")
-
-(require 'flymake)
-(add-hook 'find-file-hooks 'flymake-find-file-hook)
-(require 'jde-eclipse-compiler-server)
-;; (jde-flymake-jikes-app-name)
 
 ;; (setq midnight-mode t)
 

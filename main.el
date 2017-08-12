@@ -23,14 +23,11 @@
 (defun jmi/list-init-files (directory)
   (let (init-files-list
         (current-dir-list (directory-files-and-attributes directory t)))
-    (mapc (lambda (dir-item)
-            (if (equal ".init.el" (substring (car dir-item) -8))
-                (setq init-files-list
-                      (cons (car dir-item)
-                            init-files-list))))
-          current-dir-list)
-    init-files-list))
-
+    (dolist (dir-item current-dir-list init-files-list)
+      (if (equal ".init.el" (substring (car dir-item) -8))
+          (setq init-files-list
+                (cons (car dir-item)
+                      init-files-list))))))
 
 ;; Load paths
 (jmi/dotemacs-do-module "loadpaths.el")

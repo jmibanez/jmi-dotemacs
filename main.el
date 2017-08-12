@@ -6,7 +6,10 @@
 
 ;; As early as possible, disable menu, scroll, and tool bar
 (tool-bar-mode -1)
-;; (menu-bar-mode -1)
+
+;; If not on macOS, turn off the menu bar
+(if (not (eq system-type 'darwin))
+    (menu-bar-mode -1))
 (scroll-bar-mode -1)
 
 ;; Blink the cursor

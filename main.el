@@ -15,6 +15,12 @@
 ;; Blink the cursor
 (blink-cursor-mode 1)
 
+
+;; User Details first
+(setq user-full-name "Jan Michael Ibanez")
+(setq user-mail-address "jm@jmibanez.com")
+
+
 ;; Basic init funs
 (defmacro jmi/dotemacs-do-module (filename)
   (load-file (concat jmi/my-emacs-init-path filename)))

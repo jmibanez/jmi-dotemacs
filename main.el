@@ -1,8 +1,9 @@
-;; Entry point for all my start files
+;;; main.el -- Entry point for all my start files
 
-;; Start server
-(server-start)
-;; (gnuserv-start)
+;;; Commentary:
+;;; This drives loading of all .init.el files in ~/.emacs.init
+
+;;; Code:
 
 ;; Basic init funs
 (defmacro jmi/dotemacs-do-module (filename)
@@ -10,25 +11,32 @@
 
 
 (defun jmi/list-init-files (directory)
-  (let (init-files-list
-        (current-dir-list (directory-files-and-attributes directory t)))
-    (mapc (lambda (dir-item)
-            (if (equal ".init.el" (substring (car dir-item) -8))
-                (setq init-files-list
-                      (cons (car dir-item)
-                            init-files-list))))
-          current-dir-list)
-    init-files-list))
+  (if (not (file-exists-p directory))
+      '()
+    (let (init-files-list
+          (current-dir-list (directory-files-and-attributes directory t)))
+      (dolist (dir-item current-dir-list init-files-list)
+        (if (equal ".init.el" (substring (car dir-item) -8))
+            (setq init-files-list
+                  (cons (car dir-item)
+                        init-files-list)))))))
 
-
-;; Load paths
-(jmi/dotemacs-do-module "loadpaths.el")
+(jmi/dotemacs-do-module "packages.el")
 
 ;; Load all init modules
 (mapc 'load-file
       (sort (jmi/list-init-files jmi/my-emacs-init-path)
             'string-lessp))
 
+;; If there are any customizations per-machine, per-user, load them as
+;; well
+(mapc 'load-file
+      (sort (jmi/list-init-files (concat jmi/my-emacs-init-path
+                                         (symbol-name system-type)))
+            'string-lessp))
+
 ;; Load keybindings
 (jmi/dotemacs-do-module "keybindings.el")
+
+;;; main.el ends here
 

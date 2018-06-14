@@ -1,20 +1,27 @@
-;; Keybindings and keybinding suport
+;;; keybindings.el -- Keybindings and keybinding suport
+
+;;; Commentary:
+;;; This just adds some custom keybindings etcetera, outside of those
+;;; specific to certain modes
+
+;;; Code:
 
 (defun jmi/open-tasks (key)
   "Open org-mode file based on key"
-  (interactive "cWhich task [w:Work t:GenTasks p:Personal l:Links n:Notes]")
-  (let ((org-mode-task-dir "~/doc/personal/tasks/"))
+  (interactive "cWhich task [i:Inbox w:Work p:Personal n:Notes o:Other...]")
+  (let ((org-mode-task-dir "~/Documents/personal/tasks/")
+        (is-org-mode (lambda (s) (equals (substring s -4) ".org"))))
     (case key
+      (?i (find-file (concat org-mode-task-dir "inbox.org")))
       (?w (find-file (concat org-mode-task-dir "work.org")))
-      (?t (find-file (concat org-mode-task-dir "tasks.org")))
       (?p (find-file (concat org-mode-task-dir "personal.org")))
-      (?l (find-file (concat org-mode-task-dir "links.org")))
-      (?n (call-interactively #'jmi/open-tasks-notes))
+      (?n (find-file (concat org-mode-task-dir "notes.org")))
+      (?o (find-file (read-file-name "Org file: " org-mode-task-dir nil t)))
       (otherwise (message "Task key not found.")))))
 
 (defun jmi/open-tasks-notes (key)
   (interactive "cNote page [a:ABS-CBN b:BNSP i:ISAP-COCAF v:VOIP-Class]")
-  (let ((org-mode-task-dir "~/doc/personal/task-notes/work-projects/"))
+  (let ((org-mode-task-dir "~/Documents/personal/task-notes/work-projects/"))
     (case key
       (?a (find-file (concat org-mode-task-dir "abs-cbn.org")))
       (?b (find-file (concat org-mode-task-dir "bnsp.org")))
@@ -46,7 +53,7 @@ in process_environment."
     (setenv "LD_PRELOAD" nil)))
 
 
-(global-set-key "\M-g" 'goto-line)
+;; (global-set-key "\M-g" 'goto-line)
 ;;(global-set-key '[f7] 'planner-create-task-from-buffer)
 ;;(global-set-key '[S-f7] 'planner-goto-today)
 ;;(global-set-key '[f8] 'remember)
@@ -64,7 +71,7 @@ in process_environment."
 ;; (define-key  my-keys "t"         'planner-goto-today)
 (define-key  my-keys '[f8]       'remember)
 (define-key  my-keys "m"         'gnus)
-(define-key  my-keys "n"         'newsticker-show-news)
+(define-key  my-keys "n"         'newsticker-treeview)
 
 (define-prefix-command 'my-keys-functions)
 (define-key  my-keys-functions  "p"   'jmi/toggle-http-proxy)
@@ -72,7 +79,14 @@ in process_environment."
 (define-key  my-keys "f"         'my-keys-functions)
 (define-key  my-keys "t"         'jmi/open-tasks)
 
+
 (global-set-key '[f8] 'my-keys)
 
+;; (global-set-key '[s-return] 'ns-toggle-fullscreen)
+(global-set-key '[s-return] 'toggle-frame-fullscreen)
 
 
+;; Window move via shift-arrow
+(windmove-default-keybindings)
+
+;;; keybindings.el ends here

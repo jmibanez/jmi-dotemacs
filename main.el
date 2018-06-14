@@ -6,13 +6,16 @@
 ;;; Code:
 
 ;; Basic init funs
-(defconst jmi/my-emacs-init-path (file-name-directory load-file-name))
+(defconst jmi/my-emacs-init-path (file-name-directory load-file-name)
+  "Directory where all my init files live.")
 
 (defmacro jmi/dotemacs-do-module (filename)
+  "Load the specified FILENAME from the init directory."
   (load-file (concat jmi/my-emacs-init-path filename)))
 
 
 (defun jmi/list-init-files (directory)
+  "List all .init.el files inside DIRECTORY."
   (if (not (file-exists-p directory))
       '()
     (let (init-files-list

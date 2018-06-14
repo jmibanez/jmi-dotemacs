@@ -21,6 +21,8 @@
                   (cons (car dir-item)
                         init-files-list)))))))
 
+;; Packages
+(package-initialize)
 (jmi/dotemacs-do-module "packages.el")
 
 ;; Load all init modules

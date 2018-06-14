@@ -1,0 +1,173 @@
+;;; development.init.el -- Various config for programming
+
+;;; Commentary:
+;;; This contains all of the config for various modes I use for
+;;; writing software (including version control stuff); some of the
+;;; Lisp modes stuff were shamelessly taken from Aaron Bedra's config
+;;; (see http://aaronbedra.com/emacs.d/).
+
+;;; Code:
+
+;; Lisp Modes
+(setq lisp-modes '(lisp-mode
+                   emacs-lisp-mode
+                   common-lisp-mode
+                   scheme-mode
+                   clojure-mode))
+
+
+(use-package rainbow-delimiters)
+(use-package paredit)
+
+(defvar lisp-power-map (make-keymap))
+(define-minor-mode lisp-power-mode "Fix keybindings; add power."
+  :lighter " (power)"
+  :keymap lisp-power-map
+  (rainbow-delimiters-mode t)
+  (paredit-mode t))
+(define-key lisp-power-map [delete] 'paredit-forward-delete)
+(define-key lisp-power-map [backspace] 'paredit-backward-delete)
+
+(defun abedra/engage-lisp-power ()
+  (lisp-power-mode t))
+
+(dolist (mode lisp-modes)
+  (add-hook (intern (format "%s-hook" mode))
+            #'abedra/engage-lisp-power))
+
+(setq inferior-lisp-program "clisp")
+(setq scheme-program-name "mzscheme")
+
+(use-package clojure-mode
+  :config
+  (define-clojure-indent
+    (defroutes 'defun)
+    (GET 2)
+    (POST 2)
+    (PUT 2)
+    (DELETE 2)
+    (HEAD 2)
+    (ANY 2)
+    (context 2)))
+
+(use-package cider
+  :init
+  ;; (add-hook 'cider-mode-hook
+  ;;           #'cider-turn-on-eldoc-mode)
+  (setq nrepl-hide-special-buffers t)
+  (setq cider-popup-stacktraces nil)
+  (setq cider-repl-popup-stacktraces t)
+  (setq cider-auto-select-error-buffer t)
+  (setq cider-jdk-src-paths
+        '("/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home/src.zip"
+          "/Library/Java/JavaVirtualMachines/jdk-9.0.1.jdk/Contents/Home/lib/src.zip"
+          "/Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/Contents/Home/lib/src.zip"))
+  (setq cider-jack-in-lein-plugins
+        '(("refactor-nrepl" "2.4.0-SNAPSHOT" :predicate cljr--inject-middleware-p)
+          ("cider/cider-nrepl" "0.18.0-SNAPSHOT")))
+  ;; Disable refactor-nrepl and clj-refactor for now
+  (setq cljr-inject-dependencies-at-jack-in t)
+
+  :config
+  ;; Shim to get slamhound working with latest CIDER -- alias
+  ;; nrepl-send-string-sync to nrepl-sync-request:eval
+
+  (defun nrepl-send-string-sync (s)
+    (nrepl-sync-request:eval s
+                             (cider-current-connection)
+                             (cider-current-session)
+                             (cider-current-ns))))
+
+
+;; JS2 mode
+(use-package js2-mode
+  :mode "\\.js$")
+
+;; Java dev/Eclim
+
+(use-package eclim
+  :init
+  (setq jmi/eclipse-dir "~/apps/eclipse/Eclipse.app/Contents/Eclipse/")
+
+  (setq eclimd-executable (concat jmi/eclipse-dir "eclimd"))
+  (setq eclim-executable (concat jmi/eclipse-dir "eclim"))
+  (setq eclim-eclipse-dirs jmi/eclipse-dir)
+
+  (setq help-at-pt-display-when-idle t)
+  (setq help-at-pt-timer-delay 1)
+
+  (setq eclim-auto-save t)
+  ;;  (add-to-list 'eclim--file-coding-system-mapping '("iso-latin-1-dos" . "ISO-8859-1"))
+
+  :config
+  (help-at-pt-set-timer)
+  (global-eclim-mode))
+
+
+;; Local help, primarily for eclim
+(use-package ac-emacs-eclim-source
+  :config
+  (ac-emacs-eclim-config))
+
+
+;; Magit - Emacs interface to Git
+(use-package magit
+  :init
+  ;; Point Magit to locally installed git (not system)
+  (setq magit-git-executable "/usr/local/bin/git")
+
+  ;; Set default magit dirs
+  (setq magit-repo-dirs
+        '("~/projects/personal"
+          "~/projects/skunk"
+          "~/projects/freelance"
+          "~/projects/codeflux"))
+  (setq magit-use-overlays nil))
+
+(use-package magithub
+  :after magit
+  :config
+  (magithub-feature-autoinject t))
+
+(use-package github-notifier
+  :init
+  ;; github-notifier
+  (setq github-notifier-token "af0c5ea4b683f6fe728c1729430915344528411f"))
+
+
+(use-package magit-gh-pulls
+  :init
+  (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
+
+(use-package fullframe
+  :config
+  (fullframe magit-status magit-mode-quit-window nil))
+
+
+;; Flycheck config
+
+(use-package flycheck
+  :init
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+
+  :config
+  (declare-function python-shell-calculate-exec-path "python")
+
+  (defun flycheck-virtualenv-set-python-executables ()
+    "Set Python executables for the current buffer."
+    (let ((exec-path (python-shell-calculate-exec-path)))
+      (setq-local flycheck-python-pylint-executable
+                  (executable-find "pylint"))
+      (setq-local flycheck-python-flake8-executable
+                  (executable-find "flake8"))))
+
+  (defun flycheck-virtualenv-setup ()
+    "Setup Flycheck for the current virtualenv."
+    (when (derived-mode-p 'python-mode)
+      (add-hook 'hack-local-variables-hook
+                #'flycheck-virtualenv-set-python-executables 'local)))
+
+  (provide 'flycheck-virtualenv))
+
+
+;;; development.init.el ends here

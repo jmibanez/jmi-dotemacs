@@ -42,8 +42,8 @@
 ;; Use Emacs session management
 (use-package session
   :config
-  (add-to-list 'session-globals-exclude 'org-mark-ring)
-  :init (session-initialize))
+  (session-initialize)
+  (add-to-list 'session-globals-exclude 'org-mark-ring))
 
 
 ;;; navigation.init.el ends here

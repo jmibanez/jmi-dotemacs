@@ -86,7 +86,4 @@ in process_environment."
 (global-set-key '[s-return] 'toggle-frame-fullscreen)
 
 
-;; Window move via shift-arrow
-(windmove-default-keybindings)
-
 ;;; keybindings.el ends here

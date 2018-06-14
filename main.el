@@ -6,6 +6,8 @@
 ;;; Code:
 
 ;; Basic init funs
+(defconst jmi/my-emacs-init-path (file-name-directory load-file-name))
+
 (defmacro jmi/dotemacs-do-module (filename)
   (load-file (concat jmi/my-emacs-init-path filename)))
 

@@ -25,11 +25,6 @@
 (setq user-full-name "Jan Michael Ibanez")
 (setq user-mail-address "jm@jmibanez.com")
 
-;; Load theme
-(set-frame-parameter nil 'background-mode 'dark)
-(add-to-list 'default-frame-alist '(background-mode . dark))
-(load-theme 'solarized t)
-
 ;; exec-path
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 (push "/usr/local/bin" exec-path)

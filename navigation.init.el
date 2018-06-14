@@ -13,26 +13,25 @@
   :config
   (global-set-key (kbd "C-c h") 'helm-mini))
 
-;; Side-effect: We use a bunch of Textmate-like bindings, so use
-;; textmate-mode
+;; Side-effect: We use a bunch of Textmate-like bindings, so load
+;; textmate-mode?
 (use-package textmate
   :config
-  (textmate-mode)
-  (define-key *textmate-mode-map* [(super /)] 'comment-or-uncomment-region-or-line))
+  (textmate-define-comment-line)
+  (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
 
 ;; Projectile
 (use-package projectile
   :config
   (projectile-mode)
-
-  (defun projectile-bind-cmd-t ()
-    (define-key *textmate-mode-map* [(super t)] 'projectile-find-file))
-  (add-hook 'textmate-mode-hook 'projectile-bind-cmd-t)
+  (global-set-key [(super t)] 'projectile-find-file)
   (global-set-key [(super o)] 'projectile-switch-project))
 
 (use-package helm-projectile
   :config
-  (helm-projectile-toggle 0))
+  (helm-projectile-toggle 0)
+
+  :after projectile helm)
 
 ;; Window move via cmd-shift-arrow
 (global-set-key [(super shift left)]  'windmove-left)

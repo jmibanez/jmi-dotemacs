@@ -76,8 +76,13 @@
                                (powerline-render rhs))))))))
 
 (use-package spaceline-config
+  :init
+  (setq spaceline-helm-mode t)
+
   :config
-  (spaceline-spacemacs-theme))
+  (spaceline-spacemacs-theme)
+
+  :after helm)
 
 (use-package mode-icons
   :config

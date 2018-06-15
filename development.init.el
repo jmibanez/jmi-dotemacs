@@ -132,7 +132,14 @@
 (use-package github-notifier
   :init
   ;; github-notifier
-  (setq github-notifier-token "af0c5ea4b683f6fe728c1729430915344528411f"))
+  (setq github-notifier-token
+        (funcall
+         (plist-get (car (auth-source-search :host "api.github.com"
+                                             :user "jmibanez^ghnotifier"
+                                             :max 1
+                                             :require '(:user :secret)
+                                             :create t))
+                    :secret))))
 
 
 (use-package magit-gh-pulls

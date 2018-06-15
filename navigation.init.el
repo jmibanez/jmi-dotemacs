@@ -10,12 +10,24 @@
 
 ;; Helm:
 (use-package helm
+  :init
+  (setq helm-mode-fuzzy-match t)
+
+  ;; Use the same buffer as where invoked
+  (setq helm-split-window-default-side 'same)
+  (setq helm-reuse-last-window-split-state nil)
+
   :config
   (global-set-key (kbd "C-c h") 'helm-mini)
+
   (helm-mode 1)
 
   ;; DEEP END STUFF: This enables helm for C-x C-f
-  (global-set-key (kbd "C-x C-f") #'helm-find-files))
+  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+  ;; Also bind M-x
+  (global-set-key (kbd "M-x") #'helm-M-x)
+  ;; ... and apropos
+  (global-set-key (kbd "C-h a") #'helm-apropos))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

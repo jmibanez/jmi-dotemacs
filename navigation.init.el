@@ -12,7 +12,10 @@
 (use-package helm
   :config
   (global-set-key (kbd "C-c h") 'helm-mini)
-  (helm-mode 1))
+  (helm-mode 1)
+
+  ;; DEEP END STUFF: This enables helm for C-x C-f
+  (global-set-key (kbd "C-x C-f") #'helm-find-files))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?
@@ -25,12 +28,13 @@
 (use-package projectile
   :config
   (projectile-mode)
-  (global-set-key [(super t)] 'projectile-find-file)
+  (global-set-key [(super t)] 'helm-projectile)
   (global-set-key [(super o)] 'projectile-switch-project))
 
 (use-package helm-projectile
   :config
-  (helm-projectile-toggle 0)
+  (setq projectile-completion-system 'helm)
+  (helm-projectile-on)
 
   :after projectile helm)
 

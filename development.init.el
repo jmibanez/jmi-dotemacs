@@ -50,6 +50,20 @@
     (ANY 2)
     (context 2)))
 
+(defun jmi/cons-src-path-for-jvm-home (pair)
+  "Return path for src.zip for JVM Home alist entry in PAIR"
+
+  (let ((jvm-version (car pair))
+        (jvm-path (cdr pair)))
+    (if (equal jvm-version "1.8")
+        (concat jvm-path "/src.zip")
+      (concat jvm-path "/lib/src.zip"))))
+
+(defun jmi/cons-jdk-src-paths (jvm-alist)
+  "Construct JDK source paths (src.zip) in JVM-ALIST"
+
+  (mapcar 'jmi/cons-src-path-for-jvm-home jvm-alist))
+
 (use-package cider
   :init
   ;; (add-hook 'cider-mode-hook
@@ -58,10 +72,7 @@
   (setq cider-popup-stacktraces nil)
   (setq cider-repl-popup-stacktraces t)
   (setq cider-auto-select-error-buffer t)
-  (setq cider-jdk-src-paths
-        '("/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home/src.zip"
-          "/Library/Java/JavaVirtualMachines/jdk-9.0.1.jdk/Contents/Home/lib/src.zip"
-          "/Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/Contents/Home/lib/src.zip"))
+  (setq cider-jdk-src-paths (jmi/cons-jdk-src-paths jmi/jvm-homes-alist))
   (setq cider-jack-in-lein-plugins
         '(("refactor-nrepl" "2.4.0-SNAPSHOT" :predicate cljr--inject-middleware-p)
           ("cider/cider-nrepl" "0.18.0-SNAPSHOT")))
@@ -76,7 +87,10 @@
     (nrepl-sync-request:eval s
                              (cider-current-connection)
                              (cider-current-session)
-                             (cider-current-ns))))
+                             (cider-current-ns)))
+
+  :after
+  jmi-init-platform-paths)
 
 
 ;; JS2 mode
@@ -87,8 +101,6 @@
 
 (use-package eclim
   :init
-  (setq jmi/eclipse-dir "~/apps/eclipse/Eclipse.app/Contents/Eclipse/")
-
   (setq eclimd-executable (concat jmi/eclipse-dir "eclimd"))
   (setq eclim-executable (concat jmi/eclipse-dir "eclim"))
   (setq eclim-eclipse-dirs jmi/eclipse-dir)
@@ -101,7 +113,10 @@
 
   :config
   (help-at-pt-set-timer)
-  (global-eclim-mode))
+  (global-eclim-mode)
+
+  :after
+  jmi-init-platform-paths)
 
 
 ;; Local help, primarily for eclim
@@ -114,7 +129,7 @@
 (use-package magit
   :init
   ;; Point Magit to locally installed git (not system)
-  (setq magit-git-executable "/usr/local/bin/git")
+  (setq magit-git-executable jmi/git)
 
   ;; Set default magit dirs
   (setq magit-repo-dirs
@@ -122,7 +137,10 @@
           "~/projects/skunk"
           "~/projects/freelance"
           "~/projects/codeflux"))
-  (setq magit-use-overlays nil))
+  (setq magit-use-overlays nil)
+
+  :after
+  jmi-init-platform-paths)
 
 (use-package magithub
   :after magit

@@ -8,8 +8,7 @@
 ;;; Code:
 
 ;; Load theme
-(set-frame-parameter nil 'background-mode 'dark)
-(add-to-list 'default-frame-alist '(background-mode . dark))
+(setq frame-background-mode 'dark)
 (load-theme 'solarized t)
 
 ;; Functions to toggle between light and dark

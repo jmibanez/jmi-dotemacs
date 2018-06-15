@@ -9,9 +9,10 @@
 ;;; Code:
 
 ;; Helm:
-(use-package helm-config
+(use-package helm
   :config
-  (global-set-key (kbd "C-c h") 'helm-mini))
+  (global-set-key (kbd "C-c h") 'helm-mini)
+  (helm-mode 1))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

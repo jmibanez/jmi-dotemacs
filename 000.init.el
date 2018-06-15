@@ -18,9 +18,6 @@
     (menu-bar-mode -1))
 (scroll-bar-mode -1)
 
-;; Blink the cursor
-(blink-cursor-mode 1)
-
 ;; User Details
 (setq user-full-name "Jan Michael Ibanez")
 (setq user-mail-address "jm@jmibanez.com")

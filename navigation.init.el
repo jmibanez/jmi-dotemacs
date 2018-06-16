@@ -35,8 +35,7 @@
 (use-package textmate
   :config
   (textmate-define-comment-line)
-  :bind
-  (("s-/" . comment-or-uncomment-region-or-line)))
+  (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
 
 ;; Projectile
 (use-package projectile

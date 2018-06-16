@@ -18,35 +18,39 @@
   (setq helm-reuse-last-window-split-state nil)
 
   :config
-  (global-set-key (kbd "C-c h") 'helm-mini)
-
   (helm-mode 1)
 
-  ;; DEEP END STUFF: This enables helm for C-x C-f
-  (global-set-key (kbd "C-x C-f") #'helm-find-files)
-  ;; Also bind M-x
-  (global-set-key (kbd "M-x") #'helm-M-x)
-  ;; ... and apropos
-  (global-set-key (kbd "C-h a") #'helm-apropos))
+  :bind
+  (("C-c h"   .  helm-mini)
+
+   ;; DEEP END STUFF: This enables helm for C-x C-f
+   ("C-x C-f" .  helm-find-files)
+   ;; Also bind M-x
+   ("M-x"     .  helm-M-x)
+   ;; ... and apropos
+   ("C-h a"   .  helm-apropos)))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?
 (use-package textmate
   :config
   (textmate-define-comment-line)
-  (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
+  :bind
+  (("S-/" . comment-or-uncomment-region-or-line)))
 
 ;; Projectile
 (use-package projectile
   :config
-  (projectile-mode)
-  (global-set-key [(super t)] 'helm-projectile)
-  (global-set-key [(super o)] 'projectile-switch-project))
+  (projectile-mode))
 
 (use-package helm-projectile
   :config
   (setq projectile-completion-system 'helm)
   (helm-projectile-on)
+
+  :bind
+  (("S-t"   .  helm-projectile)
+   ("S-o"   .  projectile-switch-project))
 
   :after projectile helm)
 

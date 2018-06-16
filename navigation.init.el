@@ -33,7 +33,9 @@
    ;; Also bind M-x
    ("M-x"     .  helm-M-x)
    ;; ... and apropos
-   ("C-h a"   .  helm-apropos)))
+   ("C-h a"   .  helm-apropos)
+   ;; ... and switch-to-buffer
+   ("C-x b"   .  helm-buffers-list)))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

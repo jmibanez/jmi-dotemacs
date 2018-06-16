@@ -35,7 +35,9 @@
    ;; ... and apropos
    ("C-h a"   .  helm-apropos)
    ;; ... and switch-to-buffer
-   ("C-x b"   .  helm-buffers-list)))
+   ("C-x b"   .  helm-buffers-list))
+
+  :demand)
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

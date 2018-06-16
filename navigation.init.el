@@ -11,7 +11,12 @@
 ;; Helm:
 (use-package helm
   :init
+  ;; Fuzzy matches everywhere!
   (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-M-x-fuzzy-match t)
+  (setq helm-apropos-fuzzy-match t)
+  (setq helm-buffers-fuzzy-matching t)
 
   ;; Use the same buffer as where invoked
   (setq helm-split-window-default-side 'same)

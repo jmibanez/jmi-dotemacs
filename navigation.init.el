@@ -36,7 +36,7 @@
   :config
   (textmate-define-comment-line)
   :bind
-  (("S-/" . comment-or-uncomment-region-or-line)))
+  (("s-/" . comment-or-uncomment-region-or-line)))
 
 ;; Projectile
 (use-package projectile
@@ -49,8 +49,8 @@
   (helm-projectile-on)
 
   :bind
-  (("S-t"   .  helm-projectile)
-   ("S-o"   .  projectile-switch-project))
+  (("s-t"   .  helm-projectile)
+   ("s-o"   .  projectile-switch-project))
 
   :after projectile helm)
 

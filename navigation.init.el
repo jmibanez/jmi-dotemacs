@@ -48,12 +48,16 @@
 
 ;; Projectile
 (use-package projectile
+  :init
+  (setq projectile-completion-system 'helm)
+
   :config
-  (projectile-mode))
+  (projectile-mode)
+
+  :after helm)
 
 (use-package helm-projectile
   :config
-  (setq projectile-completion-system 'helm)
   (helm-projectile-on)
 
   :bind

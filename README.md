@@ -14,10 +14,6 @@ just contains:
    - [`main.el`](main.el) loads everything else, so should be loaded
      in `.emacs`
 
-   - [`packages.el`](packages.el) is where I have my local ELPA
-     configuration, and where I automatically install a set of
-     packages I use
-
    - [`000.init.el`](000.init.el) contains early configuration: stuff
      that should be configured and loaded as early as possible. It's
      the first init file that `main.el` loads

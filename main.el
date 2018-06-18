@@ -28,7 +28,18 @@
 
 ;; Packages
 (package-initialize)
-(jmi/dotemacs-do-module "packages.el")
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+;; Bootstrap: Ensure use-package is installed
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 ;; Load all init modules
 (mapc 'load-file

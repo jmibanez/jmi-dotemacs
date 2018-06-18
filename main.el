@@ -61,11 +61,20 @@
       (sort (jmi/list-init-files jmi/my-emacs-init-path)
             'string-lessp))
 
+(defun jmi/platform-init-path ()
+  "Return path to directory containing platform-specific init files."
+  (let* ((platform-dir (symbol-name system-type))
+         (sanitized-platform-dir
+          (if (s-contains? "/" platform-dir)
+              (car (last (s-split "/" platform-dir)))
+            platform-dir)))
+    (concat jmi/my-emacs-init-path
+            sanitized-platform-dir)))
+
 ;; If there are any customizations per-machine, per-user, load them as
 ;; well
 (mapc 'load-file
-      (sort (jmi/list-init-files (concat jmi/my-emacs-init-path
-                                         (symbol-name system-type)))
+      (sort (jmi/list-init-files (jmi/platform-init-path))
             'string-lessp))
 
 ;; Load keybindings

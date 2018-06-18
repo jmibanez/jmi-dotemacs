@@ -6,12 +6,8 @@
   :init
   (setq whitespace-style
         '(face
-          tabs
-          spaces
           lines-tail
           trailing
-          spaces-before-tab
-          spaces-after-tab
           empty))
   :config
   (global-whitespace-mode))

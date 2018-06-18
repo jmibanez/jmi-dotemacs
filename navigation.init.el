@@ -70,11 +70,12 @@
 
   :after projectile helm)
 
-;; Window move via cmd-shift-arrow
-(global-set-key [(super shift left)]  'windmove-left)
-(global-set-key [(super shift right)] 'windmove-right)
-(global-set-key [(super shift up)]    'windmove-up)
-(global-set-key [(super shift down)]  'windmove-down)
+;; Window move via cmd-ctrl-(vim keys)
+;; Changed to be consistent with how we've bound things in our iTerm2 config
+(global-set-key (kbd "C-s-h") 'windmove-left)
+(global-set-key (kbd "C-s-l") 'windmove-right)
+(global-set-key (kbd "C-s-k") 'windmove-up)
+(global-set-key (kbd "C-s-j") 'windmove-down)
 
 ;; Use Emacs session management
 (use-package session

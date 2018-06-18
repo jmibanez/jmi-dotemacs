@@ -13,4 +13,8 @@
 ;; At midnight, cleanup
 (use-package midnight)
 
+;; symon
+(use-package symon
+  :ensure t)
+
 ;;; misc.init.el ends here

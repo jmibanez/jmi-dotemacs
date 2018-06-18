@@ -10,6 +10,7 @@
 
 ;; Helm:
 (use-package helm
+  :ensure t
   :init
   ;; Fuzzy matches everywhere!
   (setq helm-mode-fuzzy-match t)
@@ -42,12 +43,14 @@
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?
 (use-package textmate
+  :ensure t
   :config
   (textmate-define-comment-line)
   (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
 
 ;; Projectile
 (use-package projectile
+  :ensure t
   :init
   (setq projectile-completion-system 'helm)
 
@@ -57,6 +60,7 @@
   :after helm)
 
 (use-package helm-projectile
+  :ensure t
   :config
   (helm-projectile-on)
 

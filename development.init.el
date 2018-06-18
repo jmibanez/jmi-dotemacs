@@ -16,8 +16,10 @@
                    clojure-mode))
 
 
-(use-package rainbow-delimiters)
-(use-package paredit)
+(use-package rainbow-delimiters
+  :ensure t)
+(use-package paredit
+  :ensure t)
 
 (defvar lisp-power-map (make-keymap))
 (define-minor-mode lisp-power-mode "Fix keybindings; add power."
@@ -39,6 +41,7 @@
 (setq scheme-program-name "mzscheme")
 
 (use-package clojure-mode
+  :ensure t
   :config
   (define-clojure-indent
     (defroutes 'defun)
@@ -65,6 +68,7 @@
   (mapcar 'jmi/cons-src-path-for-jvm-home jvm-alist))
 
 (use-package cider
+  :ensure t
   :init
   ;; (add-hook 'cider-mode-hook
   ;;           #'cider-turn-on-eldoc-mode)
@@ -95,11 +99,12 @@
 
 ;; JS2 mode
 (use-package js2-mode
+  :ensure t
   :mode "\\.js$")
 
 ;; Java dev/Eclim
-
 (use-package eclim
+  :ensure t
   :init
   (setq eclimd-executable (concat jmi/eclipse-dir "eclimd"))
   (setq eclim-executable (concat jmi/eclipse-dir "eclim"))
@@ -119,14 +124,16 @@
   jmi-init-platform-paths)
 
 
-;; Local help, primarily for eclim
-(use-package ac-emacs-eclim-source
+;; Autocompletion helpers
+(use-package ac-emacs-eclim
+  :ensure t
   :config
   (ac-emacs-eclim-config))
 
 
 ;; Magit - Emacs interface to Git
 (use-package magit
+  :ensure t
   :init
   ;; Point Magit to locally installed git (not system)
   (setq magit-git-executable jmi/git)
@@ -143,11 +150,13 @@
   jmi-init-platform-paths)
 
 (use-package magithub
+  :ensure t
   :after magit
   :config
   (magithub-feature-autoinject t))
 
 (use-package github-notifier
+  :ensure t
   :init
   ;; github-notifier
   (setq github-notifier-token
@@ -161,21 +170,21 @@
 
 
 (use-package magit-gh-pulls
-  :init
+  :ensure t
+  :config
   (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
 
 (use-package fullframe
+  :ensure t
   :config
   (fullframe magit-status magit-mode-quit-window nil))
 
 
 ;; Flycheck config
-
 (use-package flycheck
-  :init
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-
+  :ensure t
   :config
+  (add-hook 'after-init-hook #'global-flycheck-mode)
   (declare-function python-shell-calculate-exec-path "python")
 
   (defun flycheck-virtualenv-set-python-executables ()

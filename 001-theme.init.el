@@ -8,23 +8,30 @@
 ;;; Code:
 
 ;; Load theme
-(setq frame-background-mode 'dark)
-(load-theme 'solarized t)
+(use-package color-theme-solarized
+  :ensure t
 
-;; Functions to toggle between light and dark
-(defun jmi/apply-solarized-dark ()
-  (interactive)
-  (set-frame-parameter nil 'background-mode 'dark)
-  (enable-theme 'solarized))
+  :init
+  (setq frame-background-mode 'dark)
 
-(defun jmi/apply-solarized-light ()
-  (interactive)
-  (set-frame-parameter nil 'background-mode 'light)
-  (enable-theme 'solarized))
+  :config
+  (load-theme 'solarized t)
+
+  ;; Functions to toggle between light and dark
+  (defun jmi/apply-solarized-dark ()
+    (interactive)
+    (set-frame-parameter nil 'background-mode 'dark)
+    (enable-theme 'solarized))
+
+  (defun jmi/apply-solarized-light ()
+    (interactive)
+    (set-frame-parameter nil 'background-mode 'light)
+    (enable-theme 'solarized)))
 
 
 ;; Modeline config
 (use-package powerline
+  :ensure t
   :init
   (setq powerline-default-separator 'curve)
 
@@ -76,6 +83,7 @@
                                (powerline-render rhs))))))))
 
 (use-package spaceline-config
+  :ensure spaceline
   :init
   (setq spaceline-helm-mode t)
 
@@ -85,6 +93,7 @@
   :after helm)
 
 (use-package mode-icons
+  :ensure t
   :config
   (mode-icons-mode))
 

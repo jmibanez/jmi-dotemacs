@@ -78,6 +78,7 @@
 
 ;; Use Emacs session management
 (use-package session
+  :ensure t
   :config
   (session-initialize)
   (add-to-list 'session-globals-exclude 'org-mark-ring))

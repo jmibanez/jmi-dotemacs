@@ -22,5 +22,7 @@
                         'jmi/dbus-handle-gnome-session-manager-exit))
 
 
+;; We mark that we've provided platform-specific initialization
+(provide 'jmi-init-platform)
 
 ;;; 000.init.el ends here

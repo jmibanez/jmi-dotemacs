@@ -36,10 +36,25 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-;; Bootstrap: Ensure use-package is installed
-(when (not (package-installed-p 'use-package))
+;; Bootstrap: Ensure bootstrap packages are installed
+(defvar jmi/bootstrap-packages '(s use-package)
+  "Packages that should be installed as early as possible.")
+
+(defun jmi/bootstrap-packages-installed-p ()
+  "Check whether bootstrap packages are installed."
+  (seq-reduce
+   (lambda (a b) (and a b))
+   (mapcar (lambda (pkg) (package-installed-p pkg))
+	   jmi/bootstrap-packages)
+   t))
+
+(unless (jmi/bootstrap-packages-installed-p)
+  (message "%s" "Installing bootstrap packages...")
   (package-refresh-contents)
-  (package-install 'use-package))
+
+  (dolist (pkg jmi/bootstrap-packages)
+    (when (not (package-installed-p pkg))
+      (package-install pkg))))
 
 ;; Load all init modules
 (mapc 'load-file

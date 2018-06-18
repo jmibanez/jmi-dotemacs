@@ -96,6 +96,13 @@
   :after
   jmi-init-platform-paths)
 
+(use-package clj-refactor
+  :ensure t
+  :after cider)
+
+(use-package slamhound
+  :ensure t
+  :after cider)
 
 ;; JS2 mode
 (use-package js2-mode
@@ -130,6 +137,80 @@
   :config
   (ac-emacs-eclim-config))
 
+(use-package ac-cider
+  :ensure t
+  :config
+  (ac-cider-setup))
+
+(use-package ac-html-bootstrap
+  :ensure t)
+
+(use-package ac-python
+  :ensure t)
+
+
+;; Go
+(use-package go-mode
+  :ensure t)
+
+(use-package go-autocomplete
+  :ensure t
+  :after go-mode)
+
+;; Python
+(use-package python-django
+  :ensure t)
+
+(use-package pyvenv
+  :ensure t)
+
+;; Other languages/modes
+(use-package groovy-mode
+  :ensure t
+  :mode "\\.groovy$")
+
+(use-package lua-mode
+  :ensure t
+  :mode "\\.lua$")
+
+(use-package coffee-mode
+  :ensure t
+  :mode "\\.coffee$")
+
+(use-package swift-mode
+  :ensure t
+  :mode "\\.swift$")
+
+(use-package thrift
+  :ensure t
+  :mode "\\.thrift$")
+
+
+;; Typescript IDE
+(use-package tide
+  :ensure t)
+
+
+;; Docker
+(use-package dockerfile-mode
+  :ensure t
+  :mode "Dockerfile")
+
+;; Other text/config file modes
+;; Should these be here? Maybe move to separate init file?
+(use-package markdown-mode
+  :ensure t)
+
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.yaml$")
+
+;; Also include yasnippet
+(use-package yasnippet
+  :ensure t)
+
+
+;; Version control packages
 
 ;; Magit - Emacs interface to Git
 (use-package magit
@@ -149,11 +230,29 @@
   :after
   jmi-init-platform-paths)
 
+;; Enable filenotify
+(use-package magit-filenotify
+  :ensure t
+  :config
+  (add-hook 'magit-status-mode-hook #'magit-filenotify-mode)
+
+  :after magit)
+
 (use-package magithub
   :ensure t
   :after magit
   :config
   (magithub-feature-autoinject t))
+
+(use-package magit-gitflow
+  :ensure t
+  :after magit)
+
+(use-package git-timemachine
+  :ensure t)
+
+(use-package github-pullrequest
+  :ensure t)
 
 (use-package github-notifier
   :ensure t
@@ -201,7 +300,9 @@
       (add-hook 'hack-local-variables-hook
                 #'flycheck-virtualenv-set-python-executables 'local)))
 
-  (provide 'flycheck-virtualenv))
+  (provide 'flycheck-virtualenv)
+
+  :after (pyvenv python-django))
 
 
 ;;; development.init.el ends here

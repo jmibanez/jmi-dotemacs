@@ -18,12 +18,6 @@ just contains:
      that should be configured and loaded as early as possible. It's
      the first init file that `main.el` loads
 
-   - [`001-custom.init.el`](001-custom.init.el) is where I dump
-     everything that is set via `customize` -- at least temporarily. I
-     move stuff from this file to their proper place. (I should
-     probably move the `custom-set-faces` stuff to
-     `001-theme.init.el`)
-
    - [`001-theme.init.el`](001-theme.init.el) is where I configure how
      I like Emacs to look, including setting the theme, and
      configuring the modeline

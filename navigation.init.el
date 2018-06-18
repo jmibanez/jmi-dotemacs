@@ -83,5 +83,17 @@
   (session-initialize)
   (add-to-list 'session-globals-exclude 'org-mark-ring))
 
+(use-package fill-column-indicator
+  :ensure t
+
+  :init
+  ;; Change the color for the indicator to match Solarized Dark
+  (setq fci-rule-color "#888888")
+
+  :config
+  (define-globalized-minor-mode jmi-global-fci-mode
+    fci-mode
+    turn-on-fci-mode))
+
 
 ;;; navigation.init.el ends here

@@ -237,8 +237,7 @@
 ;; Enable filenotify
 (use-package magit-filenotify
   :ensure t
-  :config
-  (add-hook 'magit-status-mode-hook #'magit-filenotify-mode)
+  :hook (magit-status-mode . magit-filenotify-mode)
 
   :after magit)
 
@@ -274,8 +273,7 @@
 
 (use-package magit-gh-pulls
   :ensure t
-  :config
-  (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
+  :hook (magit-mode . turn-on-magit-gh-pulls))
 
 (use-package fullframe
   :ensure t

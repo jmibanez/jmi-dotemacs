@@ -132,6 +132,10 @@
 
 
 ;; Autocompletion helpers
+(use-package auto-complete-config
+  :config
+  (ac-config-default))
+
 (use-package ac-emacs-eclim
   :ensure t
   :config

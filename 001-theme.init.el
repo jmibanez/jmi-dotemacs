@@ -7,6 +7,9 @@
 
 ;;; Code:
 
+;; Set default fonts
+(set-frame-font "Hack 10" nil t)
+
 ;; Load theme
 (use-package color-theme-solarized
   :ensure t

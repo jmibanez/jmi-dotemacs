@@ -9,7 +9,7 @@
 (setq sql-postgres-login-params
       '((user :default "jmibanez")
         (database :default "jmibanez")
-        server 
+        server
         (port :default 5432)))
 
 ;; \\(^\\w*=[#>] \\|^\\w*[-(][#>] \\)

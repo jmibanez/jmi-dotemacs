@@ -36,4 +36,7 @@
 ;; Suppress default initial buffer
 (setq initial-buffer-choice t)
 
+;; Finally, set up defaults for use-package
+(setq use-package-always-ensure t)
+
 ;;; 000.init.el ends here

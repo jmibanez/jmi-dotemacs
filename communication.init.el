@@ -6,8 +6,6 @@
 ;;; Code:
 
 (use-package elfeed
-  :ensure t
-
   :init
   (setq elfeed-feeds
         '(("https://blog.jmibanez.com/feed.xml" blog)
@@ -59,12 +57,9 @@
                ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry))))
 
 
-(use-package circe
-  :ensure t)
+(use-package circe)
 
 (use-package slack
-  :ensure t
-
   :init
   (setq slack-buffer-emojify t)
   (setq slack-prefer-current-team t)

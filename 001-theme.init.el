@@ -12,8 +12,6 @@
 
 ;; Load theme
 (use-package color-theme-solarized
-  :ensure t
-
   :init
   (setq frame-background-mode 'dark)
 
@@ -34,12 +32,10 @@
 
 ;; Modeline config
 (use-package powerline
-  :ensure t
   :init
   (setq powerline-default-separator 'curve))
 
-(use-package spaceline-config
-  :ensure spaceline
+(use-package spaceline
   :init
   (setq spaceline-helm-mode t)
 
@@ -49,7 +45,6 @@
   :after helm)
 
 (use-package mode-icons
-  :ensure t
   :config
   (mode-icons-mode))
 

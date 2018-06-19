@@ -10,7 +10,6 @@
 
 ;; Helm:
 (use-package helm
-  :ensure t
   :init
   ;; Fuzzy matches everywhere!
   (setq helm-mode-fuzzy-match t)
@@ -43,14 +42,12 @@
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?
 (use-package textmate
-  :ensure t
   :config
   (textmate-define-comment-line)
   (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
 
 ;; Projectile
 (use-package projectile
-  :ensure t
   :init
   (setq projectile-completion-system 'helm)
 
@@ -60,7 +57,6 @@
   :after helm)
 
 (use-package helm-projectile
-  :ensure t
   :config
   (helm-projectile-on)
 
@@ -79,16 +75,12 @@
 
 ;; Use Emacs session management
 (use-package session
-  :ensure t
-
   :config
   (setq session-use-package t)
   (session-initialize)
   (add-to-list 'session-globals-exclude 'org-mark-ring))
 
 (use-package fill-column-indicator
-  :ensure t
-
   :init
   ;; Change the color for the indicator to match Solarized Dark
   (setq fci-rule-color "#888888")

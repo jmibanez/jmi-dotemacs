@@ -16,10 +16,8 @@
                    clojure-mode))
 
 
-(use-package rainbow-delimiters
-  :ensure t)
-(use-package paredit
-  :ensure t)
+(use-package rainbow-delimiters)
+(use-package paredit)
 
 (defvar lisp-power-map (make-keymap))
 (define-minor-mode lisp-power-mode "Fix keybindings; add power."
@@ -41,7 +39,6 @@
 (setq scheme-program-name "mzscheme")
 
 (use-package clojure-mode
-  :ensure t
   :config
   (define-clojure-indent
     (defroutes 'defun)
@@ -68,7 +65,6 @@
   (mapcar 'jmi/cons-src-path-for-jvm-home jvm-alist))
 
 (use-package cider
-  :ensure t
   :init
   ;; (add-hook 'cider-mode-hook
   ;;           #'cider-turn-on-eldoc-mode)
@@ -97,21 +93,17 @@
   jmi-init-platform-paths)
 
 (use-package clj-refactor
-  :ensure t
   :after cider)
 
 (use-package slamhound
-  :ensure t
   :after cider)
 
 ;; JS2 mode
 (use-package js2-mode
-  :ensure t
   :mode "\\.js$")
 
 ;; Java dev/Eclim
 (use-package eclim
-  :ensure t
   :init
   (setq eclimd-executable (concat jmi/eclipse-dir "eclimd"))
   (setq eclim-executable (concat jmi/eclipse-dir "eclim"))
@@ -137,95 +129,74 @@
   (ac-config-default))
 
 (use-package ac-emacs-eclim
-  :ensure t
   :config
   (ac-emacs-eclim-config)
   :after (auto-complete eclim))
 
 (use-package ac-cider
-  :ensure t
   :config
   (ac-cider-setup)
   :after (auto-complete cider))
 
 (use-package ac-html-bootstrap
-  :ensure t
   :after auto-complete)
 
 (use-package ac-python
-  :ensure t
   :after auto-complete)
 
 (use-package ac-js2
-  :ensure t
   :after js2-mode)
 
 ;; Go
-(use-package go-mode
-  :ensure t)
+(use-package go-mode)
 
 (use-package go-autocomplete
-  :ensure t
   :after go-mode)
 
 ;; Python
-(use-package python-django
-  :ensure t)
-
-(use-package pyvenv
-  :ensure t)
+(use-package python-django)
+(use-package pyvenv)
 
 ;; Other languages/modes
 (use-package groovy-mode
-  :ensure t
   :mode "\\.groovy$")
 
 (use-package lua-mode
-  :ensure t
   :mode "\\.lua$")
 
 (use-package coffee-mode
-  :ensure t
   :mode "\\.coffee$")
 
 (use-package swift-mode
-  :ensure t
   :mode "\\.swift$")
 
 (use-package thrift
-  :ensure t
   :mode "\\.thrift$")
 
 
 ;; Typescript IDE
-(use-package tide
-  :ensure t)
+(use-package tide)
 
 
 ;; Docker
 (use-package dockerfile-mode
-  :ensure t
   :mode "Dockerfile")
 
 ;; Other text/config file modes
 ;; Should these be here? Maybe move to separate init file?
-(use-package markdown-mode
-  :ensure t)
+(use-package markdown-mode)
 
 (use-package yaml-mode
-  :ensure t
   :mode "\\.yaml$")
 
 ;; Also include yasnippet
-(use-package yasnippet
-  :ensure t)
+(use-package yasnippet)
 
 
 ;; Version control packages
 
 ;; Magit - Emacs interface to Git
 (use-package magit
-  :ensure t
   :init
   ;; Point Magit to locally installed git (not system)
   (setq magit-git-executable jmi/git)
@@ -243,29 +214,23 @@
 
 ;; Enable filenotify
 (use-package magit-filenotify
-  :ensure t
   :hook (magit-status-mode . magit-filenotify-mode)
 
   :after magit)
 
 (use-package magithub
-  :ensure t
   :after magit
   :config
   (magithub-feature-autoinject t))
 
 (use-package magit-gitflow
-  :ensure t
   :after magit)
 
-(use-package git-timemachine
-  :ensure t)
+(use-package git-timemachine)
 
-(use-package github-pullrequest
-  :ensure t)
+(use-package github-pullrequest)
 
 (use-package github-notifier
-  :ensure t
   :init
   ;; github-notifier
   (setq github-notifier-token
@@ -279,18 +244,15 @@
 
 
 (use-package magit-gh-pulls
-  :ensure t
   :hook (magit-mode . turn-on-magit-gh-pulls))
 
 (use-package fullframe
-  :ensure t
   :config
   (fullframe magit-status magit-mode-quit-window nil))
 
 
 ;; Flycheck config
 (use-package flycheck
-  :ensure t
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (declare-function python-shell-calculate-exec-path "python")

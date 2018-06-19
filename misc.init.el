@@ -14,7 +14,6 @@
 (use-package midnight)
 
 ;; symon
-(use-package symon
-  :ensure t)
+(use-package symon)
 
 ;;; misc.init.el ends here

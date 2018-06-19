@@ -10,10 +10,20 @@
 
   :init
   (setq elfeed-feeds
-        '("https://blog.jmibanez.com/feed.xml"
-          "https://xkcd.com/atom.xml"
-          "http://leancrew.com/all-this/feed/"
-          "https://daringfireball.net/feeds/main"))
+        '(("https://blog.jmibanez.com/feed.xml" blog)
+          ("https://xkcd.com/atom.xml" comics)
+          ("http://leancrew.com/all-this/feed/" blog)
+          ("https://daringfireball.net/feeds/main" blog apple)
+          ("http://feeds.arstechnica.com/arstechnica/index" news)
+          ("https://www.jwz.org/blog/feed/" blog)
+          ("https://marco.org/rss" blog apple dev)
+          ("https://programmingisterrible.com/rss" blog dev)
+          ("http://prog21.dadgum.com/atom.xml" blog dev)
+          ("https://donmelton.com/rss.xml" blog apple dev)
+          ("http://james-iry.blogspot.com/feeds/posts/default" blog dev)
+          ("https://fishbowl.pastiche.org/atom.xml" blog dev)
+          ("http://feedpress.me/sixcolors" blog apple)))
+
 
   :config
   (defun jmi/use-bigger-elfeed-font ()

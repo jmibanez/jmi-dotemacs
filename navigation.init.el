@@ -99,4 +99,14 @@
     turn-on-fci-mode))
 
 
+;; Bind F7/S-F7 to bookmark
+(use-package bookmark
+  :bind (("<f7>"         .  bookmark-jump)
+         ("S-<f7>"       .  bookmark-set)))
+
+;; Fullscreen
+(use-package frame
+  :bind (("s-<return>"   .  toggle-frame-fullscreen)
+         ("C-s-<return>" .  toggle-frame-maximized)))
+
 ;;; navigation.init.el ends here

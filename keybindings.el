@@ -57,8 +57,6 @@ in process_environment."
 ;;(global-set-key '[f7] 'planner-create-task-from-buffer)
 ;;(global-set-key '[S-f7] 'planner-goto-today)
 ;;(global-set-key '[f8] 'remember)
-(global-set-key '[f7] 'bookmark-jump)
-(global-set-key '[S-f7] 'bookmark-set)
 
 ;;(define-prefix-command 'my-keys)
 ;;(global-set-key '[f8] 'my-keys)
@@ -80,9 +78,6 @@ in process_environment."
 
 
 (global-set-key '[f8] 'my-keys)
-
-;; (global-set-key '[s-return] 'ns-toggle-fullscreen)
-(global-set-key '[s-return] 'toggle-frame-fullscreen)
 
 
 ;;; keybindings.el ends here

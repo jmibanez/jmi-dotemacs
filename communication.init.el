@@ -24,15 +24,39 @@
           ("https://fishbowl.pastiche.org/atom.xml" blog dev)
           ("http://feedpress.me/sixcolors" blog apple)))
 
+  (setq jmi/default-elfeed-search-filter "@2-weeks-ago +unread")
 
   :config
+  (setq-default elfeed-search-filter jmi/default-elfeed-search-filter)
   (defun jmi/use-bigger-elfeed-font ()
     (set-face-attribute 'variable-pitch (selected-frame)
                         :font (font-spec :family "helvetica" :size 12)))
 
+  (defun jmi/elfeed-jump-to-bookmark-entries ()
+    (interactive)
+    (elfeed-search-set-filter "+bookmark"))
+
+  (defun jmi/elfeed-jump-to-latest-unread-entries ()
+    (interactive)
+    (elfeed-search-set-filter jmi/default-elfeed-search-filter))
+
+  (defun jmi/elfeed-search-bookmark-all ()
+    (interactive)
+    (elfeed-search-tag-all 'bookmark))
+
+  (defun jmi/elfeed-show-bookmark-entry ()
+    (interactive)
+    (elfeed-show-tag 'bookmark))
+
   :hook (elfeed-show-mode . jmi/use-bigger-elfeed-font)
 
-  :bind (("<f8> n"  .  elfeed)))
+  :bind (("<f8> n"  .  elfeed)
+         (:map elfeed-search-mode-map
+               ("<f7>"    .  jmi/elfeed-jump-to-bookmark-entries)
+               ("S-<f7>"  .  jmi/elfeed-search-bookmark-all)
+               ("*"       .  jmi/elfeed-jump-to-latest-unread-entries))
+         (:map elfeed-show-mode-map
+               ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry))))
 
 
 (use-package circe

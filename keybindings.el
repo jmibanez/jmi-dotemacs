@@ -71,7 +71,6 @@ in process_environment."
 ;; (define-key  my-keys "t"         'planner-goto-today)
 (define-key  my-keys '[f8]       'remember)
 (define-key  my-keys "m"         'gnus)
-(define-key  my-keys "n"         'newsticker-treeview)
 
 (define-prefix-command 'my-keys-functions)
 (define-key  my-keys-functions  "p"   'jmi/toggle-http-proxy)

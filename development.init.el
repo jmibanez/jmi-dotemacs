@@ -152,6 +152,9 @@
   :ensure t
   :after auto-complete)
 
+(use-package ac-js2
+  :ensure t
+  :after js2-mode)
 
 ;; Go
 (use-package go-mode

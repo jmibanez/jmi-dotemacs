@@ -68,7 +68,7 @@
   (("s-t"   .  helm-projectile)
    ("s-o"   .  projectile-switch-project))
 
-  :after projectile helm)
+  :after (projectile helm))
 
 ;; Window move via cmd-ctrl-(vim keys)
 ;; Changed to be consistent with how we've bound things in our iTerm2 config

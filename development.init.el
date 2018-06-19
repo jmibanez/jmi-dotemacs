@@ -135,18 +135,22 @@
 (use-package ac-emacs-eclim
   :ensure t
   :config
-  (ac-emacs-eclim-config))
+  (ac-emacs-eclim-config)
+  :after (auto-complete eclim))
 
 (use-package ac-cider
   :ensure t
   :config
-  (ac-cider-setup))
+  (ac-cider-setup)
+  :after (auto-complete cider))
 
 (use-package ac-html-bootstrap
-  :ensure t)
+  :ensure t
+  :after auto-complete)
 
 (use-package ac-python
-  :ensure t)
+  :ensure t
+  :after auto-complete)
 
 
 ;; Go

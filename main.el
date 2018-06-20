@@ -37,7 +37,7 @@
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;; Bootstrap: Ensure bootstrap packages are installed
-(defvar jmi/bootstrap-packages '(s use-package)
+(defvar jmi/bootstrap-packages '(s use-package use-package-ensure-system-package)
   "Packages that should be installed as early as possible.")
 
 (defun jmi/bootstrap-packages-installed-p ()

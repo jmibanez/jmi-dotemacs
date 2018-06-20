@@ -18,6 +18,10 @@
         helm-apropos-fuzzy-match t
         helm-buffers-fuzzy-matching t)
 
+  ;; Adopted from sachac's config
+  ;; http://pages.sachachua.com/.emacs.d/Sacha.html
+  (setq helm-ff-skip-boring-files t)
+
   ;; Use the same buffer as where invoked
   (setq helm-split-window-default-side 'same
         helm-reuse-last-window-split-state nil)

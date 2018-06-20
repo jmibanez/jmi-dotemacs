@@ -14,9 +14,12 @@
 (tool-bar-mode -1)
 
 ;; If not on macOS, turn off the menu bar
-(if (not (eq system-type 'darwin))
+(when (not (eq system-type 'darwin))
     (menu-bar-mode -1))
-(scroll-bar-mode -1)
+
+;; Graphic terminals: Don't display scroll bar
+(when (display-graphic-p)
+  (scroll-bar-mode -1))
 
 ;; User Details
 (setq user-full-name "Jan Michael Ibanez")

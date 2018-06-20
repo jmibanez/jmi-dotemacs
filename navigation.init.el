@@ -12,15 +12,15 @@
 (use-package helm
   :init
   ;; Fuzzy matches everywhere!
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-M-x-fuzzy-match t)
-  (setq helm-apropos-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-mode-fuzzy-match t
+        helm-completion-in-region-fuzzy-match t
+        helm-M-x-fuzzy-match t
+        helm-apropos-fuzzy-match t
+        helm-buffers-fuzzy-matching t)
 
   ;; Use the same buffer as where invoked
-  (setq helm-split-window-default-side 'same)
-  (setq helm-reuse-last-window-split-state nil)
+  (setq helm-split-window-default-side 'same
+        helm-reuse-last-window-split-state nil)
 
   :config
   (helm-mode 1)
@@ -43,6 +43,13 @@
    ("M-y"     .  helm-show-kill-ring))
 
   :demand)
+
+;; Better Helm fuzzy matches
+(use-package helm-fuzzier
+  :after (helm helm-flx))
+(use-package helm-flx
+  :after helm)
+
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

@@ -35,7 +35,12 @@
    ;; ... and apropos
    ("C-h a"   .  helm-apropos)
    ;; ... and switch-to-buffer
-   ("C-x b"   .  helm-buffers-list))
+   ("C-x b"   .  helm-buffers-list)
+
+   ;; Huh. helm-show-kill-ring looks good as an alternative to
+   ;; yank-pop -- makes it easier to see exactly what I want to get
+   ;; from the kill ring...
+   ("M-y"     .  helm-show-kill-ring))
 
   :demand)
 

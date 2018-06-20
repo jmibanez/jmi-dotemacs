@@ -59,6 +59,10 @@
 
 (use-package circe)
 
+;; Use circe with Helm
+(use-package helm-circe
+  :after (helm circe))
+
 (use-package slack
   :init
   (setq slack-buffer-emojify t)

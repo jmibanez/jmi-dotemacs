@@ -275,5 +275,8 @@
 
   :after (pyvenv python-django))
 
+;; Use Helm to browse Flycheck errors
+(use-package helm-flycheck
+  :after (helm flycheck))
 
 ;;; development.init.el ends here

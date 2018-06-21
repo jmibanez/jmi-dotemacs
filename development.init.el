@@ -231,7 +231,7 @@
 (use-package github-pullrequest)
 
 (use-package github-notifier
-  :init
+  :config
   ;; github-notifier
   (setq github-notifier-token
         (funcall
@@ -240,7 +240,8 @@
                                              :max 1
                                              :require '(:user :secret)
                                              :create t))
-                    :secret))))
+                    :secret)))
+  :commands github-notifier)
 
 
 (use-package magit-gh-pulls

@@ -14,6 +14,10 @@
 (use-package color-theme-solarized
   :init
   (setq frame-background-mode 'dark)
+  ;; Tweak colors on macOS because of Emacs bug #8402
+  (when (and (eq system-type 'darwin)
+             (display-graphic-p))
+    (setq solarized-broken-srgb t))
 
   :config
   (load-theme 'solarized t)

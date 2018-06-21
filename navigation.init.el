@@ -31,13 +31,13 @@
   (helm-mode 1)
 
   ;; Advise helm-show-kill-ring so we split verfically
-  (defun jmi/helm-split-window-for-kill-ring (orig-fn &rest args)
+  (defun jmi/advice-helm-split-existing-window (orig-fn &rest args)
     (let ((helm-split-window-default-side 'below)
           (helm-split-window-inside-p t))
       (apply orig-fn args)))
 
   (advice-add 'helm-show-kill-ring :around
-              #'jmi/helm-split-window-for-kill-ring)
+              #'jmi/advice-helm-split-existing-window)
 
   :bind
   (("C-c h"   .  helm-mini)
@@ -67,6 +67,23 @@
 (use-package helm-flx
   :after helm)
 
+;; helm-swoop -- for navigating quickly through matches in a buffer
+(use-package helm-swoop
+  :config
+  (setq helm-swoop-use-fuzzy-match t)
+  ;; Weird that helm-swoop uses this var as helm-display-function,
+  ;; *not* as helm-split-window-preferred-function; anyway, I want
+  ;; similar behavior as helm-show-kill-ring, so use
+  ;; helm-display-function
+  (setq helm-swoop-split-window-function helm-display-function)
+
+  ;; ... we then advice helm-swoop instead with our advice-fn
+  (advice-add 'helm-swoop :around
+              #'jmi/advice-helm-split-existing-window)
+
+  :bind (("C-s-s"  .  helm-swoop))
+
+  :after (helm helm-fuzzier))
 
 ;; Side-effect: We use a bunch of Textmate-like bindings, so load
 ;; textmate-mode?

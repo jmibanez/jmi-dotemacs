@@ -60,6 +60,9 @@
 
 ;; Better Helm fuzzy matches
 (use-package helm-fuzzier
+  :config
+  (helm-fuzzier-mode 1)
+
   :after (helm helm-flx))
 (use-package helm-flx
   :after helm)

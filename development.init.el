@@ -280,4 +280,22 @@
 (use-package helm-flycheck
   :after (helm flycheck))
 
+
+;; SQL interaction stuff
+
+;; Set up things so that doing M-x sql-postgres works the way I like
+(setq sql-postgres-login-params
+      '((user :default "jmibanez")
+        (database :default "jmibanez")
+        server
+        (port :default 5432)))
+
+;; Handle psql prompts where DB name has an underscore
+;; \\(^\\w*=[#>] \\|^\\w*[-(][#>] \\)
+(sql-set-product-feature
+ 'postgres :prompt-regexp "^\\(\\w\\|_\\)*=[#>]")
+(sql-set-product-feature
+ 'postgres :prompt-cont-regexp "^\\(\\w\\|_\\)*[-(][#>]")
+
+
 ;;; development.init.el ends here

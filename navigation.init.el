@@ -24,10 +24,20 @@
 
   ;; Use the same buffer as where invoked
   (setq helm-split-window-default-side 'same
+        helm-split-window-inside-p nil
         helm-reuse-last-window-split-state nil)
 
   :config
   (helm-mode 1)
+
+  ;; Advise helm-show-kill-ring so we split verfically
+  (defun jmi/helm-split-window-for-kill-ring (orig-fn &rest args)
+    (let ((helm-split-window-default-side 'below)
+          (helm-split-window-inside-p t))
+      (apply orig-fn args)))
+
+  (advice-add 'helm-show-kill-ring :around
+              #'jmi/helm-split-window-for-kill-ring)
 
   :bind
   (("C-c h"   .  helm-mini)

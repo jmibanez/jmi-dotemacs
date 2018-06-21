@@ -16,4 +16,7 @@
 ;; symon
 (use-package symon)
 
+;; Nyan cat! (Included just for fun)
+(use-package nyan-mode)
+
 ;;; misc.init.el ends here

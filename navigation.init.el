@@ -85,13 +85,6 @@
 
   :after (helm helm-fuzzier))
 
-;; Side-effect: We use a bunch of Textmate-like bindings, so load
-;; textmate-mode?
-(use-package textmate
-  :config
-  (textmate-define-comment-line)
-  (global-set-key [(super /)] 'comment-or-uncomment-region-or-line))
-
 ;; Projectile
 (use-package projectile
   :init

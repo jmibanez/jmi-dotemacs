@@ -49,13 +49,16 @@
 
   :hook (elfeed-show-mode . jmi/use-bigger-elfeed-font)
 
-  :bind (("<f8> n"  .  elfeed)
+  :bind ((:map jmi/my-jump-keys-map
+               ("n"       .  elfeed))
          (:map elfeed-search-mode-map
                ("<f7>"    .  jmi/elfeed-jump-to-bookmark-entries)
                ("S-<f7>"  .  jmi/elfeed-search-bookmark-all)
                ("*"       .  jmi/elfeed-jump-to-latest-unread-entries))
          (:map elfeed-show-mode-map
-               ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry))))
+               ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry)))
+
+  :after jmi-keybindings)
 
 
 (use-package circe)

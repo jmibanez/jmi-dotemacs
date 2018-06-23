@@ -77,8 +77,5 @@
       (sort (jmi/list-init-files (jmi/platform-init-path))
             'string-lessp))
 
-;; Load keybindings
-(jmi/dotemacs-do-module "keybindings.el")
-
 ;;; main.el ends here
 

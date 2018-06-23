@@ -48,9 +48,13 @@
 
   :after helm)
 
+;; Enable mode-icons only in GUI
 (use-package mode-icons
   :config
-  (mode-icons-mode))
+  (mode-icons-mode)
+
+  :if
+  (display-graphic-p))
 
 ;; Pop-up windows when display-buffer
 (setq pop-up-windows t)

@@ -137,6 +137,7 @@
 
 ;; Fullscreen
 (use-package frame
+  :ensure nil ;; System package
   :bind (("s-<return>"   .  toggle-frame-fullscreen)
          ("C-s-<return>" .  toggle-frame-maximized)))
 

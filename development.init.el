@@ -125,6 +125,8 @@
 
 ;; Autocompletion helpers
 (use-package auto-complete-config
+  :ensure nil ;; System package
+
   :config
   (ac-config-default))
 

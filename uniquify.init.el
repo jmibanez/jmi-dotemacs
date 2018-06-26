@@ -11,6 +11,7 @@
 ;;; Code:
 
 (use-package uniquify
+  :ensure nil ;; System package
   :init
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 

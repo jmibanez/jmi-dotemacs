@@ -4,6 +4,8 @@
 ;;; Code:
 
 (use-package epa-file
+  :ensure nil ;; System package
+
   :config
   (epa-file-enable))
 

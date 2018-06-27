@@ -214,12 +214,6 @@
   :after
   jmi-init-platform-paths)
 
-;; Enable filenotify
-(use-package magit-filenotify
-  :hook (magit-status-mode . magit-filenotify-mode)
-
-  :after magit)
-
 (use-package magithub
   :after magit
   :config

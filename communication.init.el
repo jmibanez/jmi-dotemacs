@@ -98,4 +98,93 @@
 
   :commands slack-start)
 
+
+;; WanderLust for mail
+(use-package wanderlust
+
+  :init
+  (setq elmo-imap4-default-server "imap.gmail.com"
+        elmo-imap4-default-authenticate-type 'clear
+        elmo-imap4-default-port '993
+        elmo-imap4-default-stream-type 'ssl
+
+        ;; For non ascii-characters in folder-names
+        elmo-imap4-use-modified-utf7 t
+
+        ;; For the love of everything good and just, please use
+        ;; auth-source for passwords
+        elmo-passwd-storage-type 'auth-source
+
+        mime-view-text/html-previewer 'shr
+
+        ;; SMTP
+        wl-smtp-connection-type 'starttls
+        wl-smtp-posting-port '587
+        wl-smtp-authenticate-type "plain"
+        wl-smtp-posting-server "smtp.gmail.com"
+        wl-smtp-connection-type 'starttls
+        wl-message-id-domain "smtp.gmail.com"
+
+        wl-draft-reply-buffer-style 'full
+        wl-summary-toggle-mime "mime"
+        mime-edit-split-message nil
+
+        wl-message-visible-field-list '("^From" "^To" "^Subject" "^Date" "^Cc")
+        wl-message-ignored-field-list '("^")
+
+        wl-summary-showto-folder-regexp ".*"
+        wl-summary-from-function 'wl-summary-default-from
+
+        wl-folder-check-async t
+
+        ;; Change the default summary line format to be more readable
+        wl-summary-default-number-column 4
+        wl-summary-width 100
+        wl-summary-line-format "%n %T%P %Y-%M-%D %h:%m (%W) | %t %[%20(%f%)%]%C %s"
+
+        ;; Seriously, the default threshold is too low, considering
+        ;; modern networks; up it to at least 0.75 MB / 768 KB
+        elmo-message-fetch-threshold 786432
+        wl-message-buffer-prefetch-threshold 786432
+
+        ;; Multi-folder (to aggregate my inboxes): set max to
+        ;; something "absurdly" large -- 300k messages
+        elmo-multi-max-number 300000
+
+        ;; Prefetch up to 5 messages
+        wl-message-buffer-prefetch-depth 5
+
+        ;; All system folders (draft, trash, spam, etc) are placed in the
+        ;; [Gmail]-folder, except inbox. "%" means it's an IMAP-folder
+        wl-default-folder "%INBOX"
+        wl-draft-folder   "%[Gmail]/Drafts"
+        wl-trash-folder   "%[Gmail]/Trash"
+        ;; The below is not necessary when you send mail through Gmail's SMTP server,
+        ;; see https://support.google.com/mail/answer/78892?hl=en&rd=1
+        ;; wl-fcc            "%[Gmail]/Sent"
+
+        ;; Mark sent messages as read (sent messages get sent back to you and
+        ;; placed in the folder specified by wl-fcc)
+        wl-fcc-force-as-read    t
+
+        ;; For auto-completing foldernames
+        wl-default-spec "%"
+
+        ;; Notifications
+        wl-biff-check-interval 60
+)
+
+  :config
+  ;; Like with elfeed, boost the font-face on messages being
+  ;; rendered via shr
+  (defun jmi/use-bigger-wl-message-font ()
+    (set-face-attribute 'variable-pitch (selected-frame)
+                        :font (font-spec :family "helvetica" :size 12)))
+
+
+  :bind ((:map jmi/my-jump-keys-map
+               ("m"       . wl)))
+
+  :after jmi-keybindings)
+
 ;;; communication.init.el ends here

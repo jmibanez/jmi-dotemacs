@@ -162,8 +162,22 @@
         ;; All system folders (draft, trash, spam, etc) are placed in the
         ;; [Gmail]-folder, except inbox. "%" means it's an IMAP-folder
         wl-default-folder "%INBOX"
-        wl-draft-folder   "%[Gmail]/Drafts"
-        wl-trash-folder   "%[Gmail]/Trash"
+
+        ;; Don't use [Gmail] folders for drafts and trash: use local
+        ;; folders. Awkward, but necessary, as wl doesn't seem to
+        ;; support per-account values.
+        wl-draft-folder   "+drafts"
+        wl-trash-folder   "+trash"
+
+        ;; Make sure dispose == archive in all GMail IMAP folders. This
+        ;; particularly works nicely with Trash folders, as they end up.
+        ;; For other IMAP folders, use %Trash.
+        wl-dispose-folder-alist '(("^%.+\\@imap.gmail.com"    . null)
+                                  ;; NB: Assuming defaults above for gmail
+                                  ("^%.+/clear"               . null)
+                                  ("^%"                       . "%Trash"))
+
+
         ;; The below is not necessary when you send mail through Gmail's SMTP server,
         ;; see https://support.google.com/mail/answer/78892?hl=en&rd=1
         ;; wl-fcc            "%[Gmail]/Sent"

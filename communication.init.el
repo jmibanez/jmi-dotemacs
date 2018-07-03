@@ -190,8 +190,7 @@
         wl-default-spec "%"
 
         ;; Notifications
-        wl-biff-check-interval 60
-)
+        wl-biff-check-interval 60)
 
   :config
   ;; Like with elfeed, boost the font-face on messages being

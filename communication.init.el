@@ -118,6 +118,10 @@
 
         mime-view-text/html-previewer 'shr
 
+        ;; HACK: Fix typo in elmo-imap4
+        elmo-imap4-capability-search-keys-alist '((x-gm-ext-1 "x-gm-raw" "x-gm-msgid"
+                                                              "x-gm-thrid" "x-gm-labels"))
+
         ;; SMTP
         wl-smtp-connection-type 'starttls
         wl-smtp-posting-port '587

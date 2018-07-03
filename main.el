@@ -22,9 +22,10 @@
           (current-dir-list (directory-files-and-attributes directory t)))
       (dolist (dir-item current-dir-list init-files-list)
         (if (equal ".init.el" (substring (car dir-item) -8))
-            (setq init-files-list
-                  (cons (car dir-item)
-                        init-files-list)))))))
+            (let ((dir-item-base (substring (car dir-item) 0 -3)))
+                (setq init-files-list
+                      (cons dir-item-base
+                            init-files-list))))))))
 
 ;; Packages
 (package-initialize)
@@ -56,8 +57,10 @@
     (when (not (package-installed-p pkg))
       (package-install pkg))))
 
+
+(require 'use-package)
 ;; Load all init modules
-(mapc 'load-file
+(mapc 'load
       (sort (jmi/list-init-files jmi/my-emacs-init-path)
             'string-lessp))
 
@@ -73,7 +76,7 @@
 
 ;; If there are any customizations per-machine, per-user, load them as
 ;; well
-(mapc 'load-file
+(mapc 'load
       (sort (jmi/list-init-files (jmi/platform-init-path))
             'string-lessp))
 

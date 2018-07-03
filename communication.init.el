@@ -100,7 +100,8 @@
 
 
 ;; WanderLust for mail
-(use-package wanderlust
+(use-package wl
+  :ensure wanderlust
 
   :init
   (setq elmo-imap4-default-server "imap.gmail.com"

@@ -202,10 +202,6 @@
 (use-package yaml-mode
   :mode "\\.yaml$")
 
-;; Also include yasnippet
-(use-package yasnippet)
-
-
 ;; Version control packages
 
 ;; Magit - Emacs interface to Git

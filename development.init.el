@@ -82,6 +82,8 @@
   (setq cider-jack-in-lein-plugins
         '(("refactor-nrepl" "2.4.0-SNAPSHOT" :predicate cljr--inject-middleware-p)
           ("cider/cider-nrepl" "0.18.0-SNAPSHOT")))
+  (setq cider-jack-in-cljs-dependencies
+        '(("cider/piggieback" "0.3.6")))
   ;; Disable refactor-nrepl and clj-refactor for now
   (setq cljr-inject-dependencies-at-jack-in t)
 

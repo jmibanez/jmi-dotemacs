@@ -175,6 +175,9 @@
 (use-package thrift
   :mode "\\.thrift$")
 
+(use-package "protobuf-mode"
+  :mode "\\.proto")
+
 
 ;; Typescript IDE
 (use-package tide)

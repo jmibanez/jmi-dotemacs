@@ -94,7 +94,7 @@
   (defun nrepl-send-string-sync (s)
     (nrepl-sync-request:eval s
                              (cider-current-connection)
-                             (cider-current-session)
+                             (cider-nrepl-eval-session)
                              (cider-current-ns)))
 
   :after

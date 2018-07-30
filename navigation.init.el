@@ -97,6 +97,7 @@
 
 (use-package helm-projectile
   :config
+  (setq helm-projectile-truncate-lines t)
   (helm-projectile-on)
 
   :bind

@@ -35,8 +35,14 @@
   (add-hook (intern (format "%s-hook" mode))
             #'abedra/engage-lisp-power))
 
-(setq inferior-lisp-program "clisp")
 (setq scheme-program-name "mzscheme")
+
+;; SLIME config: SBCL + QuickLisp
+(use-package slime
+  :config
+  (load-file "~/.quicklisp/slime-helper.el")
+  (setq inferior-lisp-program "sbcl"))
+
 
 (use-package clojure-mode
   :config

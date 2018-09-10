@@ -9,10 +9,20 @@
 
 (setq jmi/eclipse-dir "~/apps/eclipse/Eclipse.app/Contents/Eclipse/")
 
+(defun jmi/parse-version-in-directory (dir-name)
+  "Extract JDK version from DIR-NAME."
+  (if (string-match "\\(\\(1.[[:digit:]]\\)\\|\\([[:digit:]]+.[[:digit:]]+\\)\\).[[:digit:]]+\\(_[[:digit:]]+\\)?"
+                    dir-name)
+      (match-string 1 dir-name)))
+
 (setq jmi/jvm-homes-alist
-      '(("1.8" . "/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home/")
-        ("9"   . "/Library/Java/JavaVirtualMachines/jdk-9.0.1.jdk/Contents/Home/")
-        ("10"  . "/Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/Contents/Home/")))
+      (let ((base "/Library/Java/JavaVirtualMachines/"))
+        (mapcar (lambda (candidate)
+                  (let ((path (concat base candidate "/Contents/Home/"))
+                        (version (jmi/parse-version-in-directory candidate)))
+                    (cons version path)))
+                (directory-files base nil
+                                 "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
 
 (setq jmi/git "/usr/local/bin/git")
 

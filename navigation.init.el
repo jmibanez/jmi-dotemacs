@@ -142,4 +142,29 @@
   :bind (("s-<return>"   .  toggle-frame-fullscreen)
          ("C-s-<return>" .  toggle-frame-maximized)))
 
+
+(defmacro eyebrowse-sequence-bindings ()
+  (mapcar
+   (lambda (i)
+     (let ((binding (concat "s-" (number-to-string i)))
+           (target (intern (concat "eyebrowse-switch-to-window-config-" (number-to-string i)))))
+       `(,binding . ,target)))
+   (number-sequence 1 9)))
+
+;; Eyebrowse
+(use-package eyebrowse
+  :config
+  (eyebrowse-mode)
+
+  :bind (("s-1" . eyebrowse-switch-to-window-config-1)
+         ("s-2" . eyebrowse-switch-to-window-config-2)
+         ("s-3" . eyebrowse-switch-to-window-config-3)
+         ("s-4" . eyebrowse-switch-to-window-config-4)
+         ("s-5" . eyebrowse-switch-to-window-config-5)
+         ("s-6" . eyebrowse-switch-to-window-config-6)
+         ("s-7" . eyebrowse-switch-to-window-config-7)
+         ("s-8" . eyebrowse-switch-to-window-config-8)
+         ("s-9" . eyebrowse-switch-to-window-config-9)
+         ("s-0" . eyebrowse-switch-to-window-config-0)))
+
 ;;; navigation.init.el ends here

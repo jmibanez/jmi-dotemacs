@@ -40,7 +40,9 @@
 ;; SLIME config: SBCL + QuickLisp
 (use-package slime
   :config
-  (load-file "~/.quicklisp/slime-helper.el")
+  (if (file-exists-p "~/.quicklisp/slime-helper.el")
+      (load-file "~/.quicklisp/slime-helper.el"))
+
   (setq inferior-lisp-program "sbcl"))
 
 

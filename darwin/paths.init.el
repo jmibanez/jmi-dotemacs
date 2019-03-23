@@ -7,7 +7,7 @@
 
 ;;; Code:
 
-(setq jmi/eclipse-dir "~/apps/eclipse/Eclipse.app/Contents/Eclipse/")
+(setq jmi/eclipse-dir "/Applications/Eclipse JEE.app/Contents/Eclipse/")
 
 (defun jmi/parse-version-in-directory (dir-name)
   "Extract JDK version from DIR-NAME."
@@ -23,6 +23,9 @@
                     (cons version path)))
                 (directory-files base nil
                                  "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
+
+(setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
+(setq jmi/java-format-settings-file (expand-file-name "~/projects/defaultFormatterProfile.xml"))
 
 (setq jmi/git "/usr/local/bin/git")
 

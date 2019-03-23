@@ -12,7 +12,19 @@
 
 (setq jmi/eclipse-dir "/usr/share/eclipse")
 (setq jmi/jvm-homes-alist
-      '(("1.8" . "/usr/lib/jvm/openjdk-8")))
+      (let ((base "/usr/lib/jvm/"))
+        (mapcar (lambda (candidate)
+                  (let ((path (concat base candidate))
+                        (version (jmi/parse-version-in-directory candidate)))
+                    (cons version path)))
+                (directory-files base nil
+                                 "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
+
+;; (setq jmi/jvm-homes-alist
+;;       '(("1.8" . "/usr/lib/jvm/openjdk-8")))
+
+(setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
+(setq jmi/java-format-settings-file (expand-file-name "~/projects/defaultFormatterProfile.xml"))
 
 (setq jmi/git "/usr/bin/git")
 

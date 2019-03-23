@@ -112,52 +112,87 @@
 (use-package js2-mode
   :mode "\\.js$")
 
-;; Java dev/Eclim
-(use-package eclim
+;; Java dev: LSP
+(use-package lsp-mode
   :init
-  (setq eclimd-executable (concat jmi/eclipse-dir "eclimd"))
-  (setq eclim-executable (concat jmi/eclipse-dir "eclim"))
-  (setq eclim-eclipse-dirs jmi/eclipse-dir)
+  (setq lsp-prefer-flymake nil)
+  :after jmi-init-platform-paths)
+(use-package lsp-ui
+  :init
+  (setq lsp-ui-doc-enable nil
+        lsp-ui-sideline-enable nil
+        lsp-ui-flycheck-enable t))
+(use-package dap-mode
+  :config
+  (dap-mode t)
+  (dap-ui-mode t))
 
-  (setq help-at-pt-display-when-idle t)
-  (setq help-at-pt-timer-delay 1)
-
-  (setq eclim-auto-save t)
-  ;;  (add-to-list 'eclim--file-coding-system-mapping '("iso-latin-1-dos" . "ISO-8859-1"))
+(use-package lsp-java
+  :init
+  (defun jmi/java-mode-config ()
+    (setq-local tab-width 4
+                c-basic-offset 4)
+    (toggle-truncate-lines 1)
+    (lsp))
 
   :config
-  (help-at-pt-set-timer)
-  (global-eclim-mode)
+  (setq lsp-java-vmargs
+        (list "-noverify"
+              "-Xmx2G"
+              "-XX:+UseG1GC"
+              "-XX:+UseStringDeduplication"
+              (concat "-javaagent:" jmi/lombok-jar)
+              (concat "-Xbootclasspath/a:" jmi/lombok-jar))
+        lsp-file-watch-ignored
+        '(".idea" ".ensime_cache" ".eunit" "node_modules" ".git" ".hg" ".fslckout" "_FOSSIL_"
+          ".bzr" "_darcs" ".tox" ".svn" ".stack-work" "build")
 
-  :after
-  jmi-init-platform-paths)
+        lsp-java-import-order '["" "java" "javax" "#"]
+        ;; Don't organize imports on save
+        lsp-java-save-action-organize-imports nil
 
+        ;; Formatter profile
+        lsp-java-format-settings-url (concat "file://" jmi/java-format-settings-file))
+
+  :hook (java-mode         . jmi/java-mode-config)
+
+  :after lsp-mode
+  :demand t)
 
 ;; Autocompletion helpers
-(use-package auto-complete-config
-  :ensure nil ;; System package
+;; NB: Because we're switching to company-mode, we need to swap out some
+;; stuff...
 
+(use-package company
   :config
-  (ac-config-default))
+  (setq company-frontends
+        '(company-pseudo-tooltip-unless-just-one-frontend
+          company-preview-frontend
+          company-echo-metadata-frontend))
 
-(use-package ac-emacs-eclim
+  :hook
+  (after-init . global-company-mode))
+
+;; Company backends
+(use-package company-dict)
+(use-package company-lsp)
+(use-package company-go
+  :after go-mode)
+(use-package company-emacs-eclim
+  :after eclim)
+(use-package company-shell)
+(use-package company-sourcekit)
+(use-package company-web)
+
+(use-package company-quickhelp
   :config
-  (ac-emacs-eclim-config)
-  :after (auto-complete eclim))
+  (company-quickhelp-mode))
 
-(use-package ac-cider
-  :config
-  (ac-cider-setup)
-  :after (auto-complete cider))
+(use-package slime-company)
 
-(use-package ac-html-bootstrap
-  :after auto-complete)
-
-(use-package ac-python
-  :after auto-complete)
-
-(use-package ac-js2
-  :after js2-mode)
+;; Helm! (of course)
+(use-package helm-company
+  :after helm)
 
 ;; Go
 (use-package go-mode)

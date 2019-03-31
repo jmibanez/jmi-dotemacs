@@ -116,16 +116,19 @@
 (use-package lsp-mode
   :init
   (setq lsp-prefer-flymake nil)
+  :demand t
   :after jmi-init-platform-paths)
 (use-package lsp-ui
-  :init
+  :config
   (setq lsp-ui-doc-enable nil
         lsp-ui-sideline-enable nil
-        lsp-ui-flycheck-enable t))
+        lsp-ui-flycheck-enable t)
+  :after lsp-mode)
 (use-package dap-mode
   :config
   (dap-mode t)
   (dap-ui-mode t))
+
 
 (use-package lsp-java
   :init
@@ -133,9 +136,15 @@
     (setq-local tab-width 4
                 c-basic-offset 4)
     (toggle-truncate-lines 1)
+    (setq-local tab-width 4)
+    (setq-local c-basic-offset 4)
     (lsp))
 
   :config
+  ;; Enable dap-java
+  (require 'dap-java)
+
+  ;; Support Lombok in our projects, among other things
   (setq lsp-java-vmargs
         (list "-noverify"
               "-Xmx2G"
@@ -156,8 +165,8 @@
 
   :hook (java-mode         . jmi/java-mode-config)
 
-  :after lsp-mode
-  :demand t)
+  :demand t
+  :after (lsp lsp-mode dap-mode jmi-init-platform-paths))
 
 ;; Autocompletion helpers
 ;; NB: Because we're switching to company-mode, we need to swap out some

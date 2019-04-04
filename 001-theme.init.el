@@ -11,50 +11,53 @@
 (set-frame-font "Hack 10" nil t)
 
 ;; Load theme
-(use-package color-theme-solarized
+(use-package flucui-themes
   :init
   (setq frame-background-mode 'dark)
-  ;; Tweak colors on macOS because of Emacs bug #8402
-  (when (and (eq system-type 'darwin)
-             (display-graphic-p))
-    (setq solarized-broken-srgb t))
 
   :config
-  (load-theme 'solarized t)
+  (load-theme 'flucui-dark t)
+  (setq jmi/selected-theme 'flucui-dark))
 
-  ;; Functions to toggle between light and dark
-  (defun jmi/apply-solarized-dark ()
-    (interactive)
-    (set-frame-parameter nil 'background-mode 'dark)
-    (enable-theme 'solarized))
+;; Functions to toggle between light and dark
+(defun jmi/apply-theme-dark ()
+  (interactive)
+  (set-frame-parameter nil 'background-mode 'dark)
+  (enable-theme jmi/selected-theme))
 
-  (defun jmi/apply-solarized-light ()
-    (interactive)
-    (set-frame-parameter nil 'background-mode 'light)
-    (enable-theme 'solarized)))
-
+(defun jmi/apply-theme-light ()
+  (interactive)
+  (set-frame-parameter nil 'background-mode 'light)
+  (enable-theme jmi/selected-theme))
 
 ;; Modeline config
 (use-package powerline
   :init
-  (setq powerline-default-separator 'curve))
+  (setq powerline-default-separator 'butt))
 
 (use-package spaceline
-  :init
-  (setq spaceline-helm-mode t)
-
   :config
-  (spaceline-spacemacs-theme)
+  (spaceline-helm-mode)
 
   :after helm)
 
-;; Enable mode-icons only in GUI
-(use-package mode-icons
+(use-package all-the-icons
+  :if
+  (display-graphic-p)
+  :after spaceline)
+
+(use-package spaceline-all-the-icons
   :config
-  (mode-icons-mode)
+  (setq spaceline-all-the-icons-icon-set-eyebrowse-slot 'solid)
+  (spaceline-toggle-all-the-icons-buffer-path-off)
+  (spaceline-toggle-all-the-icons-buffer-size-off)
+  (spaceline-toggle-all-the-icons-flycheck-status-info-off)
+  (spaceline-all-the-icons-theme)
 
   :if
-  (display-graphic-p))
+  (display-graphic-p)
+
+  :after (spaceline all-the-icons))
 
 ;; Pop-up windows when display-buffer
 (setq pop-up-windows t)

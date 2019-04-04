@@ -123,6 +123,12 @@
   (setq lsp-ui-doc-enable nil
         lsp-ui-sideline-enable nil
         lsp-ui-flycheck-enable t)
+
+  (define-key lsp-ui-mode-map
+    [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map
+    [remap xref-find-references] #'lsp-ui-peek-find-references)
+
   :after lsp-mode)
 (use-package dap-mode
   :config
@@ -161,7 +167,9 @@
         lsp-java-save-action-organize-imports nil
 
         ;; Formatter profile
-        lsp-java-format-settings-url (concat "file://" jmi/java-format-settings-file))
+        lsp-java-format-settings-url (concat "file://" jmi/java-format-settings-file)
+        lsp-enable-on-type-formatting t
+        lsp-enable-indentation t)
 
   :hook (java-mode         . jmi/java-mode-config)
 
@@ -184,7 +192,8 @@
 
 ;; Company backends
 (use-package company-dict)
-(use-package company-lsp)
+(use-package company-lsp
+  :after (lsp lsp-mode))
 (use-package company-go
   :after go-mode)
 (use-package company-emacs-eclim

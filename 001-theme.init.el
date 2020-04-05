@@ -8,7 +8,8 @@
 ;;; Code:
 
 ;; Set default fonts
-(set-frame-font "Hack 10" nil t)
+(mac-auto-operator-composition-mode)
+(set-frame-font "Fira Code 11" nil t)
 
 ;; Load theme
 (use-package flucui-themes

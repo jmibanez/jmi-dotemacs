@@ -32,7 +32,7 @@
 ;; exec-path for pyenv, rbenv
 (let ((rbenv-shim-path (concat (getenv "HOME") "/.rbenv/shims"))
       (pyenv-shim-path (concat (getenv "HOME") "/.pyenv/shims")))
-  (setenv "PATH" (concat rbenv-shim-path ":" pyenv-shim-path (getenv "PATH")))
+  (setenv "PATH" (concat rbenv-shim-path ":" pyenv-shim-path ":" (getenv "PATH")))
   (push rbenv-shim-path exec-path)
   (push pyenv-shim-path exec-path))
 

@@ -238,7 +238,7 @@
 (use-package thrift
   :mode "\\.thrift$")
 
-(use-package "protobuf-mode"
+(use-package protobuf-mode
   :mode "\\.proto")
 
 

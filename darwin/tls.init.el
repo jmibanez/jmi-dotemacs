@@ -10,7 +10,7 @@
       (mapcar (lambda (openssl-base)
                 (concat openssl-base
                         "/bin/openssl"
-                        " s_client -connect %h:%p -no_ssl2 -ign_eof"))
+                        " s_client -connect %h:%p -no_ssl3 -ign_eof"))
               (reverse
                (mapcan (lambda (brew-pkg)
                          (directory-files brew-pkg t

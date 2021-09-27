@@ -8,7 +8,33 @@
 ;;; Code:
 
 ;; Set default fonts
-(mac-auto-operator-composition-mode)
+(if (fboundp 'mac-auto-operator-composition-mode)
+
+    (mac-auto-operator-composition-mode)
+
+  ;; If not running railwaycat/emacs-mac: Use ligature.el
+  (progn
+    ;; ligature.el isn't in MELPA yet, so pull it in from our local elisp load path
+    (use-package ligature
+      :config
+      (ligature-set-ligatures 't '("www"))
+
+      ;; Enable ligatures in programming modes
+      (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                                           ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                                           "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                                           "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                                           "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                                           "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                                           "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                                           "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                                           "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                                           "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+
+      (global-ligature-mode 't)
+
+      :load-path "~/elisp/ligature.el")))
+
 (set-frame-font "Fira Code 11" nil t)
 
 ;; Load theme

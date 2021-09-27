@@ -43,11 +43,11 @@
   (("C-c h"   .  helm-mini)
 
    ;; DEEP END STUFF: This enables helm for C-x C-f
-   ("C-x C-f" .  helm-find-files)
+   ([remap find-file]                 .  helm-find-files)
    ;; Also bind M-x
-   ("M-x"     .  helm-M-x)
+   ([remap execute-extended-command]  .  helm-M-x)
    ;; ... and apropos
-   ("C-h a"   .  helm-apropos)
+   ([remap apropos-command]           .  helm-apropos)
    ;; ... and switch-to-buffer
    ("C-x b"   .  helm-buffers-list)
 

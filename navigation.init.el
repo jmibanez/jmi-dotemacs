@@ -10,7 +10,9 @@
 
 ;; Helm:
 (use-package helm
-  :init
+  :config
+  (helm-mode 1)
+
   ;; Fuzzy matches everywhere!
   (setq helm-mode-fuzzy-match t
         helm-completion-in-region-fuzzy-match t
@@ -26,9 +28,6 @@
   (setq helm-split-window-default-side 'same
         helm-split-window-inside-p nil
         helm-reuse-last-window-split-state nil)
-
-  :config
-  (helm-mode 1)
 
   ;; Advise helm-show-kill-ring so we split verfically
   (defun jmi/advice-helm-split-existing-window (orig-fn &rest args)

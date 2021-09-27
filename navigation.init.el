@@ -58,15 +58,6 @@
 
   :demand)
 
-;; Better Helm fuzzy matches
-(use-package helm-fuzzier
-  :config
-  (helm-fuzzier-mode 1)
-
-  :after (helm helm-flx))
-(use-package helm-flx
-  :after helm)
-
 ;; helm-swoop -- for navigating quickly through matches in a buffer
 (use-package helm-swoop
   :config
@@ -81,9 +72,7 @@
   (advice-add 'helm-swoop :around
               #'jmi/advice-helm-split-existing-window)
 
-  :bind (("C-s-s"  .  helm-swoop))
-
-  :after (helm helm-fuzzier))
+  :bind (("C-s-s"  .  helm-swoop)))
 
 ;; Projectile
 (use-package projectile

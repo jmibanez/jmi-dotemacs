@@ -28,17 +28,13 @@
                             init-files-list))))))))
 
 ;; Packages
-(package-initialize)
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-activate-all)
 
 ;; Bootstrap: Ensure bootstrap packages are installed
-(defvar jmi/bootstrap-packages '(s use-package use-package-ensure-system-package)
+(defvar jmi/bootstrap-packages '(s use-package use-package-ensure-system-package session)
   "Packages that should be installed as early as possible.")
 
 (defun jmi/bootstrap-packages-installed-p ()
@@ -59,10 +55,8 @@
 
 
 (require 'use-package)
-;; Load all init modules
-(mapc 'load
-      (sort (jmi/list-init-files jmi/my-emacs-init-path)
-            'string-lessp))
+(require 'use-package-ensure-system-package)
+(require 's)
 
 (defun jmi/platform-init-path ()
   "Return path to directory containing platform-specific init files."
@@ -74,11 +68,17 @@
     (concat jmi/my-emacs-init-path
             sanitized-platform-dir)))
 
-;; If there are any customizations per-machine, per-user, load them as
-;; well
+;; If there are any customizations per-machine, per-user, load them
+;; first, so that our config can refer to them
 (mapc 'load
       (sort (jmi/list-init-files (jmi/platform-init-path))
             'string-lessp))
+
+;; Load all init modules
+(mapc 'load
+      (sort (jmi/list-init-files jmi/my-emacs-init-path)
+            'string-lessp))
+
 
 ;;; main.el ends here
 

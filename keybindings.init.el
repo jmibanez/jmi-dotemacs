@@ -36,6 +36,10 @@
     (setenv "LD_PRELOAD" nil)))
 
 
+;; Bind (window-toggle-side-windows)
+
+(bind-key "C-`" 'window-toggle-side-windows)
+
 
 ;; Our shortcut map
 (bind-keys :prefix-map jmi/my-jump-keys-map

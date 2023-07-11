@@ -10,9 +10,13 @@
       (mapcar (lambda (openssl-base)
                 (concat openssl-base
                         "/bin/openssl"
-                        " s_client -connect %h:%p -no_ssl2 -ign_eof"))
+                        " s_client -connect %h:%p -no_ssl3 -ign_eof"))
               (reverse
-               (directory-files "/usr/local/Cellar/openssl/" t
-                                "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" nil))))
+	       (mapcan (lambda (brew-pkg)
+                         (directory-files brew-pkg t
+                                          "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" nil))
+	               (directory-files "/usr/local/Cellar/" t
+                                        "openssl.*" nil)))))
+(setq tls-connection-command (car tls-program))
 
 ;;; tls.init.el ends here

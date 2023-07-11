@@ -28,4 +28,21 @@
   :ensure auctex)
 
 
+;; PlantUML
+(use-package plantuml-mode)
+
+
+;; Should these be here? Maybe move to separate init file?
+(use-package markdown-mode
+  :config
+  (defun jmi/setup-markdown-writing-settings ()
+    (interactive)
+    (whitespace-mode 0)
+    (set-fill-column 120)
+    (visual-line-mode)
+    (visual-fill-column-mode))
+
+  :hook ((markdown-mode   . jmi/setup-markdown-writing-settings)))
+
+
 ;;; writing.init.el ends here

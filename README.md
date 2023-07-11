@@ -29,8 +29,10 @@ just contains:
      stuff I use to get around Emacs, namely
      [Helm](https://emacs-helm.github.io/helm/)
 
-   - [`communications.init.el`](communications.init.el) contains
+   - [`communication.init.el`](communication.init.el) contains
      config for stuff like IRC, Slack, RSS, etcetera
+
+   - [`org.init.el`](org.init.el) contains my Org mode config
 
    - [`misc.init.el`](misc.init.el) is a catch-all for all other odd
      configuration bits and bobs

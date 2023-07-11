@@ -8,6 +8,37 @@
 
 ;;; Code:
 
+;; Tree Sitter
+(use-package tree-sitter
+  :config
+  (defun jmi/decorate-pydoc-strings ()
+    (add-function :before-until (local 'tree-sitter-hl-face-mapping-function)
+                  (lambda (capture-name)
+	            (pcase capture-name
+	              ("doc" 'font-lock-comment-face)))))
+  :hook
+  ((python-mode .   jmi/decorate-pydoc-strings))
+
+  :after (tree-sitter-langs))
+
+(use-package tree-sitter-langs)
+
+;; TS Fold, so we can do code folding
+(use-package ts-fold
+  :load-path "~/elisp/ts-fold"
+
+  :hook
+  ((tree-sitter-after-on . ts-fold-mode))
+
+  :after (tree-sitter))
+
+(use-package ts-fold-indicators
+  :load-path "~/elisp/ts-fold"
+  :hook
+  ((tree-sitter-after-on . ts-fold-indicators-mode))
+
+  :after (ts-fold))
+
 ;; Lisp Modes
 (setq lisp-modes '(lisp-mode
                    emacs-lisp-mode
@@ -106,23 +137,36 @@
   :after cider)
 
 (use-package slamhound
-  :after cider)
+  :after cider
+  :disabled)
 
 ;; JS2 mode
 (use-package js2-mode
   :mode "\\.js$")
 
-;; Java dev: LSP
 (use-package lsp-mode
-  :init
-  (setq lsp-prefer-flymake nil)
+  :config
+  ;; -- Some perf tweaks to make LSP work "better"
+  ;; Increase read-process size
+  (setq read-process-output-max (* 1024 1024))
+  ;; Bump up GC threshold as LSP creates a *lot* of garbage
+  (setq gc-cons-threshold 100000000)
+
+  ;; File watching knobs
+  ;; Turn off file watches, we really get a lot of pain from them
+  (setq lsp-enable-file-watchers nil)
+
   :demand t
   :after jmi-init-platform-paths)
 (use-package lsp-ui
   :config
   (setq lsp-ui-doc-enable nil
         lsp-ui-sideline-enable nil
-        lsp-ui-flycheck-enable t)
+
+        ;; Peek config
+        lsp-ui-peek-show-directory nil  ;; Elide directories
+        lsp-ui-peek-peek-height    25   ;; Show 25 entries
+        )
 
   (define-key lsp-ui-mode-map
     [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
@@ -137,48 +181,68 @@
 
 
 (use-package lsp-java
-  :init
+  :config
+  ;; Enable dap-java
+  (require 'dap-java)
+
   (defun jmi/java-mode-config ()
-    (setq-local tab-width 4
-                c-basic-offset 4)
+    ;; Set java-mode specific vars
+    (setq-local fill-column 120)
+    (setq-local whitespace-line-column 120)
+    ;; Truncate lines, instead of wrapping
     (toggle-truncate-lines 1)
     (setq-local tab-width 4)
     (setq-local c-basic-offset 4)
     (lsp))
 
-  :config
-  ;; Enable dap-java
-  (require 'dap-java)
-
   ;; Support Lombok in our projects, among other things
   (setq lsp-java-vmargs
-        (list "-noverify"
-              "-Xmx2G"
-              "-XX:+UseG1GC"
-              "-XX:+UseStringDeduplication"
-              (concat "-javaagent:" jmi/lombok-jar)
-              (concat "-Xbootclasspath/a:" jmi/lombok-jar))
-        lsp-file-watch-ignored
-        '(".idea" ".ensime_cache" ".eunit" "node_modules" ".git" ".hg" ".fslckout" "_FOSSIL_"
-          ".bzr" "_darcs" ".tox" ".svn" ".stack-work" "build")
+        (list "-XX:+UseParallelGC"
+              "-XX:GCTimeRatio=4"
+              "-XX:AdaptiveSizePolicyWeight=90"
+              "-Dsun.zip.disableMemoryMapping=true"
+              "-Xmx4G" "-Xms100m"
+              "-noverify"
+              (concat "-javaagent:" jmi/lombok-jar))
 
-        lsp-java-import-order '["" "java" "javax" "#"]
+        lsp-java-completion-import-order '["" "java" "javax" "#"]
         ;; Don't organize imports on save
         lsp-java-save-action-organize-imports nil
+
+        lsp-java-java-path (concat (cdr (assoc "11.0" jmi/jvm-homes-alist))
+                                   "/bin/java")
+
+        ;; Filter out build/private, but include build/generated-src etc
+        lsp-java-project-resource-filters
+        (vconcat lsp-java-project-resource-filters ["build/private"])
+
+        ;; Build concurrency
+        lsp-java-max-concurrent-builds 4
 
         ;; Formatter profile
         lsp-java-format-settings-url (concat "file://" jmi/java-format-settings-file)
         lsp-enable-on-type-formatting t
         lsp-enable-indentation t)
 
-  :hook (java-mode         . jmi/java-mode-config)
+  :hook (java-mode    . jmi/java-mode-config)
 
   :demand t
-  :after (lsp lsp-mode dap-mode jmi-init-platform-paths))
+  :after (lsp-mode dap-mode jmi-init-platform-paths))
+
+;; Scala
+(use-package scala-mode)
+(use-package lsp-scala
+  :if (featurep 'jmi-init-platform-paths)
+  :config
+  :after (lsp scala-mode))
+
 
 ;; Autocompletion helpers
 ;; NB: Because we're switching to company-mode, we need to swap out some
 ;; stuff...
+
+(use-package lsp-ivy
+  :after (lsp lsp-ui ivy))
 
 (use-package company
   :config
@@ -192,8 +256,6 @@
 
 ;; Company backends
 (use-package company-dict)
-(use-package company-lsp
-  :after (lsp lsp-mode))
 (use-package company-go
   :after go-mode)
 (use-package company-emacs-eclim
@@ -208,19 +270,19 @@
 
 (use-package slime-company)
 
-;; Helm! (of course)
-(use-package helm-company
-  :after helm)
-
 ;; Go
 (use-package go-mode)
-
-(use-package go-autocomplete
-  :after go-mode)
 
 ;; Python
 (use-package python-django)
 (use-package pyvenv)
+
+(use-package lsp-python-ms)
+(use-package lsp-pyright
+  :hook
+  (python-mode   . (lambda ()
+                     (require 'lsp-pyright)
+                     (lsp))))
 
 ;; Other languages/modes
 (use-package groovy-mode
@@ -238,7 +300,7 @@
 (use-package thrift
   :mode "\\.thrift$")
 
-(use-package "protobuf-mode"
+(use-package protobuf-mode
   :mode "\\.proto")
 
 
@@ -251,8 +313,6 @@
   :mode "Dockerfile")
 
 ;; Other text/config file modes
-;; Should these be here? Maybe move to separate init file?
-(use-package markdown-mode)
 
 (use-package yaml-mode
   :mode "\\.yaml$")
@@ -265,28 +325,36 @@
   ;; Point Magit to locally installed git (not system)
   (setq magit-git-executable jmi/git)
 
-  ;; Set default magit dirs
-  (setq magit-repo-dirs
-        '("~/projects/personal"
-          "~/projects/skunk"
-          "~/projects/freelance"
-          "~/projects/codeflux"))
   (setq magit-use-overlays nil)
 
   :after
-  jmi-init-platform-paths)
+  'jmi-init-platform-paths)
 
-(use-package magithub
-  :after magit
+(use-package git-gutter-fringe
   :config
-  (magithub-feature-autoinject t))
+  (setq git-gutter-fr:side 'right-fringe)
+  (global-git-gutter-mode t)
+
+  ;; Patch git-gutter:git-diff-arguments, since it places the starting
+  ;; rev in the wrong place in the arglist
+  (defun jmi/git-gutter:git-diff-arguments (file)
+    (let (args)
+      (unless (string= git-gutter:diff-option "")
+        (setq args (nreverse (split-string git-gutter:diff-option))))
+      (when (git-gutter:revision-set-p)
+        (push git-gutter:start-revision args))
+      (push "--" args)
+      (nreverse (cons file args))))
+  (advice-add 'git-gutter:git-diff-arguments
+              :override #'jmi/git-gutter:git-diff-arguments)
+
+  :after
+  magit)
 
 (use-package magit-gitflow
   :after magit)
 
 (use-package git-timemachine)
-
-(use-package github-pullrequest)
 
 (use-package github-notifier
   :config
@@ -302,9 +370,6 @@
   :commands github-notifier)
 
 
-(use-package magit-gh-pulls
-  :hook (magit-mode . turn-on-magit-gh-pulls))
-
 (use-package fullframe
   :config
   (fullframe magit-status magit-mode-quit-window nil))
@@ -314,6 +379,8 @@
 (use-package flycheck
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode)
+  ;; Disable flycheck for vterm
+  (setq flycheck-global-modes '(not vterm-mode))
   (declare-function python-shell-calculate-exec-path "python")
 
   (defun flycheck-virtualenv-set-python-executables ()
@@ -333,11 +400,6 @@
   (provide 'flycheck-virtualenv)
 
   :after (pyvenv python-django))
-
-;; Use Helm to browse Flycheck errors
-(use-package helm-flycheck
-  :after (helm flycheck))
-
 
 ;; SQL interaction stuff
 

@@ -64,145 +64,218 @@
 
 (use-package circe)
 
-;; Use circe with Helm
-(use-package helm-circe
-  :after (helm circe))
+(use-package w3m
+  :config
+  (defun jmi/w3m-view-url-via-browse-url ()
+    (interactive)
+    (browse-url (w3m-anchor)))
 
-(use-package slack
+  :bind
+  ((:map w3m-minor-mode-map
+         ("u" . jmi/w3m-view-url-via-browse-url))))
+
+
+(use-package bbdb)
+
+
+(use-package gnus
   :init
-  (setq slack-buffer-emojify t)
-  (setq slack-prefer-current-team t)
+  (add-to-list 'command-switch-alist
+               '("gnus" . (lambda (&rest ignore)
+                            ;; When given -gnus, start Gnus when Emacs starts
+                            (add-hook 'emacs-startup-hook 'gnus t)
+                            ;; Exit Emacs after Gnus quits
+                            (add-hook 'gnus-after-exiting-gnus-hook
+                                      'save-buffers-kill-emacs))))
 
   :config
-  (defun jmi/get-slack-auth (slack-team)
-    "Get relevant OAuth client-ID and client-secret from SLACK-TEAM."
-    (let* ((slack-host (format "%s.slack.com" slack-team))
-           (auth (car (auth-source-search :host slack-host
-                                          :max 1)))
-           (client-id-and-secret (s-split "\\^" (plist-get auth :user)))
-           (token (funcall (plist-get auth :secret))))
-      (cons client-id-and-secret token)))
+  (setq gnus-parameters
+        '(("INBOX" (nov-cache-size . 5000))
+          ("INBOX\\.Notifications\\.*" (nov-cache-size . 7000))))
 
-  (defun jmi/define-and-register-team (slack-team)
-    (let* ((slack-auth    (jmi/get-slack-auth slack-team))
-           (client-id     (car (car slack-auth)))
-           (client-secret (cadr (car slack-auth)))
-           (token         (cdr slack-auth)))
-      (slack-register-team :name           slack-team
-                           :client-id      client-id
-                           :client-secret  client-secret
-                           :token          token)))
+  (setq gnus-nov-is-evil t)
 
-  (mapc 'jmi/define-and-register-team
-        '("phackers"))
-
-  :commands slack-start)
-
-
-;; WanderLust for mail
-(use-package wl
-  :ensure wanderlust
-
-  :init
-  (setq elmo-imap4-default-server "imap.gmail.com"
-        elmo-imap4-default-authenticate-type 'clear
-        elmo-imap4-default-port '993
-        elmo-imap4-default-stream-type 'ssl
-
-        ;; For non ascii-characters in folder-names
-        elmo-imap4-use-modified-utf7 t
-
-        ;; For the love of everything good and just, please use
-        ;; auth-source for passwords
-        elmo-passwd-storage-type 'auth-source
-
-        mime-view-text/html-previewer 'shr
-
-        ;; HACK: Fix typo in elmo-imap4
-        elmo-imap4-capability-search-keys-alist '((x-gm-ext-1 "x-gm-raw" "x-gm-msgid"
-                                                              "x-gm-thrid" "x-gm-labels"))
-
-        ;; SMTP
-        wl-smtp-connection-type 'starttls
-        wl-smtp-posting-port '587
-        wl-smtp-authenticate-type "plain"
-        wl-smtp-posting-server "smtp.gmail.com"
-        wl-smtp-connection-type 'starttls
-        wl-message-id-domain "smtp.gmail.com"
-
-        wl-draft-reply-buffer-style 'full
-        wl-summary-toggle-mime "mime"
-        mime-edit-split-message nil
-
-        wl-message-visible-field-list '("^From" "^To" "^Subject" "^Date" "^Cc")
-        wl-message-ignored-field-list '("^")
-
-        wl-summary-showto-folder-regexp ".*"
-        wl-summary-from-function 'wl-summary-default-from
-
-        wl-folder-check-async t
-
-        ;; Change the default summary line format to be more readable
-        wl-summary-default-number-column 4
-        wl-summary-width 100
-        wl-summary-line-format "%n %T%P %Y-%M-%D %h:%m (%W) | %t %[%20(%f%)%]%C %s"
-
-        ;; Seriously, the default threshold is too low, considering
-        ;; modern networks; up it to at least 0.75 MB / 768 KB
-        elmo-message-fetch-threshold 786432
-        wl-message-buffer-prefetch-threshold 786432
-
-        ;; Multi-folder (to aggregate my inboxes): set max to
-        ;; something "absurdly" large -- 300k messages
-        elmo-multi-max-number 300000
-
-        ;; Prefetch up to 5 messages
-        wl-message-buffer-prefetch-depth 5
-
-        ;; All system folders (draft, trash, spam, etc) are placed in the
-        ;; [Gmail]-folder, except inbox. "%" means it's an IMAP-folder
-        wl-default-folder "%INBOX"
-
-        ;; Don't use [Gmail] folders for drafts and trash: use local
-        ;; folders. Awkward, but necessary, as wl doesn't seem to
-        ;; support per-account values.
-        wl-draft-folder   "+drafts"
-        wl-trash-folder   "+trash"
-
-        ;; Make sure dispose == archive in all GMail IMAP folders. This
-        ;; particularly works nicely with Trash folders, as they end up.
-        ;; For other IMAP folders, use %Trash.
-        wl-dispose-folder-alist '(("^%.+\\@imap.gmail.com"    . null)
-                                  ;; NB: Assuming defaults above for gmail
-                                  ("^%.+/clear"               . null)
-                                  ("^%"                       . "%Trash"))
+  ;; Primary: jmibanez.com
+  (setq gnus-select-method
+        '(nnimap "jmibanez"
+                 (nnimap-address        "imap.gmail.com")
+                 (nnimap-stream         ssl)
+                 (nnimap-server-port    "imaps")))
+  ;; Search via mairix
+  ;; NB: We need to require nnmairix to load it and have its keybindings active
+  (require 'nnmairix)
+  (setq gnus-secondary-select-methods
+        '((nnmaildir "mairix"
+                     (directory     "~/.nnmairix"))
+          (nnml      "archive"
+                     (nnml-directory             "~/Mail.archive")
+                     ;; Don't expire messages in the archive!
+                     (nnml-inhibit-expiry        t))
+          (nnimap "gmail"
+                  (nnimap-address       "imap.gmail.com")
+                  (nnimap-stream        ssl)
+                  (nnimap-server-port   "imaps"))))
 
 
-        ;; The below is not necessary when you send mail through Gmail's SMTP server,
-        ;; see https://support.google.com/mail/answer/78892?hl=en&rd=1
-        ;; wl-fcc            "%[Gmail]/Sent"
+  (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
+  (setq gnus-user-date-format-alist
+        '(((gnus-seconds-today) . "Today, %H:%M")
+          ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
+          (604800 . "%a %H:%M")
+          ((gnus-seconds-month) . "%a %d")
+          ((gnus-seconds-year) . "%b %d")
+          (t . "%b %d %Y")))
 
-        ;; Mark sent messages as read (sent messages get sent back to you and
-        ;; placed in the folder specified by wl-fcc)
-        wl-fcc-force-as-read    t
+  (setq gnus-summary-line-format "%~(pad-right 20)&user-date; %U%R%z%(%[%4L: %-23,23f% ]%)%B %s\n")
 
-        ;; For auto-completing foldernames
-        wl-default-spec "%"
+  ;; Enable Gnus agent
+  (setq gnus-agent t)
 
-        ;; Notifications
-        wl-biff-check-interval 60)
+  ;; HTML renderer
+  (setq mm-text-html-renderer 'w3m)
+  ;; Make sure to open URLs externally
+  (setq mm-url-use-external t)
 
-  :config
-  ;; Like with elfeed, boost the font-face on messages being
-  ;; rendered via shr
-  (defun jmi/use-bigger-wl-message-font ()
-    (set-face-attribute 'variable-pitch (selected-frame)
-                        :font (font-spec :family "helvetica" :size 12)))
+  (setq mm-discouraged-alternatives
+        '("text/html" "text/richtext" "text/enriched"))
 
+  ;; Frame configuration/layout
+  (setq gnus-use-full-window t)
+  (gnus-add-configuration
+   '(article
+     (vertical 1.0
+               (group 0.12)
+               (summary 0.25 point)
+               (article 1.0))))
+  (gnus-add-configuration
+   '(summary
+     (vertical 1.0
+               (group 0.12)
+               (summary 1.0 point))))
+
+  ;; Scoring
+  ;; Adaptive scoring
+  (setq gnus-use-adaptive-scoring '(word line))
+  (setq gnus-default-adaptive-score-alist
+        '((gnus-unread-mark)
+          (gnus-ticked-mark (from 4))
+          (gnus-dormant-mark (from 7))
+          (gnus-del-mark (from -4) (subject -15))
+          (gnus-read-mark (from 5) (subject 30))
+          (gnus-expirable-mark (from -3) (subject -3))
+          (gnus-killed-mark (from -4) (subject -20))
+          (gnus-kill-file-mark)
+          (gnus-ancient-mark (subject -10))
+          (gnus-low-score-mark)
+          (gnus-catchup-mark (from -1) (subject -10))))
+
+
+  ;; Make sure to not score short (3 or fewer letter) words
+  (setq gnus-adaptive-word-length-limit 4)
+
+  ;; Don't include words in the group
+  (setq gnus-adaptive-word-no-group-words t)
+
+  ;; Threads and thread handling
+  ;; Thread display chars
+  (setq gnus-sum-thread-tree-root             "="
+        gnus-sum-thread-tree-false-root       "< "
+        gnus-sum-thread-tree-single-indent    " "
+        gnus-sum-thread-tree-indent           "  "
+        gnus-sum-thread-tree-leaf-with-other  "+-> "
+        gnus-sum-thread-tree-single-leaf      "`-> "
+        gnus-sum-thread-tree-vertical         "| ")
+
+  ;; Sort threads by score before date (descending, recent first)
+  (setq gnus-thread-sort-functions
+        '(gnus-thread-sort-by-score
+          (not gnus-thread-sort-by-date)
+          gnus-thread-sort-by-total-score))
+
+  ;; Fetch some older messages in the thread, for context
+  (setq gnus-fetch-old-headers 'some)
+
+  ;; Jump to first link in w3m-washed article
+  (defun jmi/gnus-summary-forward-link (n)
+    (interactive "p" gnus-summary-mode)
+    (gnus-summary-select-article)
+    (gnus-configure-windows 'article)
+    (let ((win (or (gnus-get-buffer-window gnus-article-buffer t)
+                   (error "No article window found"))))
+      (select-window win)
+      (select-frame-set-input-focus (window-frame win))
+      (if (fboundp 'w3m-minor-mode)
+          (w3m-next-anchor n)
+        (forward-button n))))
+
+  (defun jmi/gnus-summary-browse-link-forward (n)
+    (interactive "p" gnus-summary-mode)
+    (gnus-summary-select-article)
+    (gnus-configure-windows 'article)
+    (let ((win (or (gnus-get-buffer-window gnus-article-buffer t)
+                   (error "No article window found"))))
+      (select-window win)
+      (select-frame-set-input-focus (window-frame win))
+      (if (fboundp 'w3m-minor-mode)
+          (progn
+            (w3m-next-anchor n)
+            (browse-url (w3m-anchor)))
+
+        (browse-url (forward-button n)))))
+
+  ;; Posting styles
+  (setq gnus-posting-styles
+        '((".*"
+           (name            "JM Ibanez")
+           (address         "jm@jmibanez.com")
+           (signature-file  "~/.signature"))))
 
   :bind ((:map jmi/my-jump-keys-map
-               ("m"       . wl)))
+               ("m"       . gnus))
+         (:map gnus-summary-mode-map
+               ("TAB"     . jmi/gnus-summary-forward-link)
+               ("C-<tab>" . jmi/gnus-summary-browse-link-forward))
+         (:map gnus-article-mode-map
+               ("TAB"     . jmi/gnus-summary-forward-link)))
 
-  :after jmi-keybindings)
+  :ensure nil
+  :after (jmi-keybindings))
+
+(use-package gnus-notifications
+  :config
+  ;; Notifications config
+
+  ;; First, we need to disable gravatar + google contacts, as that
+  ;; leaks internal email addresses
+  (setq gnus-notifications-use-google-contacts      nil
+        gnus-notifications-use-gravatar             nil)
+
+  ;; Replace gnus-notifications-notify with our own custom function,
+  ;; which exec's terminal-notifier (FIXME: Make this macOS specific
+  ;; only!)
+  (defun jmi/gnus-notification-terminal-notify (from subject ignored-photo-file)
+    "Override for gnus-notification-notify"
+    (let ((washed-subject (format "Subject: %s" subject)))
+      (call-process "/usr/local/bin/terminal-notifier" nil nil nil
+                    "-sound"    "Blow"
+                    "-title"    from
+                    "-message"  washed-subject)))
+
+  (advice-add 'gnus-notifications-notify
+              :override #'jmi/gnus-notification-terminal-notify)
+
+  :hook
+  ((gnus-after-getting-new-news   .  gnus-notifications))
+
+  :ensure nil
+  :after gnus)
+
+(use-package gnus-topic
+  :hook
+  ((gnus-group-mode               .  gnus-topic-mode))
+
+  :ensure nil
+  :after gnus)
+
 
 ;;; communication.init.el ends here

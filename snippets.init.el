@@ -40,4 +40,9 @@
   :after
   helm jmi-keybindings)
 
+
+(use-package yasnippet-snippets
+  :config
+  (yas-global-mode))
+
 ;;; snippets.init.el ends here

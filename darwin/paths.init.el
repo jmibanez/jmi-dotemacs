@@ -11,9 +11,12 @@
 
 (defun jmi/parse-version-in-directory (dir-name)
   "Extract JDK version from DIR-NAME."
-  (if (string-match "\\(\\(1.[[:digit:]]\\)\\|\\([[:digit:]]+.[[:digit:]]+\\)\\).[[:digit:]]+\\(_[[:digit:]]+\\)?"
-                    dir-name)
-      (match-string 1 dir-name)))
+
+  (cond ((string-match "\\(\\(1.[[:digit:]]\\)\\|\\([[:digit:]]+.[[:digit:]]+\\)\\).[[:digit:]]+\\(_[[:digit:]]+\\)?" dir-name)
+         (match-string 1 dir-name))
+
+        ((string-match "amazon-corretto-\\([[:digit:]]+\\).jdk" dir-name)
+         (format "%s.0" (match-string 1 dir-name)))))
 
 (setq jmi/jvm-homes-alist
       (let ((base "/Library/Java/JavaVirtualMachines/"))

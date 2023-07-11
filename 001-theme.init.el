@@ -8,62 +8,63 @@
 ;;; Code:
 
 ;; Set default fonts
-(set-frame-font "Hack 10" nil t)
+
+(if (fboundp 'mac-auto-operator-composition-mode)
+    ;; emacs-mac only; see next for emacs-plus config
+    (mac-auto-operator-composition-mode) ;; Needed for ligatures in Fira Code
+
+  ;; ligature.el isn't in MELPA yet, so pull it in from our local elisp load path
+  (use-package ligature
+    :config
+    (ligature-set-ligatures 't '("www"))
+
+    ;; Enable ligatures in programming modes
+    (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                                         ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                                         "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                                         "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                                         "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                                         "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                                         "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                                         "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                                         "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                                         "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+
+    (global-ligature-mode 't)
+
+    :load-path "~/elisp/ligature.el"))
+
 
 ;; Load theme
-(use-package flucui-themes
+(use-package modus-themes
   :init
-  (setq frame-background-mode 'dark)
+  (setq modus-themes-italic-constructs nil
+        modus-themes-bold-constructs t
+        modus-themes-syntax '(yellow-comments)
+        modus-themes-mode-line '(accented moody borderless)
+        modus-themes-org-blocks 'gray-background
+        modus-themes-markup '(background italic))
 
   :config
-  (load-theme 'flucui-dark t)
-  (setq jmi/selected-theme 'flucui-dark))
+  (load-theme 'modus-vivendi :no-confirm)
+  (setq jmi/selected-theme 'modus-vivendi)
 
-;; Functions to toggle between light and dark
-(defun jmi/apply-theme-dark ()
-  (interactive)
-  (set-frame-parameter nil 'background-mode 'dark)
-  (enable-theme jmi/selected-theme))
+  (set-face-attribute 'default nil :font "Berkeley Mono-14")
+  (set-frame-font "Berkeley Mono-14" nil t t))
 
-(defun jmi/apply-theme-light ()
-  (interactive)
-  (set-frame-parameter nil 'background-mode 'light)
-  (enable-theme jmi/selected-theme))
-
-;; Modeline config
-(use-package powerline
-  :init
-  (setq powerline-default-separator 'butt))
-
-(use-package spaceline
-  :config
-  (spaceline-helm-mode)
-
-  :after helm)
 
 (use-package all-the-icons
   :if
-  (display-graphic-p)
-  :after spaceline)
+  (display-graphic-p))
 
-(use-package spaceline-all-the-icons
+(use-package mood-line
   :config
-  (setq spaceline-all-the-icons-icon-set-eyebrowse-slot 'solid)
-  (spaceline-toggle-all-the-icons-buffer-path-off)
-  (spaceline-toggle-all-the-icons-buffer-size-off)
-  (spaceline-toggle-all-the-icons-flycheck-status-info-off)
-  (spaceline-all-the-icons-theme)
-
-  :if
-  (display-graphic-p)
-
-  :after (spaceline all-the-icons))
+  (mood-line-mode))
 
 ;; Pop-up windows when display-buffer
 (setq pop-up-windows t)
 
 ;; Indicate buffer boundaries
 (setq-default indicate-buffer-boundaries '((top . left) (t . right)))
-
 
 ;;; 001-theme.init.el ends here

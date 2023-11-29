@@ -8,7 +8,6 @@
 ;;; Code:
 
 ;; Set default fonts
-
 (if (fboundp 'mac-auto-operator-composition-mode)
     ;; emacs-mac only; see next for emacs-plus config
     (mac-auto-operator-composition-mode) ;; Needed for ligatures in Fira Code
@@ -33,7 +32,6 @@
     (global-ligature-mode 't)
 
     :load-path "~/elisp/ligature.el"))
-
 
 ;; Load theme
 (use-package modus-themes

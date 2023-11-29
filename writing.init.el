@@ -27,6 +27,9 @@
 (use-package tex-site
   :ensure auctex)
 
+;; git-auto-commit-mode -- for automatically distributing my drafts on my blog to Git
+(use-package git-auto-commit-mode)
+
 
 ;; PlantUML
 (use-package plantuml-mode)

@@ -70,12 +70,15 @@
     (interactive)
     (browse-url (w3m-anchor)))
 
+  :ensure-system-package w3m
+
   :bind
   ((:map w3m-minor-mode-map
          ("u" . jmi/w3m-view-url-via-browse-url))))
 
 
-(use-package bbdb)
+(use-package bbdb
+  :ensure t)
 
 
 (use-package gnus
@@ -89,111 +92,16 @@
                                       'save-buffers-kill-emacs))))
 
   :config
-  (setq gnus-parameters
-        '(("INBOX" (nov-cache-size . 5000))
-          ("INBOX\\.Notifications\\.*" (nov-cache-size . 7000))))
+  ;; Point to .gnus.el in this directory
+  (setq gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
 
-  (setq gnus-nov-is-evil t)
-
-  ;; Primary: jmibanez.com
-  (setq gnus-select-method
-        '(nnimap "jmibanez"
-                 (nnimap-address        "imap.gmail.com")
-                 (nnimap-stream         ssl)
-                 (nnimap-server-port    "imaps")))
-  ;; Search via mairix
-  ;; NB: We need to require nnmairix to load it and have its keybindings active
-  (require 'nnmairix)
-  (setq gnus-secondary-select-methods
-        '((nnmaildir "mairix"
-                     (directory     "~/.nnmairix"))
-          (nnml      "archive"
-                     (nnml-directory             "~/Mail.archive")
-                     ;; Don't expire messages in the archive!
-                     (nnml-inhibit-expiry        t))
-          (nnimap "gmail"
-                  (nnimap-address       "imap.gmail.com")
-                  (nnimap-stream        ssl)
-                  (nnimap-server-port   "imaps"))))
-
-
-  (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
-  (setq gnus-user-date-format-alist
-        '(((gnus-seconds-today) . "Today, %H:%M")
-          ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
-          (604800 . "%a %H:%M")
-          ((gnus-seconds-month) . "%a %d")
-          ((gnus-seconds-year) . "%b %d")
-          (t . "%b %d %Y")))
-
-  (setq gnus-summary-line-format "%~(pad-right 20)&user-date; %U%R%z%(%[%4L: %-23,23f% ]%)%B %s\n")
-
-  ;; Enable Gnus agent
-  (setq gnus-agent t)
-
-  ;; HTML renderer
-  (setq mm-text-html-renderer 'w3m)
-  ;; Make sure to open URLs externally
-  (setq mm-url-use-external t)
-
-  (setq mm-discouraged-alternatives
-        '("text/html" "text/richtext" "text/enriched"))
-
-  ;; Frame configuration/layout
-  (setq gnus-use-full-window t)
-  (gnus-add-configuration
-   '(article
-     (vertical 1.0
-               (group 0.12)
-               (summary 0.25 point)
-               (article 1.0))))
-  (gnus-add-configuration
-   '(summary
-     (vertical 1.0
-               (group 0.12)
-               (summary 1.0 point))))
-
-  ;; Scoring
-  ;; Adaptive scoring
-  (setq gnus-use-adaptive-scoring '(word line))
-  (setq gnus-default-adaptive-score-alist
-        '((gnus-unread-mark)
-          (gnus-ticked-mark (from 4))
-          (gnus-dormant-mark (from 7))
-          (gnus-del-mark (from -4) (subject -15))
-          (gnus-read-mark (from 5) (subject 30))
-          (gnus-expirable-mark (from -3) (subject -3))
-          (gnus-killed-mark (from -4) (subject -20))
-          (gnus-kill-file-mark)
-          (gnus-ancient-mark (subject -10))
-          (gnus-low-score-mark)
-          (gnus-catchup-mark (from -1) (subject -10))))
-
-
-  ;; Make sure to not score short (3 or fewer letter) words
-  (setq gnus-adaptive-word-length-limit 4)
-
-  ;; Don't include words in the group
-  (setq gnus-adaptive-word-no-group-words t)
-
-  ;; Threads and thread handling
-  ;; Thread display chars
-  (setq gnus-sum-thread-tree-root             "="
-        gnus-sum-thread-tree-false-root       "< "
-        gnus-sum-thread-tree-single-indent    " "
-        gnus-sum-thread-tree-indent           "  "
-        gnus-sum-thread-tree-leaf-with-other  "+-> "
-        gnus-sum-thread-tree-single-leaf      "`-> "
-        gnus-sum-thread-tree-vertical         "| ")
-
-  ;; Sort threads by score before date (descending, recent first)
-  (setq gnus-thread-sort-functions
-        '(gnus-thread-sort-by-score
-          (not gnus-thread-sort-by-date)
-          gnus-thread-sort-by-total-score))
-
-  ;; Fetch some older messages in the thread, for context
-  (setq gnus-fetch-old-headers 'some)
+  ;; HTML email composition via Markdown
+  (defun jmi/mimedown ()
+    (interactive)
+    (save-excursion
+      (message-goto-body)
+      (shell-command-on-region (point) (point-max)
+                               "/Users/jabz/scripts/mimedown.sh" nil t)))
 
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
@@ -223,13 +131,6 @@
 
         (browse-url (forward-button n)))))
 
-  ;; Posting styles
-  (setq gnus-posting-styles
-        '((".*"
-           (name            "JM Ibanez")
-           (address         "jm@jmibanez.com")
-           (signature-file  "~/.signature"))))
-
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . gnus))
          (:map gnus-summary-mode-map
@@ -238,36 +139,85 @@
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
 
+  :hook
+  ((message-send             .  jmi/mimedown))
+
   :ensure nil
   :after (jmi-keybindings))
 
-(use-package gnus-notifications
+(use-package mbsync
   :config
-  ;; Notifications config
+  (defun jmi/scan-mail-and-news ()
+    ;; Update mairix groups -- mairix must have been configured already...
+    (nnmairix-update-database)
+    (gnus-demon-scan-mail)
+    (gnus-demon-scan-news))
 
-  ;; First, we need to disable gravatar + google contacts, as that
-  ;; leaks internal email addresses
-  (setq gnus-notifications-use-google-contacts      nil
-        gnus-notifications-use-gravatar             nil)
+  (defun jmi/do-mail-sync ()
+    (interactive)
+    (message "Syncing mail...")
+    (mbsync))
 
-  ;; Replace gnus-notifications-notify with our own custom function,
-  ;; which exec's terminal-notifier (FIXME: Make this macOS specific
-  ;; only!)
-  (defun jmi/gnus-notification-terminal-notify (from subject ignored-photo-file)
-    "Override for gnus-notification-notify"
-    (let ((washed-subject (format "Subject: %s" subject)))
-      (call-process "/usr/local/bin/terminal-notifier" nil nil nil
-                    "-sound"    "Blow"
-                    "-title"    from
-                    "-message"  washed-subject)))
+  ;; Suppress mbsync.el's penchant for switching to the
+  ;; mbsync log buffer during errors, which just ruins my frame layout
+  (defun jmi/suppress-switch-to-buffer-other-window (buf)
+    (message "mbsync had errors, see buffer *mbsync* for details"))
 
-  (advice-add 'gnus-notifications-notify
-              :override #'jmi/gnus-notification-terminal-notify)
+  (defun jmi/mbsync-advice-fn (orig &rest args)
+    (cl-letf (((symbol-function 'switch-to-buffer-other-window)
+           #'jmi/suppress-switch-to-buffer-other-window))
+      (apply orig args)))
 
-  :hook
-  ((gnus-after-getting-new-news   .  gnus-notifications))
+  (advice-add 'mbsync-process-filter :around
+              #'jmi/mbsync-advice-fn)
+  (advice-add 'mbsync-sentinel :around
+              #'jmi/mbsync-advice-fn)
 
-  :ensure nil
+  ;; Configure Gnus to poll mbsync periodically (every 5 mins) for
+  ;; mail
+  (gnus-demon-add-handler 'mbsync 5 nil)
+
+  :ensure-system-package isync
+
+  :autoload (jmi/do-mail-sync jmi-scan-mail-and-news)
+
+  :hook ((mbsync-exit       .  jmi/scan-mail-and-news)
+         (gnus-startup      .  gnus-demon-init))
+  :after (jmi-keybindings gnus))
+
+(use-package alert
+  :config
+  (setq alert-default-style 'notifier)
+
+  ;; We need to replace the -appIcon switch with -contentImage, as
+  ;; terminal-notifier can't replace the notification icon
+  (defun alert-notifier-notify (info)
+    (if alert-notifier-command
+        (let ((args
+               (list "-title"   (alert-encode-string (plist-get info :title))
+                     "-contentImage" (or (plist-get info :icon) alert-notifier-default-icon)
+                     "-message" (alert-encode-string (plist-get info :message)))))
+          (apply #'call-process alert-notifier-command nil nil nil args))
+      (alert-message-notify info)))
+
+  :ensure-system-package terminal-notifier
+
+  :demand t)
+
+(use-package gnus-desktop-notify
+  :config
+  (setq gnus-desktop-notify-format "%n: %G")
+  (setq gnus-desktop-notify-uncollapsed-levels nil)
+  (setq gnus-desktop-notify-behavior 'gnus-desktop-notify-multi)
+
+  ;; Replace gnus-desktop-notify-alert with one that provides an icon specifically for Gnus
+  (defun gnus-desktop-notify-alert (body)
+    "Replacement for actual gnus-desktop-notify-alert which provides an icon"
+    (alert body
+           :title gnus-desktop-notify-send-subject))
+
+  (gnus-desktop-notify-mode)
+
   :after gnus)
 
 (use-package gnus-topic

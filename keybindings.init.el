@@ -36,16 +36,29 @@
     (setenv "LD_PRELOAD" nil)))
 
 
-;; Bind (window-toggle-side-windows)
+(defun jmi/projectile-find-file-or-org-roam-node-find-dwim ()
+  "Either do projectile-find-file or or do org-roam-find; DWIM."
+  (interactive)
 
-(bind-key "C-`" 'window-toggle-side-windows)
+  (if (not (fboundp 'projectile-find-file))
+      (error "Projectile is not loaded.")
 
+    (if (and (fboundp 'jmi/org-roam-buffer-p)
+             (eq major-mode 'org-mode)
+             (jmi/org-roam-buffer-p))
+        (org-roam-node-find)
+
+      ;; Else, default to projectile-find-file
+      (projectile-find-file-dwim))))
 
 ;; Our shortcut map
 (bind-keys :prefix-map jmi/my-jump-keys-map
            :prefix "<f8>"
 
-           ("f p"      . jmi/toggle-http-proxy))
+           ("f p"      . jmi/toggle-http-proxy)
+           ("f f"      . jmi/do-mail-sync))
+
+(global-set-key [(super t)] #'jmi/projectile-find-file-or-org-roam-node-find-dwim)
 
 (provide 'jmi-keybindings)
 

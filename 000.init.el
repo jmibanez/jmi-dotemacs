@@ -21,25 +21,36 @@
 (when (display-graphic-p)
   (scroll-bar-mode -1))
 
+;; On macOS, turn off titlebars
+(add-to-list 'default-frame-alist '(undecorated-round . t))
+
 ;; User Details
 (setq user-full-name "Jan Michael Ibanez")
 (setq user-mail-address "jm@jmibanez.com")
 
-;; exec-path
-(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
-(push "/usr/local/bin" exec-path)
+;; exec-path/PATH fixups
+;; Remove pyenv/rbenv/nodenv shims, re-add them to the head of the list
+(setq exec-path (cl-remove-if (lambda (path-elem)
+				(string-match "/shims" path-elem))
+                              exec-path))
 
-;; exec-path for pyenv, rbenv
-(let ((rbenv-shim-path (concat (getenv "HOME") "/.rbenv/shims"))
-      (pyenv-shim-path (concat (getenv "HOME") "/.pyenv/shims")))
-  (setenv "PATH" (concat rbenv-shim-path ":" pyenv-shim-path ":" (getenv "PATH")))
-  (push rbenv-shim-path exec-path)
-  (push pyenv-shim-path exec-path))
+;; Ensure /usr/loca/bin is also in our exec-path
+(unless (member "/usr/local/bin" exec-path)
+  (push "/usr/local/bin" exec-path))
+
+;; Apply modifications on exec-path to our PATH
+(setenv "PATH" (mapconcat 'identity exec-path ":"))
 
 ;; Suppress default initial buffer
 (setq initial-buffer-choice t)
 
 ;; Finally, set up defaults for use-package
 (setq use-package-always-ensure t)
+
+;; Enable magic GC hack
+(use-package gcmh
+  :ensure t
+  :demand t
+  :config (gcmh-mode 1))
 
 ;;; 000.init.el ends here

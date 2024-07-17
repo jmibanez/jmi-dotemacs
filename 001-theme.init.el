@@ -12,7 +12,6 @@
     ;; emacs-mac only; see next for emacs-plus config
     (mac-auto-operator-composition-mode) ;; Needed for ligatures in Fira Code
 
-  ;; ligature.el isn't in MELPA yet, so pull it in from our local elisp load path
   (use-package ligature
     :config
     (ligature-set-ligatures 't '("www"))
@@ -29,14 +28,12 @@
                                          "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
                                          "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
 
-    (global-ligature-mode 't)
-
-    :load-path "~/elisp/ligature.el"))
+    (global-ligature-mode 't)))
 
 ;; Load theme
 (use-package modus-themes
   :init
-  (setq modus-themes-italic-constructs nil
+  (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs t
         modus-themes-syntax '(yellow-comments)
         modus-themes-mode-line '(accented moody borderless)
@@ -44,8 +41,8 @@
         modus-themes-markup '(background italic))
 
   :config
-  (load-theme 'modus-vivendi :no-confirm)
-  (setq jmi/selected-theme 'modus-vivendi)
+  (load-theme 'modus-vivendi-tinted :no-confirm)
+  (setq jmi/selected-theme 'modus-vivendi-tinted)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14")
   (set-frame-font "Berkeley Mono-14" nil t t))
@@ -55,8 +52,38 @@
   :if
   (display-graphic-p))
 
+;; Breadcrumbs
+(use-package breadcrumb
+  :config
+  :demand t)
+
 (use-package mood-line
   :config
+  ;; Use Fira Code-compatible glyphs, which are also compatible with
+  ;; Berkeley Mono
+  (require 'mood-line-segment-vc)
+
+  (setq mood-line-glyph-alist mood-line-glyphs-fira-code)
+  (setq mood-line-format
+        (mood-line-defformat
+         :left
+         (((mood-line-segment-modal)            . " ")
+          ((or (mood-line-segment-buffer-status)
+               (mood-line-segment-client)
+               " ")                             . " ")
+          ((mood-line-segment-project)          . "|")
+          ((mood-line-segment-buffer-name)            . "  ")
+          ((mood-line-segment-anzu)                   . "  ")
+          ((mood-line-segment-multiple-cursors)       . "  ")
+          ((mood-line-segment-cursor-position)        . " ")
+          (mood-line-segment-scroll))
+         :right
+         (((mood-line-segment-vc)         . "  ")
+          ((mood-line-segment-major-mode) . "  ")
+          ((mood-line-segment-misc-info)  . "  ")
+          ((mood-line-segment-checker)    . "  ")
+          ((mood-line-segment-process)    . "  "))))
+
   (mood-line-mode))
 
 ;; Pop-up windows when display-buffer

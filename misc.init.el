@@ -33,4 +33,38 @@
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
 
+;; wttrin
+(use-package wttrin
+  :config
+  (setq wttrin-default-cities
+        '("Sydney" "Manila" "New York" "San Francisco" "London")
+        wttrin-default-accept-language
+        '("Accept-Language" . "en-US,en;q=0.8")
+        jmi/default-wttrin-city "Sydney")
+
+  (defun jmi/wttrin-fetch-raw-string (query)
+    (let ((url-request-extra-headers '(("X-Emacs-Package" . "wttrin.el")))
+          (url-user-agent "curl"))
+      (add-to-list 'url-request-extra-headers wttrin-default-accept-language)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           (concat "http://wttr.in/" query)
+           (lambda (status) (switch-to-buffer (current-buffer))))
+        (decode-coding-string (buffer-string) 'utf-8))))
+
+
+  (advice-add 'wttrin-fetch-raw-string
+              :override #'jmi/wttrin-fetch-raw-string)
+
+  :bind
+  ((:map jmi/my-jump-keys-map
+         ("w"    .   wttrin))))
+
+;; Run unison-daemon for all profiles in background
+(use-package unison-daemon
+  :load-path "~/projects/personal/unison-daemon-el"
+
+  :hook
+  ((emacs-startup   . (lambda () (unison-daemon t)))))
+
 ;;; misc.init.el ends here

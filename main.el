@@ -11,7 +11,7 @@
 
 (defmacro jmi/dotemacs-do-module (filename)
   "Load the specified FILENAME from the init directory."
-  (load-file (concat jmi/my-emacs-init-path filename)))
+  `(load-file ,(concat jmi/my-emacs-init-path filename)))
 
 
 (defun jmi/list-init-files (directory)

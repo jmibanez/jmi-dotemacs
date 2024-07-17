@@ -1,0 +1,4 @@
+alias prj jmi/eshell-prj $1 $2
+alias pager view-file $1
+alias less view-file $1
+alias gg git grep $*

@@ -9,35 +9,31 @@
 ;;; Code:
 
 ;; Tree Sitter
-(use-package tree-sitter
+
+(use-package treesit
   :config
-  (defun jmi/decorate-pydoc-strings ()
-    (add-function :before-until (local 'tree-sitter-hl-face-mapping-function)
-                  (lambda (capture-name)
-	            (pcase capture-name
-	              ("doc" 'font-lock-comment-face)))))
-  :hook
-  ((python-mode .   jmi/decorate-pydoc-strings))
+  (setq treesit-language-source-alist
+        '((bash          "https://github.com/tree-sitter/tree-sitter-bash")
+          (java          "https://github.com/tree-sitter/tree-sitter-java")
+          (json          "https://github.com/tree-sitter/tree-sitter-json")
+          (python        "https://github.com/tree-sitter/tree-sitter-python")
+          (html          "https://github.com/tree-sitter/tree-sitter-html")
+          (csharp        "https://github.com/tree-sitter/tree-sitter-c-sharp")
+          (go            "https://github.com/tree-sitter/tree-sitter-go")
+          (go-mod        "https://github.com/camdencheek/tree-sitter-go-mod")
+          (rust          "https://github.com/tree-sitter/tree-sitter-rust")
+          (toml          "https://github.com/tree-sitter/tree-sitter-toml")
+          (tsx           "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+          (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")))
 
-  :after (tree-sitter-langs))
+  :ensure nil)
 
-(use-package tree-sitter-langs)
+(use-package treesit-auto
+  :config
+  (setq treesit-auto-install 'prompt)
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
-;; TS Fold, so we can do code folding
-(use-package ts-fold
-  :load-path "~/elisp/ts-fold"
-
-  :hook
-  ((tree-sitter-after-on . ts-fold-mode))
-
-  :after (tree-sitter))
-
-(use-package ts-fold-indicators
-  :load-path "~/elisp/ts-fold"
-  :hook
-  ((tree-sitter-after-on . ts-fold-indicators-mode))
-
-  :after (ts-fold))
 
 ;; Lisp Modes
 (setq lisp-modes '(lisp-mode
@@ -113,10 +109,10 @@
   (setq cider-auto-select-error-buffer t)
   (setq cider-jdk-src-paths (jmi/cons-jdk-src-paths jmi/jvm-homes-alist))
   (setq cider-jack-in-lein-plugins
-        '(("refactor-nrepl" "2.4.0-SNAPSHOT" :predicate cljr--inject-middleware-p)
-          ("cider/cider-nrepl" "0.18.0-SNAPSHOT")))
+        '(("refactor-nrepl" "3.9.1" :predicate cljr--inject-middleware-p)
+          ("cider/cider-nrepl" "0.44.0")))
   (setq cider-jack-in-cljs-dependencies
-        '(("cider/piggieback" "0.3.6")))
+        '(("cider/piggieback" "0.5.3")))
   ;; Disable refactor-nrepl and clj-refactor for now
   (setq cljr-inject-dependencies-at-jack-in t)
 
@@ -144,46 +140,187 @@
 (use-package js2-mode
   :mode "\\.js$")
 
-(use-package lsp-mode
+(use-package flymake
+  :bind
+  (("C-s-n"     . flymake-goto-next-error)
+   ("C-s-p"     . flymake-goto-prev-error))
+
+  :ensure nil)
+
+(use-package flymake-diagnostic-at-point
   :config
-  ;; -- Some perf tweaks to make LSP work "better"
+  (defface :jmi-diagnostic-popup
+    '((((type graphic))
+       :background "#1640b0"
+       :foreground "white"
+       :slant italic
+       :family "Berkeley Mono")
+      (t
+       :background bg-blue-intense
+       :foreground white))
+    "Customized face for Flymake diagnostic message popup")
+
+  (defun jmi/flymake-diagnostic-at-point-via-popup (s)
+    (popup-tip s
+               :margin-left 1
+               :margin-right 1
+               :face :jmi-diagnostic-popup
+               :width 80
+               :truncate t))
+
+  (setq flymake-diagnostic-at-point-display-diagnostic-function
+        #'jmi/flymake-diagnostic-at-point-via-popup)
+
+  :hook
+  ((flymake-mode . flymake-diagnostic-at-point-mode))
+  :after flymake)
+
+
+(use-package rust-mode
+  :config
+  (setq rust-format-on-save t))
+
+(use-package eglot
+  :defer t
+
+  :config
+  ;; -- Some perf tweaks to make Eglot work "better"
   ;; Increase read-process size
   (setq read-process-output-max (* 1024 1024))
-  ;; Bump up GC threshold as LSP creates a *lot* of garbage
-  (setq gc-cons-threshold 100000000)
 
-  ;; File watching knobs
-  ;; Turn off file watches, we really get a lot of pain from them
-  (setq lsp-enable-file-watchers nil)
+  (setq eglot-connect-timeout nil)
 
-  :demand t
-  :after jmi-init-platform-paths)
-(use-package lsp-ui
+  (setq jmi/java-agent-lombok-arg (concat "-javaagent:" jmi/lombok-jar))
+
+  ;; Additional Eglot LSP config, specifically for -ts-mode variants
+  (add-to-list 'eglot-server-programs
+               `(java-ts-mode . ("jdtls"
+                                 "--jvm-arg=-XX:+UseParallelGC"
+
+                                 "--jvm-arg=-XX:GCTimeRatio=4"
+                                 "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90"
+                                 "--jvm-arg=-Dsun.zip.disableMemoryMapping=true"
+                                 "--jvm-arg=-Xmx8G"
+                                 "--jvm-arg=-Xms100m"
+                                 ,(concat "--jvm-arg=" jmi/java-agent-lombok-arg)
+                                 :initializationOptions
+                                 (:settings
+                                  (:java
+                                   (:configuration
+                                    (:runtimes ,(vconcat (mapcar (lambda (jvm-home-tuple)
+                                                                   `(:name ,(concat "Java" (car jvm-home-tuple))
+                                                                     :path ,(cdr jvm-home-tuple)))
+                                                               jmi/jvm-homes-alist))))
+                                   :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)
+                                                                                  :profile "NetDeps")))
+                                  :extendedClientCapabilities (:classFileContentsSupport t)))))
+  (add-to-list 'eglot-server-programs
+               '(ruby-ts-mode "solargraph" "socket" "--port" :autoport))
+  (add-to-list 'eglot-server-programs
+               `(python-ts-mode
+                 .  ,(eglot-alternatives
+                     '("pylsp" "pyls" ("pyright-langserver" "--stdio") "jedi-language-server"))))
+
+  ;; (Copied from https://w.amazon.com/bin/view/Bemol/#HeglotpluginforEmacs)
+  ;; The jdt server sometimes returns jdt:// scheme for jumping to definition
+  ;; instead of returning a file. This is not part of LSP and eglot does not
+  ;; handle it. The following code enables eglot to handle jdt files.
+  ;; See https://github.com/yveszoundi/eglot-java/issues/6 for more info.
+  (defun jdt-file-name-handler (operation &rest args)
+    "Support Eclipse jdtls `jdt://' uri scheme."
+    (let* ((uri (car args))
+           (cache-dir "/tmp/.eglot")
+           (source-file
+            (directory-abbrev-apply
+             (expand-file-name
+              (file-name-concat
+               cache-dir
+               (save-match-data
+                 (when (string-match "jdt://contents/\\(.*?\\)/\\(.*\\)\.class\\?" uri))
+                 (message "URI:%s" uri)
+                 (format "%s.java" (replace-regexp-in-string "/" "." (match-string 2 uri) t t))))))))
+      (unless (file-readable-p source-file)
+        (let ((content (jsonrpc-request (eglot-current-server) :java/classFileContents (list :uri uri)))
+              (metadata-file (format "%s.%s.metadata"
+                                     (file-name-directory source-file)
+                                     (file-name-base source-file))))
+          (message "content:%s" content)
+          (unless (file-directory-p cache-dir) (make-directory cache-dir t))
+          (with-temp-file source-file (insert content))
+          (with-temp-file metadata-file (insert uri))))
+      source-file))
+
+  (add-to-list 'file-name-handler-alist '("\\`jdt://" . jdt-file-name-handler))
+
+  (defun jdthandler--wrap-legacy-eglot--path-to-uri (original-fn &rest args)
+  "Hack until eglot is updated.
+ARGS is a list with one element, a file path or potentially a URI.
+If path is a jar URI, don't parse. If it is not a jar call ORIGINAL-FN."
+  (let ((path (file-truename (car args))))
+    (if (equal "jdt" (url-type (url-generic-parse-url path)))
+        path
+      (apply original-fn args))))
+
+  (defun jdthandler--wrap-legacy-eglot--uri-to-path (original-fn &rest args)
+    "Hack until eglot is updated.
+ARGS is a list with one element, a URI.
+If URI is a jar URI, don't parse and let the `jdthandler--file-name-handler'
+handle it. If it is not a jar call ORIGINAL-FN."
+    (let ((uri (car args)))
+      (if (and (stringp uri)
+               (string= "jdt" (url-type (url-generic-parse-url uri))))
+          uri
+        (apply original-fn args))))
+
+  (defun jdthandler-patch-eglot ()
+    "Patch old versions of Eglot to work with Jdthandler."
+    (interactive) ;; TODO, remove when eglot is updated in melpa
+    (unless (and (advice-member-p #'jdthandler--wrap-legacy-eglot--path-to-uri 'eglot--path-to-uri)
+                 (advice-member-p #'jdthandler--wrap-legacy-eglot--uri-to-path 'eglot--uri-to-path))
+      (advice-add 'eglot--path-to-uri :around #'jdthandler--wrap-legacy-eglot--path-to-uri)
+      (advice-add 'eglot--uri-to-path :around #'jdthandler--wrap-legacy-eglot--uri-to-path)
+      (message "[jdthandler] Eglot successfully patched.")))
+
+  ;; invoke
+  (jdthandler-patch-eglot)
+
+  (defun jmi/eglot-ensure-if-not-decompiled ()
+    "Only ensure eglot is enabled if we're not opening a buffer in .eglot-java"
+    (unless (string=
+             ".eglot-java"
+             (first (last (file-name-split
+                           (file-name-directory default-directory)) 2)))
+      (eglot-ensure)))
+
+  :hook
+  ((java-ts-mode     . jmi/eglot-ensure-if-not-decompiled)
+   (python-ts-mode   . eglot-ensure)
+   (ruby-ts-mode     . eglot-ensure)))
+
+(use-package java-ts-mode
   :config
-  (setq lsp-ui-doc-enable nil
-        lsp-ui-sideline-enable nil
-
-        ;; Peek config
-        lsp-ui-peek-show-directory nil  ;; Elide directories
-        lsp-ui-peek-peek-height    25   ;; Show 25 entries
-        )
-
-  (define-key lsp-ui-mode-map
-    [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  (define-key lsp-ui-mode-map
-    [remap xref-find-references] #'lsp-ui-peek-find-references)
-
-  :after lsp-mode)
-(use-package dap-mode
-  :config
-  (dap-mode t)
-  (dap-ui-mode t))
-
-
-(use-package lsp-java
-  :config
-  ;; Enable dap-java
-  (require 'dap-java)
+  ;; Define custom java style
+  (defconst jmi/hercules-java
+    '((c-basic-offset . 4)     ; Guessed value
+      (c-comment-only-line-offset . (0 . 0))
+      (c-offsets-alist . ((inline-open . 0)
+                          (topmost-intro-cont     . +)
+                          (statement-block-intro  . +)
+                          (knr-argdecl-intro      . 5)
+                          (substatement-open      . +)
+                          (substatement-label     . +)
+                          (label                  . +)
+                          (statement-case-open    . +)
+                          (statement-cont         . +)
+                          (arglist-intro          . ++)
+                          (arglist-cont           . ++)
+                          (arglist-close          . c-lineup-arglist)
+                          (access-label           . 0)
+                          (inher-cont             . c-lineup-java-inher)
+                          (func-decl-cont         . c-lineup-java-throws)
+                          (arglist-cont-nonempty  . ++))))
+    "Eclipse Java Programming Style")
+  (c-add-style "hercules-java" jmi/hercules-java)
 
   (defun jmi/java-mode-config ()
     ;; Set java-mode specific vars
@@ -192,57 +329,23 @@
     ;; Truncate lines, instead of wrapping
     (toggle-truncate-lines 1)
     (setq-local tab-width 4)
-    (setq-local c-basic-offset 4)
-    (lsp))
+    (setq-local c-basic-offset 4))
 
-  ;; Support Lombok in our projects, among other things
-  (setq lsp-java-vmargs
-        (list "-XX:+UseParallelGC"
-              "-XX:GCTimeRatio=4"
-              "-XX:AdaptiveSizePolicyWeight=90"
-              "-Dsun.zip.disableMemoryMapping=true"
-              "-Xmx4G" "-Xms100m"
-              "-noverify"
-              (concat "-javaagent:" jmi/lombok-jar))
+  ;; Shadow java style
+  (add-to-list 'c-default-style '(java-mode . "hercules-java"))
 
-        lsp-java-completion-import-order '["" "java" "javax" "#"]
-        ;; Don't organize imports on save
-        lsp-java-save-action-organize-imports nil
+  :hook
+  (java-ts-mode . jmi/java-mode-config)
 
-        lsp-java-java-path (concat (cdr (assoc "11.0" jmi/jvm-homes-alist))
-                                   "/bin/java")
-
-        ;; Filter out build/private, but include build/generated-src etc
-        lsp-java-project-resource-filters
-        (vconcat lsp-java-project-resource-filters ["build/private"])
-
-        ;; Build concurrency
-        lsp-java-max-concurrent-builds 4
-
-        ;; Formatter profile
-        lsp-java-format-settings-url (concat "file://" jmi/java-format-settings-file)
-        lsp-enable-on-type-formatting t
-        lsp-enable-indentation t)
-
-  :hook (java-mode    . jmi/java-mode-config)
-
-  :demand t
-  :after (lsp-mode dap-mode jmi-init-platform-paths))
+  :defer nil
+  :ensure nil) ;; built-in as of 29.1
 
 ;; Scala
 (use-package scala-mode)
-(use-package lsp-scala
-  :if (featurep 'jmi-init-platform-paths)
-  :config
-  :after (lsp scala-mode))
-
 
 ;; Autocompletion helpers
 ;; NB: Because we're switching to company-mode, we need to swap out some
 ;; stuff...
-
-(use-package lsp-ivy
-  :after (lsp lsp-ui ivy))
 
 (use-package company
   :config
@@ -258,8 +361,6 @@
 (use-package company-dict)
 (use-package company-go
   :after go-mode)
-(use-package company-emacs-eclim
-  :after eclim)
 (use-package company-shell)
 (use-package company-sourcekit)
 (use-package company-web)
@@ -277,12 +378,11 @@
 (use-package python-django)
 (use-package pyvenv)
 
-(use-package lsp-python-ms)
-(use-package lsp-pyright
-  :hook
-  (python-mode   . (lambda ()
-                     (require 'lsp-pyright)
-                     (lsp))))
+(use-package python
+  :ensure nil)
+
+(use-package ruby-ts-mode
+  :ensure nil) ;; built-in as of 29.1
 
 ;; Other languages/modes
 (use-package groovy-mode
@@ -317,6 +417,10 @@
 (use-package yaml-mode
   :mode "\\.yaml$")
 
+(use-package perl-mode
+  :ensure nil ;; System package
+)
+
 ;; Version control packages
 
 ;; Magit - Emacs interface to Git
@@ -324,8 +428,6 @@
   :init
   ;; Point Magit to locally installed git (not system)
   (setq magit-git-executable jmi/git)
-
-  (setq magit-use-overlays nil)
 
   :after
   'jmi-init-platform-paths)
@@ -374,32 +476,6 @@
   :config
   (fullframe magit-status magit-mode-quit-window nil))
 
-
-;; Flycheck config
-(use-package flycheck
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  ;; Disable flycheck for vterm
-  (setq flycheck-global-modes '(not vterm-mode))
-  (declare-function python-shell-calculate-exec-path "python")
-
-  (defun flycheck-virtualenv-set-python-executables ()
-    "Set Python executables for the current buffer."
-    (let ((exec-path (python-shell-calculate-exec-path)))
-      (setq-local flycheck-python-pylint-executable
-                  (executable-find "pylint"))
-      (setq-local flycheck-python-flake8-executable
-                  (executable-find "flake8"))))
-
-  (defun flycheck-virtualenv-setup ()
-    "Setup Flycheck for the current virtualenv."
-    (when (derived-mode-p 'python-mode)
-      (add-hook 'hack-local-variables-hook
-                #'flycheck-virtualenv-set-python-executables 'local)))
-
-  (provide 'flycheck-virtualenv)
-
-  :after (pyvenv python-django))
 
 ;; SQL interaction stuff
 

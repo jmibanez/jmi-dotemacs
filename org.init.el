@@ -40,9 +40,7 @@
         org-clock-out-switch-to-state #'jmi/org-clock-out-switch-to-todo
 
         ;; Agenda config -------
-        ;; All my org files are in ~/Documents/org, so should be what
-        ;; agenda looks at
-        org-agenda-files                       (list jmi/org-task-dir)
+        ;; See org-roam config
 
         ;; Include diary into agenda, so I get anniversaries and appointments
         org-agenda-include-diary               t
@@ -64,6 +62,27 @@
   ;; Archiving
   (setq org-archive-location "~/Documents/org-archive/%s::")
 
+  ;; XWiki support (ox-xwiki, handling xwiki: links)
+  (defun jmi/org-xw-link (link desc info)
+    "Transcode LINK into Xwiki format. Supports custom 'xwiki:'
+links for in-wiki links"
+    (let ((type (org-element-property :type link))
+          (path (org-element-property :path link)))
+      (if (member type '("xwiki"))
+          (if desc (format "[[%s>>url:%s]]" desc path)
+            (format "[[%s]]" path))
+        ;; Not an xwiki: link, call original
+        nil)))
+
+  (advice-add 'org-xw-link :before-until #'jmi/org-xw-link)
+
+  (defun jmi/org-xwiki-link-open (xwiki-dot-path)
+    (let ((amz-xwiki-url (s-replace "." "/" xwiki-dot-path)))
+      (browse-url (format "https://w.amazon.com/bin/view/%s" amz-xwiki-url))))
+
+  (org-link-set-parameters "xwiki"
+                           :follow #'jmi/org-xwiki-link-open)
+
   ;; Helper fns for opening various org task files
   (defun jmi/open-org-inbox ()
     (interactive)
@@ -84,6 +103,36 @@
             (gnus-summary-tick-article)))
       (message "Not a gnus link")))
 
+  ;; Custom link: projects
+  (defun jmi/org-project-open (path _)
+    (projectile-switch-project-by-name path))
+
+  (defun jmi/org-project-store-link ()
+    (when (and (memq major-mode '(dired-mode))
+               (project-current))
+      (let* ((current-project (project-current))
+             (current-project-path (cdr current-project))
+             (description (format "Project %s" current-project-path))
+             (link (format "project:%s" current-project-path)))
+        (org-link-store-props
+         :type "project"
+         :link link
+         :description description))))
+
+  (defun jmi/org-project-export (link description format _)
+    (let ((desc (or description link)))
+      (pcase format
+        (`html (format "<a href=\"file://%s\">%s</a>" path desc))
+        (`latex (format "\\href{file://%s}{%s}" path desc))
+        (`ascii (format "%s (%s)" desc path))
+        (t path))))
+
+  (org-link-set-parameters "project"
+                           :follow #'jmi/org-project-open
+                           :export #'jmi/org-project-export
+                           :store  #'jmi/org-project-store-link)
+
+
   :hook
   ;; I use windmove (with custom keybindings), so in general I don't
   ;; need this, but it's a good idea nonetheless to avoid conflict
@@ -100,10 +149,9 @@
   ;; Global key bindings
   :bind ((:map jmi/my-jump-keys-map
                ("l"      .  org-store-link)
-               ("a"      .  org-agenda)
-               ("t i"    .  jmi/open-org-inbox)
-               ("t n"    .  jmi/open-org-notes)))
+               ("a"      .  org-agenda)))
 
+  :after (projectile)
   :demand t)
 
 ;; org-roam as my KB on top of org in general
@@ -120,6 +168,157 @@
            :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
 
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:10}" 'face 'org-tag)))
+
+
+  ;; functions borrowed from `vulpea' library
+  ;; https://github.com/d12frosted/vulpea/blob/6a735c34f1f64e1f70da77989e9ce8da7864e5ff/vulpea-buffer.el
+  (defun vulpea-buffer-tags-get ()
+    "Return filetags value in current buffer."
+    (vulpea-buffer-prop-get-list "filetags" "[ :]"))
+
+  (defun vulpea-buffer-tags-set (&rest tags)
+    "Set TAGS in current buffer.
+If filetags value is already set, replace it."
+    (if tags
+        (vulpea-buffer-prop-set
+         "filetags" (concat ":" (string-join tags ":") ":"))
+      (vulpea-buffer-prop-remove "filetags")))
+
+  (defun vulpea-buffer-tags-add (tag)
+    "Add a TAG to filetags in current buffer."
+    (let* ((tags (vulpea-buffer-tags-get))
+           (tags (append tags (list tag))))
+      (apply #'vulpea-buffer-tags-set tags)))
+
+  (defun vulpea-buffer-tags-remove (tag)
+    "Remove a TAG from filetags in current buffer."
+    (let* ((tags (vulpea-buffer-tags-get))
+           (tags (delete tag tags)))
+      (apply #'vulpea-buffer-tags-set tags)))
+
+  (defun vulpea-buffer-prop-set (name value)
+    "Set a file property called NAME to VALUE in buffer file.
+If the property is already set, replace its value."
+    (setq name (downcase name))
+    (org-with-point-at 1
+      (let ((case-fold-search t))
+        (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
+                               (point-max) t)
+            (replace-match (concat "#+" name ": " value) 'fixedcase)
+          (while (and (not (eobp))
+                      (looking-at "^[#:]"))
+            (if (save-excursion (end-of-line) (eobp))
+                (progn
+                  (end-of-line)
+                  (insert "\n"))
+              (forward-line)
+              (beginning-of-line)))
+          (insert "#+" name ": " value "\n")))))
+
+  (defun vulpea-buffer-prop-set-list (name values &optional separators)
+    "Set a file property called NAME to VALUES in current buffer.
+VALUES are quoted and combined into single string using
+`combine-and-quote-strings'.
+If SEPARATORS is non-nil, it should be a regular expression
+matching text that separates, but is not part of, the substrings.
+If nil it defaults to `split-string-default-separators', normally
+\"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
+If the property is already set, replace its value."
+    (vulpea-buffer-prop-set
+     name (combine-and-quote-strings values separators)))
+
+  (defun vulpea-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                               (point-max) t)
+        (buffer-substring-no-properties
+         (match-beginning 1)
+         (match-end 1)))))
+
+  (defun vulpea-buffer-prop-get-list (name &optional separators)
+    "Get a buffer property NAME as a list using SEPARATORS.
+If SEPARATORS is non-nil, it should be a regular expression
+matching text that separates, but is not part of, the substrings.
+If nil it defaults to `split-string-default-separators', normally
+\"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+    (let ((value (vulpea-buffer-prop-get name)))
+      (when (and value (not (string-empty-p value)))
+        (split-string-and-unquote value separators))))
+
+  (defun vulpea-buffer-prop-remove (name)
+    "Remove a buffer property called NAME."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "\\(^#\\+" name ":.*\n?\\)")
+                               (point-max) t)
+      (replace-match ""))))
+
+  ;; Cribbed from https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+  (defun jmi/org-roam-note-is-project-p ()
+    "Return non-nil if current buffer has any TODO entries.
+
+TODO entries marked as done are ignored, meaning this function returns
+nil if the current buffer contains only completed tasks."
+
+    (org-element-map
+        (org-element-parse-buffer 'headline)
+        'headline
+      (lambda (h)
+        (eq (org-element-property :todo-type h)
+            'todo))
+      nil 'first-match))
+
+  (defun jmi/org-roam-buffer-p ()
+    "Return non-nil if the currently visited buffer is an org-roam note."
+    (and buffer-file-name
+         (string-prefix-p
+          (expand-file-name (file-name-as-directory org-roam-directory))
+          (file-name-directory buffer-file-name))))
+
+  (defun jmi/project-update-tag ()
+    "Update PROJECT tag in the current buffer, if it is an org-roam buffer."
+
+    (when (and (not (active-minibuffer-window))
+               (jmi/org-roam-buffer-p))
+      (save-excursion
+        (goto-char (point-min))
+        (let* ((tags (vulpea-buffer-tags-get))
+               (original-tags tags))
+          (if (jmi/org-roam-note-is-project-p)
+              (setq tags (cons "project" tags))
+            (setq tags (remove "project" tags)))
+
+          (setq tags (seq-uniq tags))
+
+          (when (or (seq-difference tags original-tags)
+                    (seq-difference original-tags tags))
+            (apply #'vulpea-buffer-tags-set tags))))))
+
+
+  (defun jmi/project-files ()
+    "Return a list of org-roam notes containing 'project' tag."
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+        :from tags
+        :left-join nodes
+        :on (= tags:node-id nodes:id)
+        :where (like tag (quote "%\"project\"%"))]))))
+
+  (defun jmi/update-agenda-files (&rest _)
+    "Keep `org-agenda-files' up to date."
+    (setq org-agenda-files (jmi/project-files)))
+
+  (advice-add 'org-agenda :before #'jmi/update-agenda-files)
+  (advice-add 'org-todo-list :before #'jmi/update-agenda-files)
+
+  (setq org-agenda-files (jmi/project-files))
+
   ;; Sync DB
   (org-roam-db-autosync-mode)
 
@@ -135,6 +334,14 @@
                ("T"   . org-roam-dailies-capture-tomorrow)))
 
 
+  :hook
+  ((find-file     . jmi/project-update-tag)
+   (before-save   . jmi/project-update-tag))
+
+  :after (org))
+
+(use-package ob-eshell
+  :ensure nil
   :after (org))
 
 ;; Presentations

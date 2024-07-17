@@ -19,12 +19,12 @@
 
 
 (setq display-buffer-alist
-      '(("\\*vterm\\*"
+      '(("\\*Flymake diagnostics"
          (display-buffer-in-side-window)
          (side . bottom)
          (slot . 0)
          (window-parameters . ((no-delete-other-windows . t)))
-         (mode vterm-mode vterm-copy-mode))))
+         (mode flymake-diagnostics-buffer-mode))))
 (defun mp/toggle-window-dedication ()
   "Toggle window dedication in the selected window."
   ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
@@ -39,9 +39,41 @@
   (setq projectile-completion-system 'auto)
 
   :config
+  (setq projectile-indexing-method 'hybrid)
+  (setq projectile-project-root-functions
+        '(projectile-root-local
+          projectile-root-bottom-up
+          projectile-root-marked
+          projectile-root-top-down
+          projectile-root-top-down-recurring))
+
+  (setq projectile-project-search-path
+        '(("~/projects/" . 2)))
+
+  (setq projectile-globally-ignored-files
+        '(".classpath"
+          ".factorypath"
+          ".python-version"
+          ".project"))
+  (setq projectile-globally-ignored-file-suffixes
+        '(".bak"))
+
+
+  (defun jmi/is-attic-project-p (project-root)
+    (string-prefix-p (file-truename "~/projects/attic") (file-truename project-root)))
+
+  (setq projectile-ignored-project-function #'jmi/is-attic-project-p)
+
+  (add-to-list 'projectile-globally-ignored-directories
+               "\\.settings")
+
   (projectile-mode)
 
-  :after vertico)
+  :bind
+  (("s-o"    . projectile-switch-project)
+   ("s-T"    . projectile-toggle-between-implementation-and-test))
+
+  :after (vertico))
 
 ;; Savehist, persist history (so Vertico works better)
 (use-package savehist
@@ -54,17 +86,33 @@
   (setq vertico-count 25)
   (setq vertico-resize t)
 
-  (vertico-mode)
+  (vertico-mode))
+
+(use-package counsel)
+
+(use-package consult
+  :config
+  (setq consult-preview-key nil)
 
   :bind
-  (("s-t"    . projectile-find-file)
-   ("s-o"    . projectile-switch-project)))
+  (("M-y"                                  . consult-yank-pop)
+   ("C-s-s"                                . consult-line)
+   ("s-g"                                  . consult-git-grep)
+   ("C-s-!"                                . consult-flymake)
+   ([remap goto-line]                      . consult-goto-line)
+   ([remap switch-to-buffer]               . consult-buffer)
+   ([remap switch-to-buffer-other-window]  . consult-buffer-other-window)
+   ([remap switch-to-buffer-other-frame]   . consult-buffer-other-frame)))
 
 (use-package orderless
   :init
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package popup
+  :config
+  (setq popup-tip-max-width 100))
 
 (use-package posframe)
 (use-package vertico-posframe
@@ -78,12 +126,20 @@
 (global-set-key (kbd "C-s-k") 'windmove-up)
 (global-set-key (kbd "C-s-j") 'windmove-down)
 
+(use-package framemove
+  :load-path "~/elisp/framemove"
+
+  :init
+  (setq framemove-hook-into-windmove t))
+
+
 ;; Use Emacs session management
 (use-package session
   :config
   (setq session-use-package t)
   (session-initialize)
-  (add-to-list 'session-globals-exclude 'org-mark-ring))
+  (add-to-list 'session-globals-exclude 'org-mark-ring)
+  (add-to-list 'session-globals-exclude 'consult--buffer-history))
 
 (use-package fill-column-indicator
   :init
@@ -107,13 +163,21 @@
   :bind (("s-<return>"   .  toggle-frame-fullscreen)
          ("C-s-<return>" .  toggle-frame-maximized)))
 
-;; Focus mode --
-(use-package focus
+;; Treemacs for each workspace
+(use-package treemacs
   :config
-  (add-to-list 'focus-mode-to-thing '(c-mode     .  lsp-folding-range))
-  (add-to-list 'focus-mode-to-thing '(java-mode  .  defun))
+  (treemacs-resize-icons 16)
+  (treemacs-follow-mode)
+  (treemacs-git-mode 'deferred))
 
-  :after (lsp lsp-mode lsp-java))
+(use-package treemacs-all-the-icons
+  :after (treemacs))
+
+;; Treemacs integrations with Magit and Projectile
+(use-package treemacs-magit
+  :after (treemacs magit))
+(use-package treemacs-projectile
+  :after (treemacs projectile))
 
 ;; Buffer Move: I actually want to swap buffers around windows sometimes, so this is useful...
 (use-package buffer-move
@@ -122,5 +186,18 @@
    ([C-S-s-down]    . buf-move-down)
    ([C-S-s-left]    . buf-move-left)
    ([C-S-s-right]   . buf-move-right)))
+
+;; ace-jump
+(use-package ace-jump-mode
+  :bind
+  ((:map jmi/my-jump-keys-map
+         ("SPC" .   ace-jump-mode))))
+
+(use-package ace-window
+  :config
+  (setq aw-background 't)
+
+  :bind
+  (("M-`"   .  ace-window)))
 
 ;;; navigation.init.el ends here

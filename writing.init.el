@@ -34,18 +34,24 @@
 ;; PlantUML
 (use-package plantuml-mode)
 
+(use-package writegood-mode)
+
+(use-package olivetti)
 
 ;; Should these be here? Maybe move to separate init file?
 (use-package markdown-mode
   :config
   (defun jmi/setup-markdown-writing-settings ()
     (interactive)
-    (whitespace-mode 0)
     (set-fill-column 120)
     (visual-line-mode)
-    (visual-fill-column-mode))
+    (olivetti-mode)
+    (writegood-mode)
+    (whitespace-mode 0))
 
-  :hook ((markdown-mode   . jmi/setup-markdown-writing-settings)))
+  :hook ((markdown-mode   . jmi/setup-markdown-writing-settings))
+
+  :after (writegood-mode olivetti))
 
 
 ;;; writing.init.el ends here

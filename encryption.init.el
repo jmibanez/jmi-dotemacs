@@ -6,6 +6,9 @@
 (use-package epa-file
   :ensure nil ;; System package
 
+  :custom
+  (epg-gpg-program "/usr/local/bin/gpg")
+
   :config
   (epa-file-enable))
 

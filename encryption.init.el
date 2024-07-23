@@ -3,11 +3,17 @@
 
 ;;; Code:
 
+(use-package epg
+  :ensure nil ;; System package
+
+  :config
+  (setq epg-pinentry-mode 'loopback))
+
 (use-package epa-file
   :ensure nil ;; System package
 
   :custom
-  (epg-gpg-program "/usr/local/bin/gpg")
+  (epg-gpg-program (concat jmi/homebrew-binary-path "gpg"))
 
   :config
   (epa-file-enable))

@@ -7,6 +7,16 @@
 
 ;;; Code:
 
+(setq jmi/homebrew-location
+      (or (and (file-directory-p "/usr/local/Cellar")
+               "/usr/local/Cellar")
+          "/opt/homebrew"))
+
+(setq jmi/homebrew-binary-path
+      (or (and (file-directory-p "/usr/local/Cellar")
+               "/usr/local/bin/")
+          "/opt/homebrew/bin/"))
+
 (setq jmi/eclipse-dir "/Applications/Eclipse JEE.app/Contents/Eclipse/")
 
 (defun jmi/parse-version-in-directory (dir-name)
@@ -30,7 +40,7 @@
 (setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
 (setq jmi/java-format-settings-file (expand-file-name "~/projects/intellijCompatFormatterProfile.xml"))
 
-(setq jmi/git "/usr/local/bin/git")
+(setq jmi/git (concat jmi/homebrew-binary-path "git"))
 
 (provide 'jmi-init-platform-paths)
 

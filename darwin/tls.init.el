@@ -15,7 +15,8 @@
 	       (mapcan (lambda (brew-pkg)
                          (directory-files brew-pkg t
                                           "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" nil))
-	               (directory-files "/usr/local/Cellar/" t
+
+                       (directory-files jmi/homebrew-location t
                                         "openssl.*" nil)))))
 (setq tls-connection-command (car tls-program))
 

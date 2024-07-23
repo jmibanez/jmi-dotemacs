@@ -379,4 +379,9 @@ nil if the current buffer contains only completed tasks."
 
   :after (org))
 
+;; Not org-related, but useful nonetheless. I probably should rename this module...
+(use-package hyperbole
+  :config
+  (hyperbole-mode 1))
+
 ;;; org.init.el ends here

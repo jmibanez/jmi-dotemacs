@@ -154,25 +154,60 @@
   :ensure nil)
 
 (use-package eshell-info-banner
-  :config
-  ;; Add additional macOS versions
-  (add-to-list 'eshell-info-banner--macos-versions
-               '("^13\\."        . "macOS Ventura"))
-  (add-to-list 'eshell-info-banner--macos-versions
-               '("^14\\."        . "macOS Sonoma"))
-  (add-to-list 'eshell-info-banner--macos-versions
-               '("^15\\."        . "macOS Sequoia"))
+  :init
+  ;; Annoyingly, we need to re-eval/redefine these, the implementation
+  ;; of eshell-info-banner--get-os-information-darwin uses a backquote
+  ;; to effectively cache the version at eval time, and
+  ;; eshell-info-banner--macos-versions doesn't get loaded until
+  ;; --get-macos-name is compiled.
+  (eval-when-compile
+    (defconst jmi/eshell-info-banner--macos-versions
+      '(("^10\\.0\\."  . "Mac OS X Cheetah")
+        ("^10\\.1\\."  . "Mac OS X Puma")
+        ("^10\\.2\\."  . "Mac OS X Jaguar")
+        ("^10\\.3\\."  . "Mac OS X Panther")
+        ("^10\\.4\\."  . "Mac OS X Tiger")
+        ("^10\\.5\\."  . "Mac OS X Leopard")
+        ("^10\\.6\\."  . "Mac OS X Snow Leopard")
+        ("^10\\.7\\."  . "Mac OS X Lion")
+        ("^10\\.8\\."  . "OS X Mountain Lion")
+        ("^10\\.9\\."  . "OS X Mavericks")
+        ("^10\\.10\\." . "OS X Yosemite")
+        ("^10\\.11\\." . "OS X El Capitan")
+        ("^10\\.12\\." . "macOS Sierra")
+        ("^10\\.13\\." . "macOS High Sierra")
+        ("^10\\.14\\." . "macOS Mojave")
+        ("^10\\.15\\." . "macOS Catalina")
+        ("^10\\.16\\." . "macOS Big Sur")
+        ("^11\\."      . "macOS Big Sur")
+        ("^12\\."      . "macOS Monterey")
+        ("^13\\."      . "macOS Ventura")
+        ("^14\\."      . "macOS Sonoma")
+        ("^15\\."      . "macOS Sequoia"))
+    "Versions of OSX and macOS and their name."))
 
-  ;; Annoyingly, we need to re-eval/redefine this function, since the
-  ;; implementation uses a backquote to effectively cache the version
-  ;; at eval time.
-  (defun eshell-info-banner--get-os-information-darwin ()
-    "See `eshell-info-banner--get-os-information'."
-    `(,(eshell-info-banner--get-macos-name
+  (defmacro jmi/eshell-info-banner--get-macos-name (version)
+    "Get the name of the current macOS or OSX system based on its VERSION."
+    `(cond
+      ,@(mapcar (lambda (major)
+                  `((string-match-p ,(car major)
+                                    ,version)
+                    ,(cdr major)))
+                jmi/eshell-info-banner--macos-versions)
+      (t "unknown version")))
+
+  (defun jmi/eshell-info-banner--get-os-information-darwin ()
+    "See `eshell-info-banner--get-os-information-darwin'."
+    `(,(jmi/eshell-info-banner--get-macos-name
         (s-trim
          (eshell-info-banner--shell-command-to-string "sw_vers -productVersion")))
       .
       ,(s-trim (eshell-info-banner--shell-command-to-string "uname -rs"))))
+
+  :config
+  (advice-add 'eshell-info-banner--get-os-information-darwin :override
+              #'jmi/eshell-info-banner--get-os-information-darwin)
+
 
   (setq eshell-info-banner-progress-bar-char "=")
 

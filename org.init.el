@@ -323,6 +323,10 @@ nil if the current buffer contains only completed tasks."
   :ensure nil
   :after (org))
 
+(use-package ob-shell
+  :ensure nil
+  :after (org))
+
 ;; Presentations
 (use-package org-present
   :config

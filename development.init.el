@@ -192,6 +192,8 @@
 
   (setq jmi/java-agent-lombok-arg (concat "-javaagent:" jmi/lombok-jar))
 
+  (setq eglot-connection-timeout nil)
+
   ;; Additional Eglot LSP config, specifically for -ts-mode variants
   (add-to-list 'eglot-server-programs
                `(java-ts-mode . ("jdtls"
@@ -292,6 +294,8 @@ handle it. If it is not a jar call ORIGINAL-FN."
                            (file-name-directory default-directory)) 2)))
       (eglot-ensure)))
 
+  :ensure-system-package (jdtls pyright solargraph)
+
   :hook
   ((java-ts-mode     . jmi/eglot-ensure-if-not-decompiled)
    (python-ts-mode   . eglot-ensure)
@@ -339,6 +343,13 @@ handle it. If it is not a jar call ORIGINAL-FN."
 
   :defer nil
   :ensure nil) ;; built-in as of 29.1
+
+(use-package java-ts-mode
+  :config
+  (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
+
+  :defer nil
+  :ensure nil)
 
 ;; Scala
 (use-package scala-mode)

@@ -41,6 +41,12 @@
                                           (file-truename default-directory)))
                        (jmi/all-workspaces)))))
 
+(defun jmi/projects-in-workspace (ws-path)
+  (seq-filter (lambda (project-path)
+                (string-prefix-p (file-truename ws-path)
+                                 (file-truename project-path)))
+              projectile-known-projects))
+
 (defun jmi/search-workspaces (prj-name)
   (seq-filter (lambda (prj-ws-tup)
                 (string-equal (car prj-ws-tup)
@@ -75,30 +81,23 @@
 
   (esh-command prj (prj-name ws-name)
                (:command
-                (if ws-name
-                    (if (string-equal ws-name "personal")
-                        (eshell/cd (concat "~/projects/personal/" prj-name))
-                      (eshell/cd (concat "~/projects/" ws-name "/src/" prj-name)))
+                (let ((candidates (cl-remove-if-not (lambda (p)
+                                                      (string-suffix-p (concat "/" prj-name "/") p))
+                                                    projectile-known-projects)))
+                  (message (format "%s" (length candidates)))
+                  (cond ((length= candidates 1)
+                         (eshell/cd (car candidates)))
 
-                  (progn
-                    (let ((ws-prj-matches
-                           (jmi/search-workspaces prj-name))
-                          (current-ws (jmi/current-workspace)))
+                        ((length> candidates 1)
+                         (error (format "Multiple candidate projects: %s" candidates)))
 
-                      (if (length> ws-prj-matches 1)
+                        ((and ws-name
+                              (length> candidates 1))
+                         (eshell/cd (cl-find-if (lambda (p) (string-match-p (regexp-quote ws-name) p))
+                                                candidates)))
 
-                          ;; Check local workspace
-                          (let ((in-ws-pkg-path (concat current-ws "/src/" prj-name)))
-                            (if (file-directory-p in-ws-pkg-path)
-                                (eshell/cd in-ws-pkg-path)
-                              (message "Duplicate projects for %s; specify workspace: (matches: %s)"
-                                       prj-name
-                                       (mapcar #'cdr ws-prj-matches))))
-
-                        (let* ((match-prj-ws-tup (first ws-prj-matches))
-                               (match-ws-name (cdr match-prj-ws-tup))
-                               (match-prj-name (car match-prj-ws-tup)))
-                          (eshell/cd (concat "~/projects/" match-ws-name "/src/" match-prj-name))))))))
+                        (t (error (format "No matching project %s"
+                                          prj-name ws-name))))))
                (:completion
                 ;; completion
                 (let ((project-ws-map (jmi/all-projects-across-workspaces))
@@ -107,9 +106,10 @@
                    (if current-ws
                        (mapcar (lambda (p)
                                  (-> p
-                                     cdr
-                                     file-name-nondirectory))
-                               (amz-workspace-currently-mapped-package-sources current-ws))
+                                     file-name-split
+                                     reverse
+                                     second))
+                               (jmi/projects-in-workspace current-ws))
                      (mapcar 'car
                              project-ws-map)))
                   (pcomplete-here*

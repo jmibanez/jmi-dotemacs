@@ -62,27 +62,6 @@
   ;; Archiving
   (setq org-archive-location "~/Documents/org-archive/%s::")
 
-  ;; XWiki support (ox-xwiki, handling xwiki: links)
-  (defun jmi/org-xw-link (link desc info)
-    "Transcode LINK into Xwiki format. Supports custom 'xwiki:'
-links for in-wiki links"
-    (let ((type (org-element-property :type link))
-          (path (org-element-property :path link)))
-      (if (member type '("xwiki"))
-          (if desc (format "[[%s>>url:%s]]" desc path)
-            (format "[[%s]]" path))
-        ;; Not an xwiki: link, call original
-        nil)))
-
-  (advice-add 'org-xw-link :before-until #'jmi/org-xw-link)
-
-  (defun jmi/org-xwiki-link-open (xwiki-dot-path)
-    (let ((amz-xwiki-url (s-replace "." "/" xwiki-dot-path)))
-      (browse-url (format "https://w.amazon.com/bin/view/%s" amz-xwiki-url))))
-
-  (org-link-set-parameters "xwiki"
-                           :follow #'jmi/org-xwiki-link-open)
-
   ;; Helper fns for opening various org task files
   (defun jmi/open-org-inbox ()
     (interactive)

@@ -194,6 +194,14 @@
 
   (setq eglot-connection-timeout nil)
 
+  (defun jmi/jdk-version-to-jdk-name (jdk-version-string)
+    (let ((jdk-version-number (string-to-number jdk-version-string)))
+      (cond ((>= jdk-version-number 9)
+             (format "JavaSE-%s" (truncate jdk-version-number)))
+            ((<= jdk-version-number 8)
+             (format "JavaSE-1.%s" (truncate jdk-version-number)))
+            (t (format "JavaSE-%s" jdk-version-string)))))
+
   ;; Additional Eglot LSP config, specifically for -ts-mode variants
   (add-to-list 'eglot-server-programs
                `(java-ts-mode . ("jdtls"
@@ -210,7 +218,7 @@
                                   (:java
                                    (:configuration
                                     (:runtimes ,(vconcat (mapcar (lambda (jvm-home-tuple)
-                                                                   `(:name ,(concat "Java" (car jvm-home-tuple))
+                                                                   `(:name ,(jmi/jdk-version-to-jdk-name (car jvm-home-tuple))
                                                                      :path ,(cdr jvm-home-tuple)))
                                                                jmi/jvm-homes-alist))))
                                    :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)

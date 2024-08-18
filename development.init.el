@@ -346,18 +346,14 @@ handle it. If it is not a jar call ORIGINAL-FN."
   ;; Shadow java style
   (add-to-list 'c-default-style '(java-mode . "hercules-java"))
 
+  (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
+
+
   :hook
   (java-ts-mode . jmi/java-mode-config)
 
   :defer nil
   :ensure nil) ;; built-in as of 29.1
-
-(use-package java-ts-mode
-  :config
-  (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
-
-  :defer nil
-  :ensure nil)
 
 ;; Scala
 (use-package scala-mode)

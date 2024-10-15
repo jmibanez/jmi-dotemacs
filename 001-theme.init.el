@@ -45,6 +45,7 @@
 ;; Breadcrumbs
 (use-package breadcrumb
   :config
+  (breadcrumb-mode)
   :demand t)
 
 (use-package mood-line

@@ -26,8 +26,7 @@ just contains:
      configuration for doing software development from within Emacs
 
    - [`navigation.init.el`](navigation.init.el) is where I configure
-     stuff I use to get around Emacs, namely
-     [Helm](https://emacs-helm.github.io/helm/)
+     stuff I use to get around Emacs
 
    - [`communication.init.el`](communication.init.el) contains
      config for stuff like IRC, Slack, RSS, etcetera

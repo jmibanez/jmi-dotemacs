@@ -449,7 +449,7 @@ handle it. If it is not a jar call ORIGINAL-FN."
 
 (use-package git-gutter-fringe
   :config
-  (setq git-gutter-fr:side 'right-fringe)
+  (setq git-gutter-fr:side 'left-fringe)
   (global-git-gutter-mode t)
 
   ;; Patch git-gutter:git-diff-arguments, since it places the starting

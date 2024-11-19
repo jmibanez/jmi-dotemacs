@@ -80,6 +80,11 @@
 (use-package bbdb
   :ensure t)
 
+(use-package xwwp
+  :config
+
+  (setq xwwp-search-prefix "https://duckduckgo.com/?q="))
+
 
 (use-package gnus
   :init

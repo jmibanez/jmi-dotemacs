@@ -27,6 +27,14 @@
                       (cons dir-item-base
                             init-files-list))))))))
 
+
+;; If we're debugging init, add more logging
+(when init-file-debug
+  (setq use-package-verbose t
+        use-package-expand-minimally nil
+        use-package-compute-statistics t
+        debug-on-error t))
+
 ;; Packages
 (require 'package)
 (add-to-list 'package-archives

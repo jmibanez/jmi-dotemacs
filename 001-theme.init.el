@@ -30,23 +30,13 @@
 
     (global-ligature-mode 't)))
 
-;; Load theme
-(use-package modus-themes
-  :init
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs t
-        modus-themes-syntax '(yellow-comments)
-        modus-themes-mode-line '(accented moody borderless)
-        modus-themes-org-blocks 'gray-background
-        modus-themes-markup '(background italic))
-
+(use-package anti-zenburn-theme
   :config
-  (load-theme 'modus-vivendi-tinted :no-confirm)
-  (setq jmi/selected-theme 'modus-vivendi-tinted)
+  (load-theme 'anti-zenburn :no-confirm)
+  (setq jmi/selected-theme 'anti-zenburn)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14")
   (set-frame-font "Berkeley Mono-14" nil t t))
-
 
 (use-package all-the-icons
   :if
@@ -112,6 +102,6 @@
 (setq pop-up-windows t)
 
 ;; Indicate buffer boundaries
-(setq-default indicate-buffer-boundaries '((top . left) (t . right)))
+(setq-default indicate-buffer-boundaries '((t . right)))
 
 ;;; 001-theme.init.el ends here

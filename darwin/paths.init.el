@@ -17,6 +17,9 @@
                "/usr/local/bin/")
           "/opt/homebrew/bin/"))
 
+(unless (member jmi/homebrew-binary-path exec-path)
+  (push jmi/homebrew-binary-path exec-path))
+
 (setq jmi/eclipse-dir "/Applications/Eclipse JEE.app/Contents/Eclipse/")
 
 (defun jmi/parse-version-in-directory (dir-name)

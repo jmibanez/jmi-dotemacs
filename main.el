@@ -34,7 +34,7 @@
 (package-activate-all)
 
 ;; Bootstrap: Ensure bootstrap packages are installed
-(defvar jmi/bootstrap-packages '(s use-package use-package-ensure-system-package session)
+(defvar jmi/bootstrap-packages '(s use-package use-package-ensure-system-package session system-packages)
   "Packages that should be installed as early as possible.")
 
 (defun jmi/bootstrap-packages-installed-p ()
@@ -55,6 +55,7 @@
 
 
 (require 'use-package)
+(require 'system-packages)
 (require 'use-package-ensure-system-package)
 (require 's)
 

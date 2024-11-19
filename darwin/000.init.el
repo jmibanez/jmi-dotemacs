@@ -9,6 +9,9 @@
 (setq mac-command-modifier 'super)
 (setq mac-option-modifier '(:mouse alt :function meta :ordinary meta))
 
+;; Configure system-packages-package-manager, ensure we have it set to brew
+(setq system-packages-package-manager 'brew)
+
 ;; We mark that we've provided platform-specific initialization
 (provide 'jmi-init-platform)
 

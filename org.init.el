@@ -112,6 +112,11 @@
                            :store  #'jmi/org-project-store-link)
 
 
+  (defun jmi/org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
   :hook
   ;; I use windmove (with custom keybindings), so in general I don't
   ;; need this, but it's a good idea nonetheless to avoid conflict
@@ -121,7 +126,8 @@
   ;;  (org-shiftdown-final  .  windmove-down)
   ;;  (org-shiftright-final .  windmove-right))
 
-  ((org-capture-before-finalize . jmi/tick-gnus-message-if-linked))
+  ((org-capture-before-finalize . jmi/tick-gnus-message-if-linked)
+   (org-after-todo-statistics   . jmi/org-summary-todo))
 
 
 

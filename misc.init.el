@@ -13,6 +13,8 @@
 
 ;; At midnight, cleanup
 (use-package midnight
+  :config
+  (midnight-mode)
   :ensure nil)
 
 ;; symon

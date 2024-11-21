@@ -36,11 +36,14 @@
 ;; wttrin
 (use-package wttrin
   :config
-  (setq wttrin-default-cities
-        '("Sydney" "Manila" "New York" "San Francisco" "London")
+  (setq wttrin-default-locations
+        '("Sydney, AU" "Manila, PH" "New York, NY" "San Francisco, CA" "London, UK")
         wttrin-default-accept-language
         '("Accept-Language" . "en-US,en;q=0.8")
-        jmi/default-wttrin-city "Sydney")
+
+        wttrin-font-name "Berkeley Mono"
+
+        jmi/default-wttrin-location "Sydney, AU")
 
   (defun jmi/wttrin-fetch-raw-string (query)
     (let ((url-request-extra-headers '(("X-Emacs-Package" . "wttrin.el")))

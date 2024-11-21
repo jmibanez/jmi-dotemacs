@@ -3,9 +3,9 @@
 ;;; Commentary:
 
 ;;; Customizations for running my terminal sessions in Emacs,
-;;; including some eshell customizations.  I've not yet decided whether
-;;; to use eshell or vterm, but I'm leaning towards vterm at the
-;;; moment.
+;;; including some eshell customizations. After more than a year of
+;;; using eshell, I'm sold and only keep vterm around for the
+;;; occasional tool that needs a full terminal emulator.
 
 ;;; Code:
 
@@ -144,9 +144,6 @@
                (:completion
                 (pcomplete-here* default-directory)))
 
-
-  (defun pcomplete/ebb ()
-    (pcomplete-here* '("build" "release" "test")))
 
   :bind
   (("C-s-t" .   eshell))

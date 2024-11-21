@@ -67,4 +67,14 @@
   :hook
   ((emacs-startup   . (lambda () (unison-daemon t)))))
 
+;; Automatically update packages
+(use-package auto-package-update
+  :config
+  ;; Hide results
+  (setq auto-package-update-hide-results 't)
+  ;; ... at startup
+  (auto-package-update-maybe)
+  ;; ... specifically check at noon
+  (auto-package-update-at-time "12:00"))
+
 ;;; misc.init.el ends here

@@ -88,6 +88,11 @@
 
       (:count-separator . ?×)))
 
+  (defun jmi/mood-line-segment-major-mode ()
+    (propertize (all-the-icons-icon-for-mode major-mode)
+                'help-echo (format "%s" major-mode)
+                'face `(:family ,(all-the-icons-icon-family-for-buffer))))
+
   (setq mood-line-glyph-alist jmi/mood-line-glyphs)
   (setq mood-line-format
         (mood-line-defformat
@@ -104,7 +109,7 @@
           (mood-line-segment-scroll))
          :right
          (((mood-line-segment-vc)         . "  ")
-          ((mood-line-segment-major-mode) . "  ")
+          ((jmi/mood-line-segment-major-mode) . "  ")
           ((mood-line-segment-misc-info)  . "  ")
           ((mood-line-segment-checker)    . "  ")
           ((mood-line-segment-process)    . "  "))))

@@ -30,7 +30,7 @@
   (setq-default elfeed-search-filter jmi/default-elfeed-search-filter)
   (defun jmi/use-bigger-elfeed-font ()
     (set-face-attribute 'variable-pitch (selected-frame)
-                        :font (font-spec :family "helvetica" :size 12)))
+                        :font (font-spec :family "helvetica" :size 14)))
 
   (defun jmi/elfeed-jump-to-bookmark-entries ()
     (interactive)

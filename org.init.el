@@ -104,7 +104,7 @@
         (`html (format "<a href=\"file://%s\">%s</a>" path desc))
         (`latex (format "\\href{file://%s}{%s}" path desc))
         (`ascii (format "%s (%s)" desc path))
-        (t path))))
+        (_ path))))
 
   (org-link-set-parameters "project"
                            :follow #'jmi/org-project-open

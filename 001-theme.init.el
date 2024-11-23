@@ -91,7 +91,7 @@
   (defun jmi/mood-line-segment-major-mode ()
     (propertize (all-the-icons-icon-for-mode major-mode)
                 'help-echo (format "%s" major-mode)
-                'face `(:family ,(all-the-icons-icon-family-for-buffer))))
+                'face `(:height 0.8 :family ,(all-the-icons-icon-family-for-buffer))))
 
   (setq mood-line-glyph-alist jmi/mood-line-glyphs)
   (setq mood-line-format

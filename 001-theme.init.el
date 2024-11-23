@@ -98,10 +98,10 @@
         (mood-line-defformat
          :left
          (((mood-line-segment-modal)            . " ")
+          ((mood-line-segment-project)          . "")
           ((or (mood-line-segment-buffer-status)
                (mood-line-segment-client)
-               " ")                             . " ")
-          ((mood-line-segment-project)          . "|")
+               " ")                             . "")
           ((mood-line-segment-buffer-name)            . "  ")
           ((mood-line-segment-anzu)                   . "  ")
           ((mood-line-segment-multiple-cursors)       . "  ")

@@ -209,12 +209,14 @@
   (setq eshell-info-banner-progress-bar-char "=")
 
   ;; Exclude macOS system volumes (Preboot, VM, etc.) except Data
-  ;; which has the user home dir
+  ;; which has the user home dir. Also ignore simulator images
   (when (eq system-type 'darwin)
     (setq eshell-info-banner-exclude-partitions
           '("Preboot"
             "VM"
-            "Update")))
+            "Update"
+            "watchOS"
+            "iOS")))
 
   :ensure-system-package duf
 

@@ -53,4 +53,5 @@
   :demand t
   :config (gcmh-mode 1))
 
+(setq custom-file (concat jmi/my-emacs-init-path "001-custom.init.el"))
 ;;; 000.init.el ends here

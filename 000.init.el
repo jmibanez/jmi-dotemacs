@@ -22,7 +22,7 @@
   (scroll-bar-mode -1))
 
 ;; On macOS, turn off titlebars
-(add-to-list 'default-frame-alist '(undecorated-round . t))
+(add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; User Details
 (setq user-full-name "Jan Michael Ibanez")

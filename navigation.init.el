@@ -142,10 +142,6 @@
   (add-to-list 'session-globals-exclude 'consult--buffer-history))
 
 (use-package fill-column-indicator
-  :init
-  ;; Change the color for the indicator to match Solarized Dark
-  (setq fci-rule-color "#888888")
-
   :config
   (define-globalized-minor-mode jmi-global-fci-mode
     fci-mode

@@ -25,7 +25,7 @@
 (add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; User Details
-(setq user-full-name "Jan Michael Ibanez")
+(setq user-full-name "Jan Michael Ibañez")
 (setq user-mail-address "jm@jmibanez.com")
 
 ;; exec-path/PATH fixups

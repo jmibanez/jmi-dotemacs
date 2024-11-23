@@ -196,4 +196,10 @@
   :bind
   (("M-`"   .  ace-window)))
 
+;; Ensure window config can be undone
+(use-package winner
+  :config
+  (winner-mode)
+  :ensure nil)
+
 ;;; navigation.init.el ends here

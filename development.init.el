@@ -198,9 +198,9 @@
     (let ((jdk-version-number (string-to-number jdk-version-string)))
       (cond ((>= jdk-version-number 9)
              (format "JavaSE-%s" (truncate jdk-version-number)))
-            ((<= jdk-version-number 8)
+            ((>= jdk-version-number 6)
              (format "JavaSE-1.%s" (truncate jdk-version-number)))
-            (t (format "JavaSE-%s" jdk-version-string)))))
+            (t (format "J2SE-%s" jdk-version-string)))))
 
   ;; Additional Eglot LSP config, specifically for -ts-mode variants
   (add-to-list 'eglot-server-programs

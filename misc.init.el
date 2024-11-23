@@ -6,6 +6,9 @@
 
 ;;; Code:
 
+;; Use y/n instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
+
 (use-package page-ext
   :init
   (put 'narrow-to-page 'disabled nil)

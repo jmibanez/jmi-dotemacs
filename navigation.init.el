@@ -202,4 +202,11 @@
   (winner-mode)
   :ensure nil)
 
+;; Breadcrumbs
+(use-package breadcrumb
+  :config
+  (breadcrumb-mode)
+  :demand t)
+
+
 ;;; navigation.init.el ends here

@@ -56,12 +56,6 @@
   :if
   (display-graphic-p))
 
-;; Breadcrumbs
-(use-package breadcrumb
-  :config
-  (breadcrumb-mode)
-  :demand t)
-
 (use-package mood-line
   :config
   ;; Use Fira Code-compatible glyphs, which are also compatible with

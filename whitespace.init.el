@@ -9,6 +9,8 @@
           lines-tail
           trailing))
   :config
+  (setq whitespace-line-column nil)
+
   ;; Don't enable in certain places, including Gnus etc.
   (setq whitespace-global-modes
         '(not org-issues-mode

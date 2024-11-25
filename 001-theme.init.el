@@ -53,6 +53,10 @@
   (set-frame-font "Berkeley Mono-14" nil t t))
 
 (use-package all-the-icons
+  :config
+  (push
+   '(groovy-mode  all-the-icons-fileicon "groovy" :face all-the-icons-green)
+   all-the-icons-mode-icon-alist)
   :if
   (display-graphic-p))
 
@@ -65,7 +69,7 @@
   (defconst jmi/mood-line-glyphs
     '((:checker-info . ?↳)
       (:checker-issues . ?→)
-      (:checker-good . ?✓)
+      (:vc-good . ?-)
       (:checker-checking . ?⟳)
       (:checker-errored . ?x)
       (:checker-interrupted . ?=)
@@ -74,7 +78,7 @@
       (:vc-needs-merge . ?⟷)
       (:vc-needs-update . ?↓)
       (:vc-conflict . ?x)
-      (:vc-good . ?✓)
+      (:vc-good . ?-)
 
       (:buffer-narrowed . ?◢)
       (:buffer-modified . ?◊)
@@ -85,9 +89,14 @@
       (:count-separator . ?×)))
 
   (defun jmi/mood-line-segment-major-mode ()
-    (propertize (all-the-icons-icon-for-mode major-mode)
-                'help-echo (format "%s" major-mode)
-                'face `(:height 0.8 :family ,(all-the-icons-icon-family-for-buffer))))
+    (let ((icon (all-the-icons-icon-for-mode major-mode
+                                             :v-adjust 0
+                                             :height 0.8)))
+      (if (eq icon major-mode)
+          mode-name
+        (propertize icon
+                    'help-echo mode-name))))
+
 
   (setq mood-line-glyph-alist jmi/mood-line-glyphs)
   (setq mood-line-format

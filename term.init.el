@@ -226,20 +226,12 @@
   :demand t)
 
 
-(use-package eshell-git-prompt
-  :config
-  (eshell-git-prompt-use-theme 'robbyrussell)
-
-  :demand)
-
 (use-package eshell-prompt-extras
   :config
 
   (setq eshell-highlight-prompt nil
         eshell-prompt-function 'epe-theme-multiline-with-status
         epe-path-style 'full)
-
-  (epe-theme-dakrone)
 
   :after esh-opt
   :demand t)

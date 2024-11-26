@@ -87,7 +87,11 @@
 (use-package xwwp
   :config
 
-  (setq xwwp-search-prefix "https://duckduckgo.com/?q="))
+  (setq xwwp-search-prefix "https://duckduckgo.com/?q=")
+
+  :bind
+  ((:map xwidget-webkit-mode-map
+         ("l"   . xwwp-follow-link))))
 
 
 (use-package gnus

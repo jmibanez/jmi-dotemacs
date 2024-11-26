@@ -36,21 +36,24 @@
   :config
   (load-theme 'anti-zenburn :no-confirm)
 
-  ;; Remap ansi-color-<color> faces
-  (custom-set-faces
-   `(ansi-color-black  ((t (:foreground "#232333"))))
-   `(ansi-color-red ((t (:foreground "#6c1f1c"))))
-   `(ansi-color-green ((t (:foreground "#23733c"))))
-   `(ansi-color-yellow ((t (:foreground "#732f2c"))))
-   `(ansi-color-blue ((t (:foreground "#0f2050"))))
-   `(ansi-color-magenta ((t (:foreground "#806080"))))
-   `(ansi-color-cyan ((t (:foreground "#336c6c"))))
-   `(ansi-color-gray ((t (:foreground "#c0c0c0")))))
-
   (setq jmi/selected-theme 'anti-zenburn)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14")
-  (set-frame-font "Berkeley Mono-14" nil t t))
+  (set-frame-font "Berkeley Mono-14" nil t t)
+
+  :custom-face
+  ;; Remap ansi-color-<color> faces
+  (ansi-color-black  ((t (:foreground "#232333"))))
+  (ansi-color-red ((t (:foreground "#6c1f1c"))))
+  (ansi-color-green ((t (:foreground "#23733c"))))
+  (ansi-color-yellow ((t (:foreground "#732f2c"))))
+  (ansi-color-blue ((t (:foreground "#0f2050"))))
+  (ansi-color-magenta ((t (:foreground "#806080"))))
+  (ansi-color-cyan ((t (:foreground "#336c6c"))))
+  (ansi-color-gray ((t (:foreground "#c0c0c0"))))
+
+  ;; Also fix company-preview so it uses a light grey foreground, default black is unreadable
+  (company-preview ((t (:background "#603a60" :foreground "#FFFFFF")))))
 
 (use-package all-the-icons
   :config

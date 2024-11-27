@@ -34,7 +34,7 @@
 				(string-match "/shims" path-elem))
                               exec-path))
 
-;; Ensure /usr/loca/bin is also in our exec-path
+;; Ensure /usr/local/bin is also in our exec-path
 (unless (member "/usr/local/bin" exec-path)
   (push "/usr/local/bin" exec-path))
 

@@ -108,33 +108,14 @@
   (setq cider-repl-popup-stacktraces t)
   (setq cider-auto-select-error-buffer t)
   (setq cider-jdk-src-paths (jmi/cons-jdk-src-paths jmi/jvm-homes-alist))
-  (setq cider-jack-in-lein-plugins
-        '(("refactor-nrepl" "3.9.1" :predicate cljr--inject-middleware-p)
-          ("cider/cider-nrepl" "0.44.0")))
   (setq cider-jack-in-cljs-dependencies
         '(("cider/piggieback" "0.5.3")))
-  ;; Disable refactor-nrepl and clj-refactor for now
-  (setq cljr-inject-dependencies-at-jack-in t)
-
-  :config
-  ;; Shim to get slamhound working with latest CIDER -- alias
-  ;; nrepl-send-string-sync to nrepl-sync-request:eval
-
-  (defun nrepl-send-string-sync (s)
-    (nrepl-sync-request:eval s
-                             (cider-current-connection)
-                             (cider-nrepl-eval-session)
-                             (cider-current-ns)))
 
   :after
   jmi-init-platform-paths)
 
 (use-package clj-refactor
   :after cider)
-
-(use-package slamhound
-  :after cider
-  :disabled)
 
 ;; JS2 mode
 (use-package js2-mode

@@ -76,6 +76,11 @@
   (setq eshell-review-quick-commands nil)
   (setq eshell-smart-space-goes-to-end t)
 
+  ;; A history ring size of 128 is too small; use something like 1k
+  ;; entries (which should be fine). Consider bumping this up to
+  ;; something like 4k or 10k...
+  (setq eshell-history-size 1000)
+
   (setq eshell-aliases-file (concat jmi/my-emacs-init-path "eshell/aliases"))
   (setq eshell-rc-script (concat jmi/my-emacs-init-path "eshell/rc"))
 

@@ -175,6 +175,15 @@
 
   (setq eglot-connection-timeout nil)
 
+  ;; For downloading Lombok, url-copy-file in url
+  (require 'url)
+
+  (defun jmi/ensure-lombok-jar-exists ()
+    (if (not (file-exists-p jmi/lombok-jar))
+        (progn
+          (mkdir (file-name-directory jmi/lombok-jar) t)
+          (url-copy-file "https://projectlombok.org/downloads/lombok.jar" jmi/lombok-jar t))))
+
   (defun jmi/jdk-version-to-jdk-name (jdk-version-string)
     (let ((jdk-version-number (string-to-number jdk-version-string)))
       (cond ((>= jdk-version-number 9)
@@ -218,6 +227,7 @@
              ".eglot-java"
              (first (last (file-name-split
                            (file-name-directory default-directory)) 2)))
+      (jmi/ensure-lombok-jar-exists)
       (eglot-ensure)))
 
   :ensure-system-package (jdtls pyright solargraph)

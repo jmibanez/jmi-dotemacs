@@ -18,6 +18,7 @@
               org-issues-ticket-mode
               org-issues-sprint-mode
               org-issues-search-mode
+              org-mode
               gnus-mode))
 
   (global-whitespace-mode)

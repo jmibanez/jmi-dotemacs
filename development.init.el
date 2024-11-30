@@ -70,7 +70,12 @@
   (if (file-exists-p "~/.quicklisp/slime-helper.el")
       (load-file "~/.quicklisp/slime-helper.el"))
 
-  (setq inferior-lisp-program "sbcl"))
+  (setq inferior-lisp-program "sbcl")
+
+  :bind (:map slime-mode-map
+              ("M-TAB"  )))
+
+(use-package slime-company)
 
 
 (use-package clojure-mode
@@ -318,8 +323,6 @@
 (use-package company-quickhelp
   :config
   (company-quickhelp-mode))
-
-(use-package slime-company)
 
 ;; Go
 (use-package go-mode)

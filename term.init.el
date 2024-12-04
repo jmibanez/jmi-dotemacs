@@ -273,6 +273,7 @@
 
   :hook (vterm-mode  . jmi/vterm-customizations)
 
+  :ensure-system-package cmake
   :demand)
 
 (use-package eshell-vterm

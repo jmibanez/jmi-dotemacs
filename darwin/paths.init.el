@@ -29,6 +29,9 @@
          (match-string 1 dir-name))
 
         ((string-match "amazon-corretto-\\([[:digit:]]+\\).jdk" dir-name)
+         (format "%s.0" (match-string 1 dir-name)))
+
+        ((string-match "jdk-\\([[:digit:]]+\\).jdk" dir-name)
          (format "%s.0" (match-string 1 dir-name)))))
 
 (setq jmi/jvm-homes-alist

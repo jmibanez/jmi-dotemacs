@@ -36,12 +36,14 @@
 
 (setq jmi/jvm-homes-alist
       (let ((base "/Library/Java/JavaVirtualMachines/"))
-        (mapcar (lambda (candidate)
-                  (let ((path (concat base candidate "/Contents/Home/"))
-                        (version (jmi/parse-version-in-directory candidate)))
-                    (cons version path)))
-                (directory-files base nil
-                                 "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
+        (cl-remove-if (lambda (tup)
+                        (not (car tup)))
+                      (mapcar (lambda (candidate)
+                                (let ((path (concat base candidate "/Contents/Home/"))
+                                      (version (jmi/parse-version-in-directory candidate)))
+                                  (cons version path)))
+                              (directory-files base nil
+                                               "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)")))))
 
 (setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
 (setq jmi/java-format-settings-file (expand-file-name "~/projects/intellijCompatFormatterProfile.xml"))

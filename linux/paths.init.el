@@ -24,12 +24,14 @@
 
 (setq jmi/jvm-homes-alist
       (let ((base "/usr/lib/jvm/"))
-        (mapcar (lambda (candidate)
-                  (let ((path (concat base candidate))
-                        (version (jmi/parse-version-in-directory candidate)))
-                    (cons version path)))
-                (directory-files base nil
-                                 "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
+        (cl-remove-if (lambda (tup)
+                        (not (car tup)))
+                      (mapcar (lambda (candidate)
+                                (let ((path (concat base candidate))
+                                      (version (jmi/parse-version-in-directory candidate)))
+                                  (cons version path)))
+                              (directory-files base nil
+                                               "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)")))))
 
 ;; (setq jmi/jvm-homes-alist
 ;;       '(("1.8" . "/usr/lib/jvm/openjdk-8")))

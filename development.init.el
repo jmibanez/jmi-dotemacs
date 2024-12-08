@@ -179,11 +179,8 @@
 
   (setq jmi/java-agent-lombok-arg (concat "-javaagent:" jmi/lombok-jar))
 
-  (setq eglot-connection-timeout nil)
-
   ;; For downloading Lombok, url-copy-file in url
   (require 'url)
-
   (defun jmi/ensure-lombok-jar-exists ()
     (if (not (file-exists-p jmi/lombok-jar))
         (progn

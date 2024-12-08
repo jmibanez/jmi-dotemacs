@@ -55,7 +55,7 @@
 (bind-keys :prefix-map jmi/my-jump-keys-map
            :prefix "<f8>"
 
-           ("c c"      . compile)
+           ("c c"      . projectile-compile-project)
            ("f p"      . jmi/toggle-http-proxy)
            ("f f"      . jmi/do-mail-sync))
 

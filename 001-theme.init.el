@@ -53,7 +53,10 @@
   (ansi-color-gray ((t (:foreground "#c0c0c0"))))
 
   ;; Also fix company-preview so it uses a light grey foreground, default black is unreadable
-  (company-preview ((t (:background "#603a60" :foreground "#FFFFFF")))))
+  (company-preview ((t (:background "#603a60" :foreground "#FFFFFF"))))
+
+  ;; Fix epe-git-dir-face to be readable against grey (default yellow is too bright)
+  (epe-git-dir-face ((t (:foreground "#23733c")))))
 
 (use-package all-the-icons
   :config

@@ -117,7 +117,13 @@
 (use-package posframe)
 (use-package vertico-posframe
   :config
-  (vertico-posframe-mode))
+
+  ;; Shim for latest vertico which renamed vertico--resize-window to vertico--resize
+  (cl-defmethod vertico--resize
+    (&context ((vertico-posframe-mode-workable-p) (eql t))))
+
+  (vertico-posframe-mode)
+  :after posframe)
 
 ;; Window move via cmd-ctrl-(vim keys)
 ;; Changed to be consistent with how we've bound things in our iTerm2 config

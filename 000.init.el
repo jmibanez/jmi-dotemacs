@@ -48,6 +48,9 @@
 ;; Finally, set up defaults for use-package
 (setq use-package-always-ensure t)
 
+;; Add pkg for init-only defined packages that we can leverage use-package on
+(add-to-list 'load-path (concat jmi/my-emacs-init-path "/pkg"))
+
 ;; Enable magic GC hack
 (use-package gcmh
   :ensure t

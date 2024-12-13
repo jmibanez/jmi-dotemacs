@@ -135,4 +135,11 @@
 ;; Indicate buffer boundaries
 (setq-default indicate-buffer-boundaries '((t . right)))
 
+;; Startup screen
+(use-package jmi-startup-screen
+  :ensure nil
+  :demand t
+  :hook (emacs-startup . jmi/startup-screen))
+
+
 ;;; 001-theme.init.el ends here

@@ -83,7 +83,10 @@
       (message "Not a gnus link")))
 
   ;; Custom link: projects
+  (declare-function projectile-switch-project-by-name "projectile")
   (defun jmi/org-project-open (path _)
+    (if (not (featurep 'projectile))
+        (require 'projectile))
     (projectile-switch-project-by-name path))
 
   (defun jmi/org-project-store-link ()
@@ -135,8 +138,6 @@
   :bind ((:map jmi/my-jump-keys-map
                ("l"      .  org-store-link)
                ("a"      .  org-agenda)))
-
-  :after (projectile)
   :demand t)
 
 ;; org-roam as my KB on top of org in general

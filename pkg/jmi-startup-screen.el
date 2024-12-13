@@ -11,7 +11,6 @@
 (defun jmi/startup-screen ()
   "Function to be used as emacs-startup-hook for startup screen."
   (with-eval-after-load 'jmi/all-config-loaded
-    (require 'projectile)
     (require 'org)
     (require 'org-roam)
     (require 'eshell)

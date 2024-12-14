@@ -8,12 +8,15 @@
 (use-package elfeed
   :init
   (setq elfeed-feeds
-        '(("https://blog.jmibanez.com/feed.xml" blog)
+        `(("https://blog.jmibanez.com/feed.xml" blog)
           ("https://xkcd.com/atom.xml" comics)
           ("https://www.gpf-comics.com/rss/main_comic_rss.xml" comics)
           ("http://leancrew.com/all-this/feed/" blog)
           ("https://daringfireball.net/feeds/main" blog apple)
-          ("http://feeds.arstechnica.com/arstechnica/index" news)
+          (,(format "https://arstechnica.com/feed/?t=%s"
+                    (auth-info-password (car (auth-source-search :host "arstechnica.com"
+                                                                 :user "elfeed^jm@jmibanez.com"))))
+           news)
           ("https://www.jwz.org/blog/feed/" blog)
           ("https://marco.org/rss" blog apple dev)
           ("https://mjtsai.com/blog/feed/" blog apple dev)

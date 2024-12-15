@@ -122,7 +122,9 @@
           ((mood-line-segment-checker)    . "  ")
           ((mood-line-segment-process)    . "  "))))
 
-  (mood-line-mode))
+  (mood-line-mode)
+
+  :after all-the-icons)
 
 ;; Pop-up windows when display-buffer
 (setq pop-up-windows t)

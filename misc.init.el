@@ -43,26 +43,9 @@
   :config
   (setq wttrin-default-locations
         '("Sydney, AU" "Manila, PH" "New York, NY" "San Francisco, CA" "London, UK")
-        wttrin-default-accept-language
-        '("Accept-Language" . "en-US,en;q=0.8")
-
         wttrin-font-name "Berkeley Mono"
 
         jmi/default-wttrin-location "Sydney, AU")
-
-  (defun jmi/wttrin-fetch-raw-string (query)
-    (let ((url-request-extra-headers '(("X-Emacs-Package" . "wttrin.el")))
-          (url-user-agent "curl"))
-      (add-to-list 'url-request-extra-headers wttrin-default-accept-language)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           (concat "http://wttr.in/" query)
-           (lambda (status) (switch-to-buffer (current-buffer))))
-        (decode-coding-string (buffer-string) 'utf-8))))
-
-
-  (advice-add 'wttrin-fetch-raw-string
-              :override #'jmi/wttrin-fetch-raw-string)
 
   :bind
   ((:map jmi/my-jump-keys-map

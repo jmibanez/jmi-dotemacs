@@ -94,7 +94,8 @@
                          (eshell/cd (car candidates)))
 
                         ((length> candidates 1)
-                         (error (format "Multiple candidate projects: %s" candidates)))
+                         (eshell/cd (completing-read "Multiple candidate ptojects: "
+                                                     candidates)))
 
                         ((and ws-name
                               (length> candidates 1))

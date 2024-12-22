@@ -13,9 +13,10 @@
 ;; As early as possible, disable menu, scroll, and tool bar
 (tool-bar-mode -1)
 
-;; If not on macOS, turn off the menu bar
-(when (not (eq system-type 'darwin))
-    (menu-bar-mode -1))
+;; If not on macOS (or in a terminal), turn off the menu bar
+(when (not (and (eq system-type 'darwin)
+                (display-graphic-p)))
+  (menu-bar-mode -1))
 
 ;; Graphic terminals: Don't display scroll bar
 (when (display-graphic-p)

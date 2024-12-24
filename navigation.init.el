@@ -73,7 +73,8 @@
   (("s-o"    . projectile-switch-project)
    ("s-T"    . projectile-toggle-between-implementation-and-test))
 
-  :after (vertico))
+  :after (vertico)
+  :defer t)
 
 ;; Savehist, persist history (so Vertico works better)
 (use-package savehist
@@ -170,7 +171,8 @@
   :config
   (treemacs-resize-icons 16)
   (treemacs-follow-mode)
-  (treemacs-git-mode 'deferred))
+  (treemacs-git-mode 'deferred)
+  :defer t)
 
 (use-package treemacs-all-the-icons
   :after (treemacs))

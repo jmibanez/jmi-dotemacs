@@ -88,7 +88,8 @@
     (DELETE 2)
     (HEAD 2)
     (ANY 2)
-    (context 2)))
+    (context 2))
+  :mode "\\.clj$")
 
 (defun jmi/cons-src-path-for-jvm-home (pair)
   "Return path for src.zip for JVM Home alist entry in PAIR"
@@ -117,7 +118,7 @@
         '(("cider/piggieback" "0.5.3")))
 
   :after
-  jmi-init-platform-paths)
+  (jmi-init-platform-paths clojure-mode))
 
 (use-package clj-refactor
   :after cider)

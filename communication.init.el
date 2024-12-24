@@ -69,7 +69,8 @@
   :after jmi-keybindings)
 
 
-(use-package circe)
+(use-package circe
+  :defer t)
 
 (use-package w3m
   :config

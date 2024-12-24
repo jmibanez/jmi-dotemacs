@@ -17,11 +17,11 @@
   (if (not (file-directory-p base-path))
       '()
 
-    (remove-if (lambda (f-or-d)
-                 (or (string-equal "." f-or-d)
-                     (string-equal ".." f-or-d)
-                     (not (file-directory-p (concat base-path f-or-d)))))
-               (directory-files base-path))))
+    (cl-remove-if (lambda (f-or-d)
+                    (or (string-equal "." f-or-d)
+                        (string-equal ".." f-or-d)
+                        (not (file-directory-p (concat base-path f-or-d)))))
+                  (directory-files base-path))))
 
 (defun jmi/all-projects-across-workspaces ()
   (let ((all-ws (jmi/list-directories-only "~/projects/")))
@@ -101,7 +101,7 @@
                          (eshell/cd (cl-find-if (lambda (p) (string-match-p (regexp-quote ws-name) p))
                                                 candidates)))
 
-                        (t (error (format "No matching project %s"
+                        (t (error (format "No matching project %s in %s"
                                           prj-name ws-name))))))
                (:completion
                 ;; completion

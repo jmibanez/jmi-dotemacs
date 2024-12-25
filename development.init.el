@@ -313,6 +313,12 @@
   :hook
   (after-init . global-company-mode))
 
+(use-package dape
+  :config
+  (setq dape-buffer-window-arrangement 'right)
+
+  :after eglot)
+
 ;; Company backends
 (use-package company-dict)
 (use-package company-go

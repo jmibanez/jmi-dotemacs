@@ -394,19 +394,6 @@
   (setq git-gutter-fr:side 'left-fringe)
   (global-git-gutter-mode t)
 
-  ;; Patch git-gutter:git-diff-arguments, since it places the starting
-  ;; rev in the wrong place in the arglist
-  (defun jmi/git-gutter:git-diff-arguments (file)
-    (let (args)
-      (unless (string= git-gutter:diff-option "")
-        (setq args (nreverse (split-string git-gutter:diff-option))))
-      (when (git-gutter:revision-set-p)
-        (push git-gutter:start-revision args))
-      (push "--" args)
-      (nreverse (cons file args))))
-  (advice-add 'git-gutter:git-diff-arguments
-              :override #'jmi/git-gutter:git-diff-arguments)
-
   :after
   magit)
 

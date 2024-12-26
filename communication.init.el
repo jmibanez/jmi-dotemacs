@@ -204,11 +204,11 @@
 
 (use-package alert
   :config
-  (setq alert-default-style 'notifier)
+  (setq alert-default-style 'osx-notifier)
 
   ;; We need to replace the -appIcon switch with -contentImage, as
   ;; terminal-notifier can't replace the notification icon
-  (defun alert-notifier-notify (info)
+  (defun jmi/alert-notifier-notify (info)
     (if alert-notifier-command
         (let ((args
                (list "-title"   (alert-encode-string (plist-get info :title))
@@ -216,6 +216,10 @@
                      "-message" (alert-encode-string (plist-get info :message)))))
           (apply #'call-process alert-notifier-command nil nil nil args))
       (alert-message-notify info)))
+
+  (advice-add 'alert-notifier-notify :override
+              #'jmi/alert-notifier-notify)
+
 
   :ensure-system-package terminal-notifier
 

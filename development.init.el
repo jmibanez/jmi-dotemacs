@@ -389,6 +389,11 @@
   :after
   'jmi-init-platform-paths)
 
+(use-package git-link
+  :bind
+  ((:map jmi/my-jump-keys-map
+         ("f l" .  git-link-dispatch))))
+
 (use-package git-gutter-fringe
   :config
   (setq git-gutter-fr:side 'left-fringe)

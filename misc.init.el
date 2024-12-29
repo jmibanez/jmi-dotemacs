@@ -53,10 +53,9 @@
 
 ;; Run unison-daemon for all profiles in background
 (use-package unison-daemon
-  :load-path "~/projects/personal/unison-daemon-el"
-
-  :hook
-  ((emacs-startup   . (lambda () (unison-daemon t)))))
+  :vc (:url "https://github.com/jmibanez/unison-daemon-el"
+       :branch "main"
+       :rev :newest))
 
 ;; Automatically update packages
 (use-package auto-package-update

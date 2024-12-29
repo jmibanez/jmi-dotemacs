@@ -231,12 +231,6 @@
   (setq gnus-desktop-notify-uncollapsed-levels nil)
   (setq gnus-desktop-notify-behavior 'gnus-desktop-notify-multi)
 
-  ;; Replace gnus-desktop-notify-alert with one that provides an icon specifically for Gnus
-  (defun gnus-desktop-notify-alert (body)
-    "Replacement for actual gnus-desktop-notify-alert which provides an icon"
-    (alert body
-           :title gnus-desktop-notify-send-subject))
-
   (gnus-desktop-notify-mode)
 
   :after gnus)

@@ -394,6 +394,17 @@
   ((:map jmi/my-jump-keys-map
          ("f l" .  git-link-dispatch))))
 
+(use-package bug-reference
+  :config
+
+  :hook
+  ((prog-mode   . bug-reference-mode))
+
+  :ensure nil)
+
+(use-package bug-reference-github
+  :after (bug-reference))
+
 (use-package git-gutter-fringe
   :config
   (setq git-gutter-fr:side 'left-fringe)

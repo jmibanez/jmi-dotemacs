@@ -9,6 +9,9 @@
 ;; Use y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Sentences end with a single space.
+(setq sentence-end-double-space nil)
+
 (use-package page-ext
   :init
   (put 'narrow-to-page 'disabled nil)

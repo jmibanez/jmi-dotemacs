@@ -19,7 +19,10 @@
   :config
   (setq langtool-bin
         (or (executable-find "languagetool")
-            "languagetool")))
+            "languagetool"))
+
+  :ensure-system-package languagetool)
+
 
 
 ;; AucTeX - I have some LaTeX files (for instance, my CV and resume),

@@ -264,7 +264,7 @@ nil if the current buffer contains only completed tasks."
           (expand-file-name (file-name-as-directory org-roam-directory))
           (file-name-directory buffer-file-name))))
 
-  (defun jmi/project-update-tag ()
+  (defun jmi/org-project-update-tag ()
     "Update PROJECT tag in the current buffer, if it is an org-roam buffer."
 
     (when (and (not (active-minibuffer-window))
@@ -284,7 +284,7 @@ nil if the current buffer contains only completed tasks."
             (apply #'vulpea-buffer-tags-set tags))))))
 
 
-  (defun jmi/project-files ()
+  (defun jmi/org-project-files ()
     "Return a list of org-roam notes containing 'project' tag."
     (seq-uniq
      (seq-map
@@ -298,12 +298,12 @@ nil if the current buffer contains only completed tasks."
 
   (defun jmi/update-agenda-files (&rest _)
     "Keep `org-agenda-files' up to date."
-    (setq org-agenda-files (jmi/project-files)))
+    (setq org-agenda-files (jmi/org-project-files)))
 
   (advice-add 'org-agenda :before #'jmi/update-agenda-files)
   (advice-add 'org-todo-list :before #'jmi/update-agenda-files)
 
-  (setq org-agenda-files (jmi/project-files))
+  (setq org-agenda-files (jmi/org-project-files))
 
   ;; Sync DB
   (org-roam-db-autosync-mode)
@@ -321,8 +321,8 @@ nil if the current buffer contains only completed tasks."
 
 
   :hook
-  ((find-file     . jmi/project-update-tag)
-   (before-save   . jmi/project-update-tag))
+  ((find-file     . jmi/org-project-update-tag)
+   (before-save   . jmi/org-project-update-tag))
 
   :after (org))
 

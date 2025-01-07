@@ -137,16 +137,26 @@
     (interactive "p" gnus-summary-mode)
     (gnus-summary-select-article)
     (gnus-configure-windows 'article)
-    (let ((win (or (gnus-get-buffer-window gnus-article-buffer t)
-                   (error "No article window found"))))
-      (select-window win)
-      (select-frame-set-input-focus (window-frame win))
-      (if (fboundp 'w3m-minor-mode)
-          (progn
-            (w3m-next-anchor n)
-            (browse-url (w3m-anchor)))
+    (let* ((message-id (mail-header-id (gnus-summary-article-header)))
+           (synthetic-message-id (string-match "<\\(\\w+\\)/\\(\\w+\\)/pull/\\(\\w+\\)\\(/.*\\)?@github.com>"
+                                               message-id)))
+      (if synthetic-message-id
+          (let ((pr-org (match-string 1 message-id))
+                (pr-repo (match-string 2 message-id))
+                (pr-id   (match-string 3 message-id)))
+            (browse-url (format "https://github.com/%s/%s/pull/%s" pr-org pr-repo pr-id)))
 
-        (browse-url (forward-button n)))))
+        (let ((win (or (gnus-get-buffer-window gnus-article-buffer t)
+                       (error "No article window found"))))
+          (select-window win)
+          (select-frame-set-input-focus (window-frame win))
+          (if (fboundp 'w3m-minor-mode)
+              (progn
+                (w3m-next-anchor n)
+                (browse-url (w3m-anchor)))
+
+            (browse-url (forward-button n)))))))
+
 
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . gnus))

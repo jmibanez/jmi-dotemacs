@@ -137,6 +137,7 @@
   ;; Global key bindings
   :bind ((:map jmi/my-jump-keys-map
                ("l"      .  org-store-link)
+               ("g c"    .  org-clock-goto)
                ("a"      .  org-agenda)))
   :demand t)
 

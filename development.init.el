@@ -247,6 +247,9 @@
 
   :after eglot)
 
+(use-package kotlin-ts-mode
+  :mode "\\.kts$")
+
 (use-package java-ts-mode
   :config
   ;; Define custom java style

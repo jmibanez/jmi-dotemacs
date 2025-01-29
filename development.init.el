@@ -195,28 +195,41 @@
              (format "JavaSE-1.%s" (truncate jdk-version-number)))
             (t (format "J2SE-%s" jdk-version-string)))))
 
+  (defvar jmi/java-langserv-heap-min "100m"
+    "Minimum heap size for Java language server instance")
+  (defvar jmi/java-langserv-heap-max "8G"
+    "Maximum heap size for Java language server instance")
+
+  (defvar jmi/java-langserv-jvm-args
+    `("--jvm-arg=-XX:+UseParallelGC"
+      "--jvm-arg=-XX:GCTimeRatio=4"
+      "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90"
+      "--jvm-arg=-Dsun.zip.disableMemoryMapping=true"
+      ,(concat "--jvm-arg=-Xms" jmi/java-langserv-heap-min)
+      ,(concat "--jvm-arg=-Xmx" jmi/java-langserv-heap-max))
+    "JVM args for Java language server")
+
+  (defvar jmi/java-langserv-init-options
+    `(:settings
+      (:java
+       (:configuration
+        (:runtimes ,(vconcat (mapcar (lambda (jvm-home-tuple)
+                                       `(:name ,(jmi/jdk-version-to-jdk-name (car jvm-home-tuple))
+                                               :path ,(cdr jvm-home-tuple)))
+                                     jmi/jvm-homes-alist)))
+        :updateBuildConfiguration t)
+       :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)
+                                           :profile "NetDeps")))
+      :extendedClientCapabilities (:classFileContentsSupport t)))
+
+  (defun jmi/eglot-jdtls-args (interactive-p project)
+    (append '("jdtls")
+            jmi/java-langserv-jvm-args
+            `(:initializationOptions ,jmi/java-langserv-init-options)))
+
   ;; Additional Eglot LSP config, specifically for -ts-mode variants
   (add-to-list 'eglot-server-programs
-               `(java-ts-mode . ("jdtls"
-                                 "--jvm-arg=-XX:+UseParallelGC"
-
-                                 "--jvm-arg=-XX:GCTimeRatio=4"
-                                 "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90"
-                                 "--jvm-arg=-Dsun.zip.disableMemoryMapping=true"
-                                 "--jvm-arg=-Xmx8G"
-                                 "--jvm-arg=-Xms100m"
-                                 ,(concat "--jvm-arg=" jmi/java-agent-lombok-arg)
-                                 :initializationOptions
-                                 (:settings
-                                  (:java
-                                   (:configuration
-                                    (:runtimes ,(vconcat (mapcar (lambda (jvm-home-tuple)
-                                                                   `(:name ,(jmi/jdk-version-to-jdk-name (car jvm-home-tuple))
-                                                                     :path ,(cdr jvm-home-tuple)))
-                                                               jmi/jvm-homes-alist))))
-                                   :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)
-                                                                                  :profile "NetDeps")))
-                                  :extendedClientCapabilities (:classFileContentsSupport t)))))
+               `(java-ts-mode . ,#'jmi/eglot-jdtls-args))
   (add-to-list 'eglot-server-programs
                '(ruby-ts-mode "solargraph" "socket" "--port" :autoport))
   (add-to-list 'eglot-server-programs

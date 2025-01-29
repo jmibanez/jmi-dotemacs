@@ -245,6 +245,10 @@
   (setq eglot-java-eglot-server-programs-manual-updates t)
   (eglot-java--jdthandler-patch-eglot)
 
+  ;; Override eglot-java--find-server to just use eglot--current-server-or-lose
+  (advice-add 'eglot-java--find-server :override
+              #'eglot--current-server-or-lose)
+
   :after eglot)
 
 (use-package kotlin-ts-mode

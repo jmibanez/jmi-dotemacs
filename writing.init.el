@@ -57,4 +57,13 @@
   :after (writegood-mode olivetti))
 
 
+;; Configure ispell
+(use-package ispell
+  :config
+  (setq ispell-program-name (executable-find "aspell"))
+
+  :ensure-system-package aspell
+  :ensure nil)
+
+
 ;;; writing.init.el ends here

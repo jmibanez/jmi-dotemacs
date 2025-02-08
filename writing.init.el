@@ -8,13 +8,9 @@
 ;;; Code:
 
 ;; Switch to using enchant as our spell-checking backend (fallback to ispell)
-(setq ispell-program-name
-      (or (executable-find "enchant")
-          (executable-find "ispell")
-          "ispell"))
-
 ;; Use langtool for grammar checking; ensure languagetool exists in
 ;; system
+
 (use-package langtool
   :config
   (setq langtool-bin
@@ -60,9 +56,14 @@
 ;; Configure ispell
 (use-package ispell
   :config
-  (setq ispell-program-name (executable-find "aspell"))
+  (setq ispell-program-name
+        (or (executable-find "enchant-2")
+            (executable-find "enchant")
+            (executable-find "aspell")
+            "ispell"))
 
-  :ensure-system-package aspell
+
+  :ensure-system-package enchant
   :ensure nil)
 
 

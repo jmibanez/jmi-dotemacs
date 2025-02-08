@@ -55,6 +55,10 @@
   ;; Also fix company-preview so it uses a light grey foreground, default black is unreadable
   (company-preview ((t (:background "#603a60" :foreground "#FFFFFF"))))
 
+  ;; Ensure eshell-info-banner text color is the same as the theme background color (for contrast against the normal
+  ;; progress bar values)
+  (eshell-info-banner-background-face ((t :foreground "#c0c0c0")))
+
   ;; Fix epe-git-dir-face to be readable against grey (default yellow is too bright)
   (epe-git-dir-face ((t (:foreground "#23733c")))))
 

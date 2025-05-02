@@ -59,10 +59,24 @@
         '(".bak"))
 
 
-  (defun jmi/is-attic-project-p (project-root)
-    (string-prefix-p (file-truename "~/projects/attic") (file-truename project-root)))
+  (defun jmi/is-outside-project-dir-p (project-root)
+    (not (string-prefix-p (file-truename "~/projects")
+                          (file-truename project-root))))
 
-  (setq projectile-ignored-project-function #'jmi/is-attic-project-p)
+  (defun jmi/is-attic-project-p (project-root)
+    (string-prefix-p (file-truename "~/projects/attic")
+                     (file-truename project-root)))
+
+  (defun jmi/dotemacs-project-p (project-root)
+    (string-prefix-p jmi/my-emacs-init-path
+                     (file-truename project-root)))
+
+  (defun jmi/ignored-project-p (project-root)
+    (or (jmi/is-attic-project-p project-root)
+        (and (jmi/is-outside-project-dir-p project-root)
+             (not (jmi/dotemacs-project-p project-root)))))
+
+  (setq projectile-ignored-project-function #'jmi/ignored-project-p)
 
   (add-to-list 'projectile-globally-ignored-directories
                "\\.settings")

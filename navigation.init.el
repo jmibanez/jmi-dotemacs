@@ -120,10 +120,20 @@
    ([remap switch-to-buffer-other-frame]   . consult-buffer-other-frame)))
 
 (use-package orderless
-  :init
+  :config
+  ;; Define orderless style with initialism by default -- shamelessly
+  ;; stolen from:
+  ;; https://github.com/minad/consult/wiki#minads-orderless-configuration
+  (orderless-define-completion-style +orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+        completion-category-overrides '((file (styles partial-completion))
+                                        (command (styles +orderless-with-initialism))
+                                        (variable (styles +orderless-with-initialism))
+                                        (symbol (styles +orderless-with-initialism)))
+        orderless-component-separator #'orderless-escapable-split-on-space))
 
 (use-package popup
   :config

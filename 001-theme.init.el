@@ -32,35 +32,43 @@
                                          "\\\\" "://"))
     (global-ligature-mode 't)))
 
-(use-package anti-zenburn-theme
-  :config
-  (load-theme 'anti-zenburn :no-confirm)
+(use-package modus-themes
+  :defer nil
 
-  (setq jmi/selected-theme 'anti-zenburn)
+  :init
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs t
+        modus-themes-org-blocks 'gray-background
+        modus-themes-common-palette-overrides '((comment blue-faint)
+                                                (border-mode-line-active unspecified)
+                                                (border-mode-line-inactive unspecified)
+                                                (bg-mode-line-active bg-blue-subtle)
+                                                (fg-mode-line-active fg-main))
+        modus-themes-headings '((1 . (variable-pitch 1.5))
+                                (2 . (1.3))
+                                (agenda-date . (1.3))
+                                (agenda-structure . (variable-pitch light 1.8))
+                                (t . (1.1))))
+
+  (defun jmi/modus-theme-support-faces (_)
+    (modus-themes-with-colors
+      (custom-set-faces
+       ;; Ensure eshell-info-banner text color is the same as the theme background color (for contrast against the normal
+       ;; progress bar values)
+       ;; :foreground bg-main
+       `(eshell-info-banner-background-face ((,c :foreground ,bg-main)))
+
+       ;; Fix epe-git-dir-face to be readable against white (default yellow is too bright)
+       ;; :foreground fg-dim
+       `(epe-git-dir-face ((,c :foreground ,fg-dim))))))
+  (add-hook 'enable-theme-functions #'jmi/modus-theme-support-faces)
+
+  :config
+  (load-theme 'modus-vivendi-tinted :no-confirm)
+  (setq jmi/selected-theme 'modus-vivendi-tinted)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14")
-  (set-frame-font "Berkeley Mono-14" nil t t)
-
-  :custom-face
-  ;; Remap ansi-color-<color> faces
-  (ansi-color-black  ((t (:foreground "#232333"))))
-  (ansi-color-red ((t (:foreground "#6c1f1c"))))
-  (ansi-color-green ((t (:foreground "#23733c"))))
-  (ansi-color-yellow ((t (:foreground "#732f2c"))))
-  (ansi-color-blue ((t (:foreground "#0f2050"))))
-  (ansi-color-magenta ((t (:foreground "#806080"))))
-  (ansi-color-cyan ((t (:foreground "#336c6c"))))
-  (ansi-color-gray ((t (:foreground "#c0c0c0"))))
-
-  ;; Also fix company-preview so it uses a light grey foreground, default black is unreadable
-  (company-preview ((t (:background "#603a60" :foreground "#FFFFFF"))))
-
-  ;; Ensure eshell-info-banner text color is the same as the theme background color (for contrast against the normal
-  ;; progress bar values)
-  (eshell-info-banner-background-face ((t :foreground "#c0c0c0")))
-
-  ;; Fix epe-git-dir-face to be readable against grey (default yellow is too bright)
-  (epe-git-dir-face ((t (:foreground "#23733c")))))
+  (set-frame-font "Berkeley Mono-14" nil t t))
 
 (use-package all-the-icons
   :config

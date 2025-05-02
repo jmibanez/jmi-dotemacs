@@ -120,6 +120,15 @@
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
+  (defun jmi/org-update-statusbar-clock-in ()
+    (do-applescript (format "tell application %S to clock in %S"
+                            "org-clock-statusbar"
+                            (substring-no-properties org-clock-current-task))))
+
+  (defun jmi/org-update-statusbar-clock-out ()
+    (do-applescript (format "tell application %S to clock out"
+                            "org-clock-statusbar")))
+
   :hook
   ;; I use windmove (with custom keybindings), so in general I don't
   ;; need this, but it's a good idea nonetheless to avoid conflict
@@ -130,9 +139,9 @@
   ;;  (org-shiftright-final .  windmove-right))
 
   ((org-capture-before-finalize . jmi/tick-gnus-message-if-linked)
-   (org-after-todo-statistics   . jmi/org-summary-todo))
-
-
+   (org-after-todo-statistics   . jmi/org-summary-todo)
+   (org-clock-in-hook           . jmi/org-update-statusbar-clock-in)
+   (org-clock-out-hook          . jmi/org-update-statusbar-clock-out))
 
   ;; Global key bindings
   :bind ((:map jmi/my-jump-keys-map

@@ -2,3 +2,5 @@ alias prj jmi/eshell-prj $1 $2
 alias pager view-file $1
 alias less view-file $1
 alias gg git grep $*
+alias up eshell-up $1
+alias pk eshell-up-peek $1

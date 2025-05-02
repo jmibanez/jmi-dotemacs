@@ -314,4 +314,6 @@
   :bind
   (("C-`"    . eshell-toggle)))
 
+(use-package eshell-up)
+
 ;;; term.init.el ends here

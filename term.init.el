@@ -222,7 +222,9 @@
             "VM"
             "Update"
             "watchOS"
-            "iOS")))
+            "iOS"
+            "CoreSimulator"
+            "private")))
 
   :ensure-system-package duf
 

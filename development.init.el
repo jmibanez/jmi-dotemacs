@@ -251,6 +251,7 @@
   :hook
   ((java-ts-mode     . jmi/eglot-ensure-if-not-decompiled)
    (python-ts-mode   . eglot-ensure)
+   (rust-ts-mode     . eglot-ensure)
    (ruby-ts-mode     . eglot-ensure)))
 
 (use-package eglot-java

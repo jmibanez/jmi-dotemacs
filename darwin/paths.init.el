@@ -50,6 +50,8 @@
 
 (setq jmi/git (concat jmi/homebrew-binary-path "git"))
 
+(setq fortune-file (concat jmi/homebrew-location "/opt/fortune/share/games/fortunes"))
+
 (provide 'jmi-init-platform-paths)
 
 ;;; paths.init.el ends here

@@ -133,6 +133,10 @@
 
   :after all-the-icons)
 
+(use-package anzu
+  :config
+  (global-anzu-mode))
+
 ;; Pop-up windows when display-buffer
 (setq pop-up-windows t)
 

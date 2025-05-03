@@ -55,11 +55,9 @@
       (custom-set-faces
        ;; Ensure eshell-info-banner text color is the same as the theme background color (for contrast against the normal
        ;; progress bar values)
-       ;; :foreground bg-main
-       `(eshell-info-banner-background-face ((,c :foreground ,bg-main)))
+       `(eshell-info-banner-background-face ((,c :foreground ,bg-dim)))
 
        ;; Fix epe-git-dir-face to be readable against white (default yellow is too bright)
-       ;; :foreground fg-dim
        `(epe-git-dir-face ((,c :foreground ,fg-dim))))))
   (add-hook 'enable-theme-functions #'jmi/modus-theme-support-faces)
 

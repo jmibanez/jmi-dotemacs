@@ -160,6 +160,8 @@
   :config
   (setq eshell-info-banner-progress-bar-char "■")
   (setq eshell-info-banner-double-width-line-char "═")
+  (setq eshell-info-banner-right-padding-char "·")
+  (setq eshell-info-banner-column-separator-char " ")
 
   ;; Exclude macOS system volumes (Preboot, VM, etc.) except Data
   ;; which has the user home dir. Also ignore simulator images

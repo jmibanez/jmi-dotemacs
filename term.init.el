@@ -171,6 +171,7 @@
             "watchOS"
             "iOS"
             "CoreSimulator"
+            "SimRuntimeBundle"
             "private")))
 
   :ensure-system-package duf

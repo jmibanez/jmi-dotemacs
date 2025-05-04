@@ -42,9 +42,21 @@
                    scheme-mode
                    clojure-mode))
 
-
 (use-package rainbow-delimiters)
-(use-package paredit)
+(use-package paredit
+  :config
+
+  (defun jmi/paredit-C-j-if-not-lisp-interaction (&optional eval-last-sexp-arg-internal)
+    "Run paredit-C-j unless we're in Lisp Interaction mode"
+    (interactive "P")
+    (if (eq 'lisp-interaction-mode
+            major-mode)
+        (eval-print-last-sexp eval-last-sexp-arg-internal)
+      (paredit-C-j)))
+
+  :bind
+  (:map paredit-mode-map
+        ("C-j" .  jmi/paredit-C-j-if-not-lisp-interaction)))
 
 (defvar lisp-power-map (make-keymap))
 (define-minor-mode lisp-power-mode "Fix keybindings; add power."

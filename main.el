@@ -9,9 +9,27 @@
 (defconst jmi/my-emacs-init-path (file-name-directory load-file-name)
   "Directory where all my init files live.")
 
+(defconst jmi/early-init-file (locate-user-emacs-file "early-init.el")
+  "Location of early-init file.")
+
+(defconst jmi/early-init-file-source (concat jmi/my-emacs-init-path "000.init.el")
+  "Location of early-init source file.")
+
 (defmacro jmi/dotemacs-do-module (filename)
   "Load the specified FILENAME from the init directory."
   `(load-file ,(concat jmi/my-emacs-init-path filename)))
+
+;; Add pkg for init-only defined packages that we can leverage use-package on
+(add-to-list 'load-path (concat jmi/my-emacs-init-path "/pkg"))
+
+(setq custom-file (concat jmi/my-emacs-init-path "001-custom.init.el"))
+
+;; Ensure that 000.init.el is copied to early-init.el; eval if it's
+;; newer or non-existent
+(unless (not (file-newer-than-file-p jmi/early-init-file-source
+                                     jmi/early-init-file))
+  (copy-file jmi/early-init-file-source jmi/early-init-file t)
+  (load jmi/early-init-file-source nil nil :no-suffix))
 
 
 (defun jmi/list-init-files (directory)
@@ -35,37 +53,6 @@
         use-package-compute-statistics t
         debug-on-error t))
 
-;; Packages
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-(package-activate-all)
-
-;; Bootstrap: Ensure bootstrap packages are installed
-(defvar jmi/bootstrap-packages '(s session system-packages)
-  "Packages that should be installed as early as possible.")
-
-(defun jmi/bootstrap-packages-installed-p ()
-  "Check whether bootstrap packages are installed."
-  (seq-reduce
-   (lambda (a b) (and a b))
-   (mapcar (lambda (pkg) (package-installed-p pkg))
-	   jmi/bootstrap-packages)
-   t))
-
-(unless (jmi/bootstrap-packages-installed-p)
-  (message "%s" "Installing bootstrap packages...")
-  (package-refresh-contents)
-
-  (dolist (pkg jmi/bootstrap-packages)
-    (when (not (package-installed-p pkg))
-      (package-install pkg))))
-
-
-(require 'use-package)
-(require 'system-packages)
-(require 'use-package-ensure-system-package)
-(require 's)
 
 (defun jmi/platform-init-path ()
   "Return path to directory containing platform-specific init files."
@@ -85,9 +72,9 @@
 
 ;; Load all init modules
 (mapc 'load
-      (sort (jmi/list-init-files jmi/my-emacs-init-path)
-            'string-lessp))
-
+      (seq-remove (lambda (i) (equal "000.init.el" (substring i -11)))
+                  (sort (jmi/list-init-files jmi/my-emacs-init-path)
+			'string-lessp)))
 
 ;;; main.el ends here
 

@@ -2,10 +2,41 @@
 ;;;
 
 ;;; Commentary:
-;;; This is loaded first by main.el, and should contain all early
-;;; initialization items
+;;; This is copied over to early-init.el
 
 ;;; Code:
+
+;; Packages
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(package-activate-all)
+
+;; Bootstrap: Ensure bootstrap packages are installed
+(defvar jmi/bootstrap-packages '(s session system-packages)
+  "Packages that should be installed as early as possible.")
+
+(defun jmi/bootstrap-packages-installed-p ()
+  "Check whether bootstrap packages are installed."
+  (seq-reduce
+   (lambda (a b) (and a b))
+   (mapcar (lambda (pkg) (package-installed-p pkg))
+	   jmi/bootstrap-packages)
+   t))
+
+(unless (jmi/bootstrap-packages-installed-p)
+  (message "%s" "Installing bootstrap packages...")
+  (package-refresh-contents)
+
+  (dolist (pkg jmi/bootstrap-packages)
+    (when (not (package-installed-p pkg))
+      (package-install pkg))))
+
+
+(require 'use-package)
+(require 'system-packages)
+(require 'use-package-ensure-system-package)
+(require 's)
 
 ;; Start server
 (server-start)
@@ -18,12 +49,17 @@
                 (display-graphic-p)))
   (menu-bar-mode -1))
 
+;; Set default frame size
+(setq default-frame-alist '((width . 120)
+                            (height . 70)
+                            (vertical-scroll-bars . nil)))
+
 ;; Graphic terminals: Don't display scroll bar
-(when (display-graphic-p)
-  (scroll-bar-mode -1))
+(scroll-bar-mode -1)
 
 ;; On macOS, turn off titlebars
-(add-to-list 'default-frame-alist '(undecorated . t))
+(when (and (eq system-type 'darwin))
+  (add-to-list 'default-frame-alist '(undecorated . t)))
 
 ;; User Details
 (setq user-full-name "Jan Michael Ibañez")
@@ -48,14 +84,9 @@
 ;; Finally, set up defaults for use-package
 (setq use-package-always-ensure t)
 
-;; Add pkg for init-only defined packages that we can leverage use-package on
-(add-to-list 'load-path (concat jmi/my-emacs-init-path "/pkg"))
-
 ;; Enable magic GC hack
 (use-package gcmh
   :ensure t
   :demand t
   :config (gcmh-mode 1))
-
-(setq custom-file (concat jmi/my-emacs-init-path "001-custom.init.el"))
 ;;; 000.init.el ends here

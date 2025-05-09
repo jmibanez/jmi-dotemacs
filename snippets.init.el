@@ -35,10 +35,7 @@
   (setq yas-snippet-dirs
         '("~/.emacs.d/snippets"))
 
-  (add-to-list 'yas-prompt-functions #'shk-yas/helm-prompt)
-
-  :after
-  helm jmi-keybindings)
+  (add-to-list 'yas-prompt-functions #'shk-yas/helm-prompt))
 
 
 (use-package yasnippet-snippets

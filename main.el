@@ -64,6 +64,11 @@
     (concat jmi/my-emacs-init-path
             sanitized-platform-dir)))
 
+(require 'bind-key)
+
+(bind-keys :prefix-map jmi/my-jump-keys-map
+           :prefix "<f8>")
+
 ;; If there are any customizations per-machine, per-user, load them
 ;; first, so that our config can refer to them
 (mapc 'load

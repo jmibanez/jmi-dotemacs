@@ -51,15 +51,11 @@
         ;; Else, default to projectile-find-file
         (projectile-find-file-dwim))))
 
-  ;; Our shortcut map
-  (bind-keys :prefix-map jmi/my-jump-keys-map
-             :prefix "<f8>"
-
-             ("c c"      . projectile-compile-project)
-             ("f p"      . jmi/toggle-http-proxy)
-             ("f f"      . jmi/do-mail-sync))
-
   :bind
-  (("s-t"   . jmi/projectile-find-file-or-org-roam-node-find-dwim)))
+  (("s-t"   . jmi/projectile-find-file-or-org-roam-node-find-dwim)
+   (:map jmi/my-jump-keys-map
+         ("c c"      . projectile-compile-project)
+         ("f p"      . jmi/toggle-http-proxy)
+         ("f f"      . jmi/do-mail-sync))))
 
 ;;; keybindings.init.el ends here

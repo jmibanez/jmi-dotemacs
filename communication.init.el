@@ -64,9 +64,7 @@
                ("S-<f7>"  .  jmi/elfeed-search-bookmark-all)
                ("*"       .  jmi/elfeed-jump-to-latest-unread-entries))
          (:map elfeed-show-mode-map
-               ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry)))
-
-  :after jmi-keybindings)
+               ("S-<f7>"  .  jmi/elfeed-show-bookmark-entry))))
 
 
 (use-package circe
@@ -169,8 +167,7 @@
   :hook
   ((message-send             .  jmi/mimedown))
 
-  :ensure nil
-  :after (jmi-keybindings))
+  :ensure nil)
 
 (use-package mbsync
   :config
@@ -210,7 +207,7 @@
 
   :hook ((mbsync-exit       .  jmi/scan-mail-and-news)
          (gnus-startup      .  gnus-demon-init))
-  :after (jmi-keybindings gnus))
+  :after (gnus))
 
 (use-package alert
   :config

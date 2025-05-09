@@ -17,6 +17,7 @@
         (or (executable-find "languagetool")
             "languagetool"))
 
+  :defer t
   :ensure-system-package languagetool)
 
 
@@ -24,21 +25,27 @@
 ;; AucTeX - I have some LaTeX files (for instance, my CV and resume),
 ;; so it makes sense to have this installed
 (use-package tex-site
+  :defer t
   :ensure auctex)
 
 ;; git-auto-commit-mode -- for automatically distributing my drafts on my blog to Git
-(use-package git-auto-commit-mode)
+(use-package git-auto-commit-mode
+  :defer t)
 
 
 ;; PlantUML
-(use-package plantuml-mode)
+(use-package plantuml-mode
+  :defer t)
 
-(use-package writegood-mode)
+(use-package writegood-mode
+  :defer t)
 
-(use-package olivetti)
+(use-package olivetti
+  :defer t)
 
 ;; Should these be here? Maybe move to separate init file?
 (use-package markdown-mode
+  :defer t
   :config
   (defun jmi/setup-markdown-writing-settings ()
     (interactive)

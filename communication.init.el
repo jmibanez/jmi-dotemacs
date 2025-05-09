@@ -84,11 +84,12 @@
 
 
 (use-package bbdb
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package xwwp
+  :defer t
   :config
-
   (setq xwwp-search-prefix "https://duckduckgo.com/?q=")
 
   :bind
@@ -167,9 +168,11 @@
   :hook
   ((message-send             .  jmi/mimedown))
 
-  :ensure nil)
+  :ensure nil
+  :defer t)
 
 (use-package mbsync
+  :defer t
   :config
   (defun jmi/scan-mail-and-news ()
     ;; Update mairix groups -- mairix must have been configured already...
@@ -210,6 +213,7 @@
   :after (gnus))
 
 (use-package alert
+  :defer t
   :config
   (setq alert-default-style 'osx-notifier)
 
@@ -233,6 +237,7 @@
   :demand t)
 
 (use-package gnus-desktop-notify
+  :defer t
   :config
   (setq gnus-desktop-notify-format "%n: %G")
   (setq gnus-desktop-notify-uncollapsed-levels nil)
@@ -243,6 +248,7 @@
   :after gnus)
 
 (use-package gnus-topic
+  :defer t
   :hook
   ((gnus-group-mode               .  gnus-topic-mode))
 

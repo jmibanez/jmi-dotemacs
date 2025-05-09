@@ -92,6 +92,7 @@
 
 ;; Savehist, persist history (so Vertico works better)
 (use-package savehist
+  :defer t
   :config
   (savehist-mode))
 
@@ -103,7 +104,8 @@
 
   (vertico-mode))
 
-(use-package counsel)
+(use-package counsel
+  :defer t)
 
 (use-package consult
   :config
@@ -158,6 +160,7 @@
 (global-set-key (kbd "C-s-j") 'windmove-down)
 
 (use-package framemove
+  :defer t
   :load-path "~/elisp/framemove"
 
   :init
@@ -166,6 +169,7 @@
 
 ;; Use Emacs session management
 (use-package session
+  :defer t
   :config
   (setq session-use-package t)
   (session-initialize)
@@ -173,6 +177,7 @@
   (add-to-list 'session-globals-exclude 'consult--buffer-history))
 
 (use-package fill-column-indicator
+  :defer t
   :config
   (define-globalized-minor-mode jmi-global-fci-mode
     fci-mode
@@ -180,12 +185,14 @@
 
 ;; Bind F7/S-F7 to bookmark
 (use-package bookmark
+  :defer t
   :ensure nil ;; System package
   :bind (("<f7>"         .  bookmark-jump)
          ("S-<f7>"       .  bookmark-set)))
 
 ;; Fullscreen
 (use-package frame
+  :defer t
   :ensure nil ;; System package
   :bind (("s-<return>"   .  toggle-frame-fullscreen)
          ("C-s-<return>" .  toggle-frame-maximized)))
@@ -238,7 +245,8 @@
 (use-package breadcrumb
   :config
   (breadcrumb-mode)
-  :demand t)
+  :defer t)
+
 
 
 ;;; navigation.init.el ends here

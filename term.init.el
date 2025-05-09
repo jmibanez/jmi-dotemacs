@@ -183,20 +183,16 @@
 
   :vc (:url "https://github.com/jmibanez/eshell-info-banner.el"
        :branch "main"
-       :rev :newest)
-
-  :demand t)
+       :rev :newest))
 
 
 (use-package eshell-prompt-extras
   :config
-
   (setq eshell-highlight-prompt nil
         eshell-prompt-function 'epe-theme-multiline-with-status
         epe-path-style 'full)
 
-  :after esh-opt
-  :demand t)
+  :after esh-opt)
 
 
 (use-package vterm
@@ -230,8 +226,7 @@
 
   :hook (vterm-mode  . jmi/vterm-customizations)
 
-  :ensure-system-package cmake
-  :demand)
+  :ensure-system-package cmake)
 
 (use-package eshell-vterm
   :config

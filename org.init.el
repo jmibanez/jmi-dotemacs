@@ -148,7 +148,7 @@
                ("l"      .  org-store-link)
                ("g c"    .  org-clock-goto)
                ("a"      .  org-agenda)))
-  :demand t)
+  :defer t)
 
 ;; org-roam as my KB on top of org in general
 (use-package org-roam

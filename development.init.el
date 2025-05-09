@@ -26,7 +26,8 @@
           (tsx           "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
           (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")))
 
-  :ensure nil)
+  :ensure nil
+  :defer t)
 
 (use-package treesit-auto
   :config
@@ -87,7 +88,8 @@
   :bind (:map slime-mode-map
               ("M-TAB"  )))
 
-(use-package slime-company)
+(use-package slime-company
+  :defer t)
 
 
 (use-package clojure-mode
@@ -129,10 +131,12 @@
   (setq cider-jack-in-cljs-dependencies
         '(("cider/piggieback" "0.5.3")))
 
+  :defer t
   :after
   (jmi-init-platform-paths clojure-mode))
 
 (use-package clj-refactor
+  :defer t
   :after cider)
 
 ;; JS2 mode
@@ -144,6 +148,7 @@
   (("C-s-n"     . flymake-goto-next-error)
    ("C-s-p"     . flymake-goto-prev-error))
 
+  :defer t
   :ensure nil)
 
 (use-package flymake-diagnostic-at-point
@@ -176,6 +181,7 @@
 
 
 (use-package rust-mode
+  :defer t
   :config
   (setq rust-format-on-save t))
 
@@ -323,11 +329,12 @@
   :hook
   (java-ts-mode . jmi/java-mode-config)
 
-  :defer nil
+  :defer t
   :ensure nil) ;; built-in as of 29.1
 
 ;; Scala
-(use-package scala-mode)
+(use-package scala-mode
+  :defer t)
 
 ;; Autocompletion helpers
 ;; NB: Because we're switching to company-mode, we need to swap out some
@@ -350,28 +357,38 @@
   :after eglot)
 
 ;; Company backends
-(use-package company-dict)
+(use-package company-dict
+  :defer t)
 (use-package company-go
   :after go-mode)
-(use-package company-shell)
-(use-package company-sourcekit)
-(use-package company-web)
+(use-package company-shell
+  :defer t)
+(use-package company-sourcekit
+  :defer t)
+(use-package company-web
+  :defer t)
 
 (use-package company-quickhelp
+  :defer t
   :config
   (company-quickhelp-mode))
 
 ;; Go
-(use-package go-mode)
+(use-package go-mode
+  :defer t)
 
 ;; Python
-(use-package python-django)
-(use-package pyvenv)
+(use-package python-django
+  :defer t)
+(use-package pyvenv
+  :defer t)
 
 (use-package python
+  :defer t
   :ensure nil)
 
 (use-package ruby-ts-mode
+  :defer t
   :ensure nil) ;; built-in as of 29.1
 
 ;; Other languages/modes
@@ -395,7 +412,8 @@
 
 
 ;; Typescript IDE
-(use-package tide)
+(use-package tide
+  :defer t)
 
 
 ;; Docker
@@ -408,6 +426,7 @@
   :mode "\\.yaml$")
 
 (use-package perl-mode
+  :defer t
   :ensure nil ;; System package
 )
 
@@ -419,6 +438,7 @@
   ;; Point Magit to locally installed git (not system)
   (setq magit-git-executable jmi/git)
 
+  :defer t
   :after
   'jmi-init-platform-paths)
 
@@ -449,7 +469,8 @@
 (use-package magit-gitflow
   :after magit)
 
-(use-package git-timemachine)
+(use-package git-timemachine
+  :defer t)
 
 (use-package github-notifier
   :config
@@ -472,19 +493,24 @@
 
 ;; SQL interaction stuff
 
-;; Set up things so that doing M-x sql-postgres works the way I like
-(setq sql-postgres-login-params
-      '((user :default "jmibanez")
-        (database :default "jmibanez")
-        server
-        (port :default 5432)))
+(use-package sql
+  :ensure nil
+  :defer t
 
-;; Handle psql prompts where DB name has an underscore
-;; \\(^\\w*=[#>] \\|^\\w*[-(][#>] \\)
-(sql-set-product-feature
- 'postgres :prompt-regexp "^\\(\\w\\|_\\)*=[#>]")
-(sql-set-product-feature
- 'postgres :prompt-cont-regexp "^\\(\\w\\|_\\)*[-(][#>]")
+  :config
+  ;; Set up things so that doing M-x sql-postgres works the way I like
+  (setq sql-postgres-login-params
+	'((user :default "jmibanez")
+          (database :default "jmibanez")
+          server
+          (port :default 5432)))
+
+  ;; Handle psql prompts where DB name has an underscore
+  ;; \\(^\\w*=[#>] \\|^\\w*[-(][#>] \\)
+  (sql-set-product-feature
+   'postgres :prompt-regexp "^\\(\\w\\|_\\)*=[#>]")
+  (sql-set-product-feature
+   'postgres :prompt-cont-regexp "^\\(\\w\\|_\\)*[-(][#>]"))
 
 ;;; allow-line-as-region-for-function adds an "-or-line" version of
 ;;; the given comment function which (un)comments the current line is

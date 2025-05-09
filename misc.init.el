@@ -13,6 +13,7 @@
 (setq sentence-end-double-space nil)
 
 (use-package page-ext
+  :defer t
   :init
   (put 'narrow-to-page 'disabled nil)
   :ensure nil)
@@ -24,10 +25,12 @@
   :ensure nil)
 
 ;; symon
-(use-package symon)
+(use-package symon
+  :defer t)
 
 ;; Nyan cat! (Included just for fun)
-(use-package nyan-mode)
+(use-package nyan-mode
+  :defer t)
 
 ;; Unfill paragraph
 
@@ -56,6 +59,7 @@
 
 ;; Run unison-daemon for all profiles in background
 (use-package unison-daemon
+  :defer t
   :vc (:url "https://github.com/jmibanez/unison-daemon-el"
        :branch "main"
        :rev :newest))

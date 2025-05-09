@@ -10,7 +10,6 @@
 
 (use-package bind-key
   :ensure nil
-  :demand t
 
   :config
   ;; User function: Toggle http_proxy in process-environment. Used so I

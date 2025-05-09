@@ -72,7 +72,7 @@
 
 ;; Load all init modules
 (mapc 'load
-      (seq-remove (lambda (i) (equal "000.init.el" (substring i -11)))
+      (seq-remove (lambda (i) (equal "000.init" (substring i -8)))
                   (sort (jmi/list-init-files jmi/my-emacs-init-path)
 			'string-lessp)))
 

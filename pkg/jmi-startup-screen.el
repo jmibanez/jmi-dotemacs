@@ -10,7 +10,7 @@
 
 (defun jmi/startup-screen ()
   "Function to be used as emacs-startup-hook for startup screen."
-  (with-eval-after-load 'jmi/all-config-loaded
+  (with-eval-after-load 'jmi-dotemacs
     (require 'org)
     (require 'org-roam)
     (require 'eshell)

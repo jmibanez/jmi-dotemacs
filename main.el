@@ -81,5 +81,7 @@
                   (sort (jmi/list-init-files jmi/my-emacs-init-path)
 			'string-lessp)))
 
+(provide 'jmi-dotemacs)
+
 ;;; main.el ends here
 

@@ -89,4 +89,9 @@
   :ensure t
   :demand t
   :config (gcmh-mode 1))
+
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
 ;;; 000.init.el ends here

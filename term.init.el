@@ -248,12 +248,6 @@
   :after eshell
   :ensure nil)
 
-(use-package exec-path-from-shell
-  :config
-  (exec-path-from-shell-initialize)
-
-  :after eshell)
-
 (use-package eshell-toggle
   :config
   (setq eshell-toggle-find-project-root-package 'projectile)

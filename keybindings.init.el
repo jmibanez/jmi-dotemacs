@@ -35,6 +35,11 @@
       (setenv "LD_PRELOAD" nil)))
 
 
+  (defun jmi/in-org-roam-related-buffer-p ()
+    (or (and (fboundp 'jmi/org-roam-buffer-p)
+             (jmi/org-roam-buffer-p))
+        (eq major-mode 'org-agenda-mode)))
+
   (defun jmi/projectile-find-file-or-org-roam-node-find-dwim ()
     "Either do projectile-find-file or or do org-roam-find; DWIM."
     (interactive)
@@ -42,9 +47,7 @@
     (if (not (fboundp 'projectile-find-file))
         (error "Projectile is not loaded.")
 
-      (if (and (fboundp 'jmi/org-roam-buffer-p)
-               (eq major-mode 'org-mode)
-               (jmi/org-roam-buffer-p))
+      (if (jmi/in-org-roam-related-buffer-p)
           (org-roam-node-find)
 
         ;; Else, default to projectile-find-file

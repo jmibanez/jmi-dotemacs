@@ -9,68 +9,68 @@
 
 ;;; Code:
 
-
-(require 'cl)
-(require 'seq)
-
-(defun jmi/list-directories-only (base-path)
-  (if (not (file-directory-p base-path))
-      '()
-
-    (cl-remove-if (lambda (f-or-d)
-                    (or (string-equal "." f-or-d)
-                        (string-equal ".." f-or-d)
-                        (not (file-directory-p (concat base-path f-or-d)))))
-                  (directory-files base-path))))
-
-(defun jmi/all-projects-across-workspaces ()
-  (let ((all-ws (jmi/list-directories-only "~/projects/")))
-    (mapcan (lambda (ws)
-              (loop for prj-in-ws in (jmi/list-directories-only (concat "~/projects/" ws "/src/"))
-                    collect (cons prj-in-ws ws)))
-            all-ws)))
-
-(defun jmi/all-workspaces ()
-  (jmi/list-directories-only "~/projects/"))
-
-(defun jmi/current-workspace ()
-  (concat "~/projects/"
-          (first
-           (seq-filter (lambda (ws-name)
-                         (string-prefix-p (file-truename (concat "~/projects/" ws-name))
-                                          (file-truename default-directory)))
-                       (jmi/all-workspaces)))))
-
-(defun jmi/projects-in-workspace (ws-path)
-  (seq-filter (lambda (project-path)
-                (string-prefix-p (file-truename ws-path)
-                                 (file-truename project-path)))
-              projectile-known-projects))
-
-(defun jmi/search-workspaces (prj-name)
-  (seq-filter (lambda (prj-ws-tup)
-                (string-equal (car prj-ws-tup)
-                              prj-name))
-              (jmi/all-projects-across-workspaces)))
-
-(defmacro esh-command (alias arglist &rest command-def-alist)
-  (let ((command-body (cdr (assoc :command command-def-alist)))
-        (pcomplete-body (cdr (assoc :completion command-def-alist)))
-        (real-fn-name (intern (concat "jmi/eshell-" (symbol-name alias))))
-        (pcomplete-name (intern (concat "pcomplete/" (symbol-name alias)))))
-
-    `(progn
-       (defun ,real-fn-name ,arglist
-         ,@command-body)
-       ,(if pcomplete-body
-            `(defun ,pcomplete-name ()
-               ,@pcomplete-body))
-       (defalias (quote
-                  ,(intern (concat "eshell/" (symbol-name alias))))
-         (quote ,real-fn-name)))))
-
 (use-package eshell
   :config
+  (require 'cl-lib)
+  (require 'seq)
+
+  (defmacro esh-command (alias arglist &rest command-def-alist)
+    (let ((command-body (cdr (assoc :command command-def-alist)))
+          (pcomplete-body (cdr (assoc :completion command-def-alist)))
+          (real-fn-name (intern (concat "jmi/eshell-" (symbol-name alias))))
+          (pcomplete-name (intern (concat "pcomplete/" (symbol-name alias)))))
+
+      `(progn
+         (defun ,real-fn-name ,arglist
+           ,@command-body)
+         ,(if pcomplete-body
+              `(defun ,pcomplete-name ()
+                 ,@pcomplete-body))
+         (defalias (quote
+                    ,(intern (concat "eshell/" (symbol-name alias))))
+           (quote ,real-fn-name)))))
+
+  (defun jmi/list-directories-only (base-path)
+    (if (not (file-directory-p base-path))
+        '()
+
+      (cl-remove-if (lambda (f-or-d)
+                      (or (string-equal "." f-or-d)
+                          (string-equal ".." f-or-d)
+                          (not (file-directory-p (concat base-path f-or-d)))))
+                    (directory-files base-path))))
+
+  (defun jmi/all-projects-across-workspaces ()
+    (let ((all-ws (jmi/list-directories-only "~/projects/")))
+      (mapcan (lambda (ws)
+                (cl-loop for prj-in-ws in (jmi/list-directories-only (concat "~/projects/" ws "/src/"))
+                      collect (cons prj-in-ws ws)))
+              all-ws)))
+
+  (defun jmi/all-workspaces ()
+    (jmi/list-directories-only "~/projects/"))
+
+  (defun jmi/current-workspace ()
+    (concat "~/projects/"
+            (first
+             (seq-filter (lambda (ws-name)
+                           (string-prefix-p (file-truename (concat "~/projects/" ws-name))
+                                            (file-truename default-directory)))
+                         (jmi/all-workspaces)))))
+
+  (defun jmi/projects-in-workspace (ws-path)
+    (seq-filter (lambda (project-path)
+                  (string-prefix-p (file-truename ws-path)
+                                   (file-truename project-path)))
+                projectile-known-projects))
+
+  (defun jmi/search-workspaces (prj-name)
+    (seq-filter (lambda (prj-ws-tup)
+                  (string-equal (car prj-ws-tup)
+                                prj-name))
+                (jmi/all-projects-across-workspaces)))
+
+
   (require 'em-smart)
   (setq eshell-where-to-jump 'begin)
   (setq eshell-review-quick-commands nil)

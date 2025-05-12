@@ -8,21 +8,27 @@
 
 ;;; Code:
 
+
+(defun jmi/startup-screen--body ()
+  (benchmark-init/activate)
+  (let ((buffer-agenda "*Org Agenda*")
+        (buffer-eshell "*eshell*"))
+    ;; Trigger loading org roam
+    (org-roam-list-files)
+    (org-todo-list)
+    (eshell)
+    (switch-to-buffer (get-buffer buffer-agenda))
+    (delete-other-windows)
+    (split-window-vertically)
+    (other-window 1)
+    (switch-to-buffer (get-buffer buffer-eshell)))
+  (message (concat "Emacs started in " (emacs-init-time)))
+  (benchmark-init/deactivate))
+
 (defun jmi/startup-screen ()
   "Function to be used as emacs-startup-hook for startup screen."
   (with-eval-after-load 'jmi-dotemacs
-    (require 'org)
-    (require 'org-roam)
-    (require 'eshell)
-    (let ((buffer-agenda "*Org Agenda*")
-          (buffer-eshell "*eshell*"))
-      (org-todo-list)
-      (eshell)
-      (switch-to-buffer (get-buffer buffer-agenda))
-      (delete-other-windows)
-      (split-window-vertically)
-      (other-window 1)
-      (switch-to-buffer (get-buffer buffer-eshell)))))
+    (jmi/startup-screen--body)))
 
 (provide 'jmi-startup-screen)
 

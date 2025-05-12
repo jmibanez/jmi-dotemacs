@@ -63,11 +63,11 @@
 ;; Configure ispell
 (use-package ispell
   :config
-  (setq ispell-program-name
-        (or (executable-find "enchant-2")
-            (executable-find "enchant")
-            (executable-find "aspell")
-            "ispell"))
+  (setopt ispell-program-name
+          (or (executable-find "enchant-2")
+              (executable-find "enchant")
+              (executable-find "aspell")
+              "ispell"))
 
 
   :ensure-system-package enchant

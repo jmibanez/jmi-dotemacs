@@ -9,8 +9,8 @@
 ;;; Code:
 
 ;; display-buffer tweaks
-(setq switch-to-buffer-obey-display-actions t)
-(setq switch-to-buffer-in-dedicated-window 'pop)
+(setopt switch-to-buffer-obey-display-actions t)
+(setopt switch-to-buffer-in-dedicated-window 'pop)
 
 (defun mp/make-display-buffer-matcher-function (major-modes)
   ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
@@ -36,27 +36,28 @@
 ;; Projectile
 (use-package projectile
   :init
-  (setq projectile-completion-system 'auto)
+  (setopt projectile-completion-system 'auto)
 
   :config
-  (setq projectile-indexing-method 'hybrid)
-  (setq projectile-project-root-functions
-        '(projectile-root-local
-          projectile-root-bottom-up
-          projectile-root-marked
-          projectile-root-top-down
-          projectile-root-top-down-recurring))
+  (setopt projectile-indexing-method 'hybrid
+          projectile-project-root-functions
+          '(projectile-root-local
+            projectile-root-bottom-up
+            projectile-root-marked
+            projectile-root-top-down
+            projectile-root-top-down-recurring)
 
-  (setq projectile-project-search-path
-        '(("~/projects/" . 2)))
+          projectile-project-search-path
+          '(("~/projects/" . 2))
 
-  (setq projectile-globally-ignored-files
-        '(".classpath"
-          ".factorypath"
-          ".python-version"
-          ".project"))
-  (setq projectile-globally-ignored-file-suffixes
-        '(".bak"))
+          projectile-globally-ignored-files
+          '(".classpath"
+            ".factorypath"
+            ".python-version"
+            ".project")
+
+          projectile-globally-ignored-file-suffixes
+          '(".bak"))
 
 
   (defun jmi/is-outside-project-dir-p (project-root)
@@ -99,8 +100,8 @@
 ;; Vertico
 (use-package vertico
   :config
-  (setq vertico-count 25)
-  (setq vertico-resize t)
+  (setopt vertico-count  25
+          vertico-resize t)
 
   (vertico-mode))
 
@@ -109,7 +110,7 @@
 
 (use-package consult
   :config
-  (setq consult-preview-key nil)
+  (setopt consult-preview-key nil)
 
   :bind
   (("M-y"                                  . consult-yank-pop)
@@ -129,17 +130,17 @@
   (orderless-define-completion-style +orderless-with-initialism
     (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))
-                                        (command (styles +orderless-with-initialism))
-                                        (variable (styles +orderless-with-initialism))
-                                        (symbol (styles +orderless-with-initialism)))
-        orderless-component-separator #'orderless-escapable-split-on-space))
+  (setopt completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion))
+                                          (command (styles +orderless-with-initialism))
+                                          (variable (styles +orderless-with-initialism))
+                                          (symbol (styles +orderless-with-initialism)))
+          orderless-component-separator #'orderless-escapable-split-on-space))
 
 (use-package popup
   :config
-  (setq popup-tip-max-width 100))
+  (setopt popup-tip-max-width 100))
 
 (use-package posframe)
 (use-package vertico-posframe
@@ -171,7 +172,7 @@
 (use-package session
   :defer t
   :config
-  (setq session-use-package t)
+  (setopt session-use-package t)
   (session-initialize)
   (add-to-list 'session-globals-exclude 'org-mark-ring)
   (add-to-list 'session-globals-exclude 'consult--buffer-history))
@@ -230,7 +231,7 @@
 
 (use-package ace-window
   :config
-  (setq aw-background 't)
+  (setopt aw-background 't)
 
   :bind
   (("M-`"   .  ace-window)))
@@ -246,7 +247,5 @@
   :config
   (breadcrumb-mode)
   :defer t)
-
-
 
 ;;; navigation.init.el ends here

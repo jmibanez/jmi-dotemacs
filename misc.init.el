@@ -10,7 +10,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Sentences end with a single space.
-(setq sentence-end-double-space nil)
+(setopt sentence-end-double-space nil)
 
 (use-package page-ext
   :defer t
@@ -47,11 +47,11 @@
 ;; wttrin
 (use-package wttrin
   :config
-  (setq wttrin-default-locations
-        '("Sydney, AU" "Manila, PH" "New York, NY" "San Francisco, CA" "London, UK")
-        wttrin-font-name "Berkeley Mono"
+  (setopt wttrin-default-locations
+          '("Sydney, AU" "Manila, PH" "New York, NY" "San Francisco, CA" "London, UK")
+          wttrin-font-name "Berkeley Mono")
 
-        jmi/default-wttrin-location "Sydney, AU")
+  ;; (setq jmi/default-wttrin-location "Sydney, AU")
 
   :bind
   ((:map jmi/my-jump-keys-map
@@ -68,7 +68,7 @@
 (use-package auto-package-update
   :config
   ;; Hide results
-  (setq auto-package-update-hide-results 't)
+  (setopt auto-package-update-hide-results 't)
   ;; ... at startup
   (auto-package-update-maybe)
   ;; ... specifically check at noon

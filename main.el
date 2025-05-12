@@ -48,10 +48,10 @@
 
 ;; If we're debugging init, add more logging
 (when init-file-debug
-  (setq use-package-verbose t
-        use-package-expand-minimally nil
-        use-package-compute-statistics t
-        debug-on-error t))
+  (setopt use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t
+          debug-on-error t))
 
 
 (defun jmi/platform-init-path ()

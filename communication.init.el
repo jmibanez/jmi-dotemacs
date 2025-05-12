@@ -7,29 +7,29 @@
 
 (use-package elfeed
   :init
-  (setq elfeed-feeds
-        `(("https://blog.jmibanez.com/feed.xml" blog)
-          ("https://xkcd.com/atom.xml" comics)
-          ("https://www.gpf-comics.com/rss/main_comic_rss.xml" comics)
-          ("http://leancrew.com/all-this/feed/" blog)
-          ("https://daringfireball.net/feeds/main" blog apple)
-          (,(format "https://arstechnica.com/feed/?t=%s"
-                    (auth-info-password (car (auth-source-search :host "arstechnica.com"
-                                                                 :user "elfeed^jm@jmibanez.com"))))
-           news)
-          ("https://www.jwz.org/blog/feed/" blog)
-          ("https://marco.org/rss" blog apple dev)
-          ("https://mjtsai.com/blog/feed/" blog apple dev)
-          ("https://programmingisterrible.com/rss" blog dev)
-          ("http://prog21.dadgum.com/atom.xml" blog dev)
-          ("https://donmelton.com/rss.xml" blog apple dev)
-          ("https://irreal.org/blog/?feed=rss2" blog dev emacs)
-          ("https://sachachua.com/blog/feed" blog dev emacs)
-          ("http://james-iry.blogspot.com/feeds/posts/default" blog dev)
-          ("https://fishbowl.pastiche.org/atom.xml" blog dev)
-          ("http://feedpress.me/sixcolors" blog apple)
-          ("http://nullprogram.com/feed/" blog dev emacs)
-          ("http://hownow.brownpau.com/feed" blog)))
+  (setopt elfeed-feeds
+          `(("https://blog.jmibanez.com/feed.xml" blog)
+            ("https://xkcd.com/atom.xml" comics)
+            ("https://www.gpf-comics.com/rss/main_comic_rss.xml" comics)
+            ("http://leancrew.com/all-this/feed/" blog)
+            ("https://daringfireball.net/feeds/main" blog apple)
+            (,(format "https://arstechnica.com/feed/?t=%s"
+                      (auth-info-password (car (auth-source-search :host "arstechnica.com"
+                                                                   :user "elfeed^jm@jmibanez.com"))))
+             news)
+            ("https://www.jwz.org/blog/feed/" blog)
+            ("https://marco.org/rss" blog apple dev)
+            ("https://mjtsai.com/blog/feed/" blog apple dev)
+            ("https://programmingisterrible.com/rss" blog dev)
+            ("http://prog21.dadgum.com/atom.xml" blog dev)
+            ("https://donmelton.com/rss.xml" blog apple dev)
+            ("https://irreal.org/blog/?feed=rss2" blog dev emacs)
+            ("https://sachachua.com/blog/feed" blog dev emacs)
+            ("http://james-iry.blogspot.com/feeds/posts/default" blog dev)
+            ("https://fishbowl.pastiche.org/atom.xml" blog dev)
+            ("http://feedpress.me/sixcolors" blog apple)
+            ("http://nullprogram.com/feed/" blog dev emacs)
+            ("http://hownow.brownpau.com/feed" blog)))
 
   (setq jmi/default-elfeed-search-filter "@2-weeks-ago +unread")
 
@@ -90,7 +90,7 @@
 (use-package xwwp
   :defer t
   :config
-  (setq xwwp-search-prefix "https://duckduckgo.com/?q=")
+  (setopt xwwp-search-prefix "https://duckduckgo.com/?q=")
 
   :bind
   ((:map xwidget-webkit-mode-map
@@ -109,7 +109,7 @@
 
   :config
   ;; Point to .gnus.el in this directory
-  (setq gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
+  (setopt gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
 
   ;; HTML email composition via Markdown
   (defun jmi/mimedown ()
@@ -239,9 +239,9 @@
 (use-package gnus-desktop-notify
   :defer t
   :config
-  (setq gnus-desktop-notify-format "%n: %G")
-  (setq gnus-desktop-notify-uncollapsed-levels nil)
-  (setq gnus-desktop-notify-behavior 'gnus-desktop-notify-multi)
+  (setopt gnus-desktop-notify-format              "%n: %G"
+          gnus-desktop-notify-uncollapsed-levels  nil
+          gnus-desktop-notify-behavior            'gnus-desktop-notify-multi)
 
   (gnus-desktop-notify-mode)
 

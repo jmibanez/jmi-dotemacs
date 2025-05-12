@@ -23,44 +23,44 @@
 
   (setq jmi/org-task-dir "~/Documents/org")
 
-  (setq org-startup-indented                   t
-        ;; Let's not hide the leading stars, it gets annoying quickly
-        org-indent-mode-turns-on-hiding-stars  nil
+  (setopt org-startup-indented                   t
+          ;; Let's not hide the leading stars, it gets annoying quickly
+          org-indent-mode-turns-on-hiding-stars  nil
 
-        ;; Enforce that parent tasks can only be marked DONE if all
-        ;; child tasks are also DONE
-        org-enforce-todo-dependencies          t
-        org-enforce-todo-checkbox-dependencies t
+          ;; Enforce that parent tasks can only be marked DONE if all
+          ;; child tasks are also DONE
+          org-enforce-todo-dependencies          t
+          org-enforce-todo-checkbox-dependencies t
 
-        ;; Default TODO states
-        org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "BLOCKED(b@/!)" "|" "DONE(d!)" "CANCELLED(c)"))
+          ;; Default TODO states
+          org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "BLOCKED(b@/!)" "|" "DONE(d!)" "CANCELLED(c)"))
 
-        ;; Automatically switch to INPROGRESS when clocking in
-        org-clock-in-switch-to-state #'jmi/org-clock-in-switch-to-in-progress
-        org-clock-out-switch-to-state #'jmi/org-clock-out-switch-to-todo
+          ;; Automatically switch to INPROGRESS when clocking in
+          org-clock-in-switch-to-state #'jmi/org-clock-in-switch-to-in-progress
+          org-clock-out-switch-to-state #'jmi/org-clock-out-switch-to-todo
 
-        ;; Agenda config -------
-        ;; See org-roam config
+          ;; Agenda config -------
+          ;; See org-roam config
 
-        ;; Include diary into agenda, so I get anniversaries and appointments
-        org-agenda-include-diary               t
+          ;; Include diary into agenda, so I get anniversaries and appointments
+          org-agenda-include-diary               t
 
-        ;; org-capture templates
-        org-capture-templates
-        '(("t" "General task" entry (file+headline "~/Documents/org/inbox.org" "Tasks")
-           "* TODO %?\n%i\n%a")
-          ("T" "Ticket/Issue task" entry (file+headline "~/Documents/org/inbox.org" "Tasks")
-           "* TODO [%^{SIM ID?}] %?\n[[issue:%\\1][%\\1]]\n%i\n%a")
-          ("n" "Note" entry (file+headline "~/Documents/org/inbox.org" "Notes")
-           "* %?\n%i\n%a")
-          ("b" "WikiBlog" entry (file+datetree "~/Documents/org/blog.org")
-           "* %?"
-           :empty-lines 1))
+          ;; ;; DEFUNCT: org-capture templates
+          ;; org-capture-templates
+          ;; '(("t" "General task" entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+          ;;    "* TODO %?\n%i\n%a")
+          ;;   ("T" "Ticket/Issue task" entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+          ;;    "* TODO [%^{SIM ID?}] %?\n[[issue:%\\1][%\\1]]\n%i\n%a")
+          ;;   ("n" "Note" entry (file+headline "~/Documents/org/inbox.org" "Notes")
+          ;;    "* %?\n%i\n%a")
+          ;;   ("b" "WikiBlog" entry (file+datetree "~/Documents/org/blog.org")
+          ;;    "* %?"
+          ;;    :empty-lines 1))
 
-        org-refile-targets '((org-agenda-files . (:level . 1))))
+          org-refile-targets '((org-agenda-files . (:level . 1))))
 
   ;; Archiving
-  (setq org-archive-location "~/Documents/org-archive/%s::")
+  (setopt org-archive-location "~/Documents/org-archive/%s::")
 
   ;; Helper fns for opening various org task files
   (defun jmi/open-org-inbox ()
@@ -156,17 +156,18 @@
 
   :config
   (require 'org-roam-dailies)
-  (setq org-roam-directory "~/Documents/org-roam")
-  (setq org-roam-dailies-directory "journal/")
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           "* %<%H:%M>: %?"
-           :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n"))))
+  (setopt org-roam-directory                  "~/Documents/org-roam"
+          org-roam-dailies-directory          "journal/"
 
-  (setq org-roam-node-display-template
-        (concat "${title:*} "
-                (propertize "${tags:10}" 'face 'org-tag)))
+          org-roam-dailies-capture-templates
+          '(("d" "default" entry
+             "* %<%H:%M>: %?"
+             :if-new (file+head "%<%Y-%m-%d>.org"
+                                "#+title: %<%Y-%m-%d>\n")))
+
+          org-roam-node-display-template
+          (concat "${title:*} "
+                  (propertize "${tags:10}" 'face 'org-tag)))
 
 
   ;; functions borrowed from `vulpea' library
@@ -337,15 +338,18 @@ nil if the current buffer contains only completed tasks."
   :after (org))
 
 (use-package ob-eshell
+  :defer t
   :ensure nil
   :after (org))
 
 (use-package ob-shell
+  :defer t
   :ensure nil
   :after (org))
 
 ;; Presentations
 (use-package org-present
+  :defer t
   :config
   (defun jmi/org-present-setup ()
     (visual-fill-column-mode 1)
@@ -380,8 +384,8 @@ nil if the current buffer contains only completed tasks."
   :after (org))
 
 ;; Not org-related, but useful nonetheless. I probably should rename this module...
-(use-package hyperbole
-  :config
-  (hyperbole-mode 1))
+;; (use-package hyperbole
+;;   :config
+;;   (hyperbole-mode 1))
 
 ;;; org.init.el ends here

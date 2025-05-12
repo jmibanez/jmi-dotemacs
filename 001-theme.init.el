@@ -36,19 +36,19 @@
   :defer nil
 
   :init
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs t
-        modus-themes-org-blocks 'gray-background
-        modus-themes-common-palette-overrides '((comment blue-faint)
-                                                (border-mode-line-active unspecified)
-                                                (border-mode-line-inactive unspecified)
-                                                (bg-mode-line-active bg-blue-subtle)
-                                                (fg-mode-line-active fg-main))
-        modus-themes-headings '((1 . (variable-pitch 1.5))
-                                (2 . (1.3))
-                                (agenda-date . (1.3))
-                                (agenda-structure . (variable-pitch light 1.8))
-                                (t . (1.1))))
+  (setopt modus-themes-italic-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-org-blocks 'gray-background
+          modus-themes-common-palette-overrides '((comment blue-faint)
+                                                  (border-mode-line-active unspecified)
+                                                  (border-mode-line-inactive unspecified)
+                                                  (bg-mode-line-active bg-blue-subtle)
+                                                  (fg-mode-line-active fg-main))
+          modus-themes-headings '((1 . (variable-pitch 1.5))
+                                  (2 . (1.3))
+                                  (agenda-date . (1.3))
+                                  (agenda-structure . (variable-pitch light 1.8))
+                                  (t . (1.1))))
 
   (defun jmi/modus-theme-support-faces (_)
     (modus-themes-with-colors
@@ -114,26 +114,26 @@
                     'help-echo mode-name))))
 
 
-  (setq mood-line-glyph-alist jmi/mood-line-glyphs)
-  (setq mood-line-format
-        (mood-line-defformat
-         :left
-         (((mood-line-segment-modal)            . " ")
-          ((mood-line-segment-project)          . "")
-          ((or (mood-line-segment-buffer-status)
-               (mood-line-segment-client)
-               " ")                             . "")
-          ((mood-line-segment-buffer-name)            . "  ")
-          ((mood-line-segment-anzu)                   . "  ")
-          ((mood-line-segment-multiple-cursors)       . "  ")
-          ((mood-line-segment-cursor-position)        . " ")
-          (mood-line-segment-scroll))
-         :right
-         (((mood-line-segment-vc)         . "  ")
-          ((jmi/mood-line-segment-major-mode) . "  ")
-          ((mood-line-segment-misc-info)  . "  ")
-          ((mood-line-segment-checker)    . "  ")
-          ((mood-line-segment-process)    . "  "))))
+  (setopt mood-line-glyph-alist jmi/mood-line-glyphs)
+  (setopt mood-line-format
+          (mood-line-defformat
+           :left
+           (((mood-line-segment-modal)            . " ")
+            ((mood-line-segment-project)          . "")
+            ((or (mood-line-segment-buffer-status)
+                 (mood-line-segment-client)
+                 " ")                             . "")
+            ((mood-line-segment-buffer-name)            . "  ")
+            ((mood-line-segment-anzu)                   . "  ")
+            ((mood-line-segment-multiple-cursors)       . "  ")
+            ((mood-line-segment-cursor-position)        . " ")
+            (mood-line-segment-scroll))
+           :right
+           (((mood-line-segment-vc)         . "  ")
+            ((jmi/mood-line-segment-major-mode) . "  ")
+            ((mood-line-segment-misc-info)  . "  ")
+            ((mood-line-segment-checker)    . "  ")
+            ((mood-line-segment-process)    . "  "))))
 
   (mood-line-mode)
 
@@ -144,7 +144,7 @@
   (global-anzu-mode))
 
 ;; Pop-up windows when display-buffer
-(setq pop-up-windows t)
+(setopt pop-up-windows t)
 
 ;; Indicate buffer boundaries
 (setq-default indicate-buffer-boundaries '((t . right)))

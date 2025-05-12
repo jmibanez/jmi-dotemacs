@@ -31,7 +31,7 @@
 
 (use-package treesit-auto
   :config
-  (setq treesit-auto-install 'prompt)
+  (setopt treesit-auto-install 'prompt)
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
@@ -75,7 +75,7 @@
   (add-hook (intern (format "%s-hook" mode))
             #'abedra/engage-lisp-power))
 
-(setq scheme-program-name "mzscheme")
+(setopt scheme-program-name "mzscheme")
 
 ;; SLIME config: SBCL + QuickLisp
 (use-package slime
@@ -83,7 +83,7 @@
   (if (file-exists-p "~/.quicklisp/slime-helper.el")
       (load-file "~/.quicklisp/slime-helper.el"))
 
-  (setq inferior-lisp-program "sbcl")
+  (setopt inferior-lisp-program "sbcl")
 
   :bind (:map slime-mode-map
               ("M-TAB"  )))
@@ -123,13 +123,12 @@
   :init
   ;; (add-hook 'cider-mode-hook
   ;;           #'cider-turn-on-eldoc-mode)
-  (setq nrepl-hide-special-buffers t)
-  (setq cider-popup-stacktraces nil)
-  (setq cider-repl-popup-stacktraces t)
-  (setq cider-auto-select-error-buffer t)
-  (setq cider-jdk-src-paths (jmi/cons-jdk-src-paths jmi/jvm-homes-alist))
-  (setq cider-jack-in-cljs-dependencies
-        '(("cider/piggieback" "0.5.3")))
+  (setopt nrepl-hide-special-buffers      t
+          cider-popup-stacktraces         nil
+          cider-repl-popup-stacktraces    t
+          cider-auto-select-error-buffer  t
+          cider-jdk-src-paths             (jmi/cons-jdk-src-paths jmi/jvm-homes-alist)
+          cider-jack-in-cljs-dependencies '(("cider/piggieback" "0.5.3")))
 
   :defer t
   :after
@@ -191,9 +190,8 @@
   :config
   ;; -- Some perf tweaks to make Eglot work "better"
   ;; Increase read-process size
-  (setq read-process-output-max (* 1024 1024))
-
-  (setq eglot-connect-timeout nil)
+  (setopt read-process-output-max (* 1024 1024))
+  (setopt eglot-connect-timeout nil)
 
   (setq jmi/java-agent-lombok-arg (concat "-javaagent:" jmi/lombok-jar))
 
@@ -274,7 +272,7 @@
 
 (use-package eglot-java
   :config
-  (setq eglot-java-eglot-server-programs-manual-updates t)
+  (setopt eglot-java-eglot-server-programs-manual-updates t)
   (eglot-java--jdthandler-patch-eglot)
 
   ;; Override eglot-java--find-server to just use eglot--current-server-or-lose
@@ -342,17 +340,17 @@
 
 (use-package company
   :config
-  (setq company-frontends
-        '(company-pseudo-tooltip-unless-just-one-frontend
-          company-preview-frontend
-          company-echo-metadata-frontend))
+  (setopt company-frontends
+          '(company-pseudo-tooltip-unless-just-one-frontend
+            company-preview-frontend
+            company-echo-metadata-frontend))
 
   :hook
   (after-init . global-company-mode))
 
 (use-package dape
   :config
-  (setq dape-buffer-window-arrangement 'right)
+  (setopt dape-buffer-window-arrangement 'right)
 
   :after eglot)
 
@@ -436,7 +434,7 @@
 (use-package magit
   :init
   ;; Point Magit to locally installed git (not system)
-  (setq magit-git-executable jmi/git)
+  (setopt magit-git-executable jmi/git)
 
   :defer t
   :after
@@ -460,7 +458,7 @@
 
 (use-package git-gutter-fringe
   :config
-  (setq git-gutter-fr:side 'left-fringe)
+  (setopt git-gutter-fr:side 'left-fringe)
   (global-git-gutter-mode t)
 
   :after
@@ -502,7 +500,6 @@
   (setq sql-postgres-login-params
 	'((user :default "jmibanez")
           (database :default "jmibanez")
-          server
           (port :default 5432)))
 
   ;; Handle psql prompts where DB name has an underscore

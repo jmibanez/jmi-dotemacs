@@ -4,22 +4,22 @@
 ;;; Code:
 (use-package whitespace
   :init
-  (setq whitespace-style
-        '(face
-          lines-tail
-          trailing))
+  (setopt whitespace-style
+          '(face
+            lines-tail
+            trailing))
   :config
-  (setq whitespace-line-column nil)
+  (setopt whitespace-line-column nil
 
-  ;; Don't enable in certain places, including Gnus etc.
-  (setq whitespace-global-modes
-        '(not org-issues-mode
-              org-issues-issue-mode
-              org-issues-ticket-mode
-              org-issues-sprint-mode
-              org-issues-search-mode
-              org-mode
-              gnus-mode))
+          ;; Don't enable in certain places, including Gnus etc.
+          whitespace-global-modes
+          '(not org-issues-mode
+                org-issues-issue-mode
+                org-issues-ticket-mode
+                org-issues-sprint-mode
+                org-issues-search-mode
+                org-mode
+                gnus-mode))
 
   (global-whitespace-mode)
 

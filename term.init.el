@@ -72,17 +72,17 @@
 
 
   (require 'em-smart)
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-review-quick-commands nil)
-  (setq eshell-smart-space-goes-to-end t)
+  (setopt eshell-where-to-jump            'begin
+          eshell-review-quick-commands    nil
+          eshell-smart-space-goes-to-end  t
 
-  ;; A history ring size of 128 is too small; use something like 1k
-  ;; entries (which should be fine). Consider bumping this up to
-  ;; something like 4k or 10k...
-  (setq eshell-history-size 1000)
+          ;; A history ring size of 128 is too small; use something like 1k
+          ;; entries (which should be fine). Consider bumping this up to
+          ;; something like 4k or 10k...
+          eshell-history-size             1000
 
-  (setq eshell-aliases-file (concat jmi/my-emacs-init-path "eshell/aliases"))
-  (setq eshell-rc-script (concat jmi/my-emacs-init-path "eshell/rc"))
+          eshell-aliases-file             (concat jmi/my-emacs-init-path "eshell/aliases")
+          eshell-rc-script                (concat jmi/my-emacs-init-path "eshell/rc"))
 
   (esh-command prj (prj-name ws-name)
                (:command
@@ -158,23 +158,23 @@
 
 (use-package eshell-info-banner
   :config
-  (setq eshell-info-banner-progress-bar-char "■")
-  (setq eshell-info-banner-double-width-line-char "═")
-  (setq eshell-info-banner-right-padding-char "·")
-  (setq eshell-info-banner-column-separator-char " ")
+  (setopt eshell-info-banner-progress-bar-char      "■"
+          eshell-info-banner-double-width-line-char "═"
+          eshell-info-banner-right-padding-char     "·"
+          eshell-info-banner-column-separator-char  " ")
 
   ;; Exclude macOS system volumes (Preboot, VM, etc.) except Data
   ;; which has the user home dir. Also ignore simulator images
   (when (eq system-type 'darwin)
-    (setq eshell-info-banner-exclude-partitions
-          '("Preboot"
-            "VM"
-            "Update"
-            "watchOS"
-            "iOS"
-            "CoreSimulator"
-            "SimRuntimeBundle"
-            "private")))
+    (setopt eshell-info-banner-exclude-partitions
+            '("Preboot"
+              "VM"
+              "Update"
+              "watchOS"
+              "iOS"
+              "CoreSimulator"
+              "SimRuntimeBundle"
+              "private")))
 
   :ensure-system-package duf
 
@@ -188,9 +188,9 @@
 
 (use-package eshell-prompt-extras
   :config
-  (setq eshell-highlight-prompt nil
-        eshell-prompt-function 'epe-theme-multiline-with-status
-        epe-path-style 'full)
+  (setopt eshell-highlight-prompt nil
+          eshell-prompt-function 'epe-theme-multiline-with-status
+          epe-path-style 'full)
 
   :after esh-opt)
 
@@ -213,7 +213,7 @@
     (interactive)
     (jmi/vterm-in-dir "~/"))
 
-  (setq vterm-max-scrollback 100000)
+  (setopt vterm-max-scrollback 100000)
 
   (define-key vterm-mode-map (kbd "C-q") #'vterm-send-next-key)
   (define-key vterm-mode-map (kbd "S-<prior>") #'scroll-down-command)
@@ -250,9 +250,9 @@
 
 (use-package eshell-toggle
   :config
-  (setq eshell-toggle-find-project-root-package 'projectile)
-  (setq eshell-toggle-default-directory "~/")
-  (setq eshell-toggle-run-command nil)
+  (setopt eshell-toggle-find-project-root-package 'projectile)
+  (setopt eshell-toggle-default-directory "~/")
+  (setopt eshell-toggle-run-command nil)
 
   :bind
   (("C-`"    . eshell-toggle)))

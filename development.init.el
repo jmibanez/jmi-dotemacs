@@ -187,10 +187,12 @@
 (use-package eglot
   :defer t
 
-  :config
-  ;; -- Some perf tweaks to make Eglot work "better"
+  :init
   ;; Increase read-process size
   (setopt read-process-output-max (* 1024 1024))
+
+  :config
+  ;; -- Some perf tweaks to make Eglot work "better"
   (setopt eglot-connect-timeout nil)
 
   (setq jmi/java-agent-lombok-arg (concat "-javaagent:" jmi/lombok-jar))

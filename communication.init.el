@@ -232,9 +232,7 @@
               #'jmi/alert-notifier-notify)
 
 
-  :ensure-system-package terminal-notifier
-
-  :demand t)
+  :ensure-system-package terminal-notifier)
 
 (use-package gnus-desktop-notify
   :defer t

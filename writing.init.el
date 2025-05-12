@@ -47,6 +47,8 @@
 (use-package markdown-mode
   :defer t
   :config
+  (require 'writegood-mode)
+  (require 'olivetti)
   (defun jmi/setup-markdown-writing-settings ()
     (interactive)
     (set-fill-column 120)
@@ -55,9 +57,7 @@
     (writegood-mode)
     (whitespace-mode 0))
 
-  :hook ((markdown-mode   . jmi/setup-markdown-writing-settings))
-
-  :after (writegood-mode olivetti))
+  :hook ((markdown-mode   . jmi/setup-markdown-writing-settings)))
 
 
 ;; Configure ispell
@@ -69,9 +69,9 @@
               (executable-find "aspell")
               "ispell"))
 
-
   :ensure-system-package enchant
-  :ensure nil)
+  :ensure nil
+  :defer t)
 
 
 ;;; writing.init.el ends here

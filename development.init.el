@@ -459,10 +459,7 @@
 (use-package git-gutter-fringe
   :config
   (setopt git-gutter-fr:side 'left-fringe)
-  (global-git-gutter-mode t)
-
-  :after
-  magit)
+  (global-git-gutter-mode t))
 
 (use-package magit-gitflow
   :after magit)

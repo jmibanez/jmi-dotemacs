@@ -64,6 +64,11 @@
     (concat jmi/my-emacs-init-path
             sanitized-platform-dir)))
 
+
+(use-package benchmark-init
+  :config
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 (require 'bind-key)
 
 (bind-keys :prefix-map jmi/my-jump-keys-map

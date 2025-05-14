@@ -204,7 +204,7 @@
   ;; mail
   (gnus-demon-add-handler 'mbsync 5 nil)
 
-  :ensure-system-package isync
+  :ensure-system-package (mbsync . isync)
 
   :autoload (jmi/do-mail-sync jmi-scan-mail-and-news)
 

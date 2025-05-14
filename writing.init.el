@@ -69,7 +69,7 @@
               (executable-find "aspell")
               "ispell"))
 
-  :ensure-system-package enchant
+  :ensure-system-package (enchant-2 . enchant)
   :ensure nil
   :defer t)
 

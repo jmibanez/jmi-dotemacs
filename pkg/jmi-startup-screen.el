@@ -23,6 +23,7 @@
     (other-window 1)
     (switch-to-buffer (get-buffer buffer-eshell)))
   (message (concat "Emacs started in " (emacs-init-time)))
+  (org-roam-db-autosync-mode)
   (benchmark-init/deactivate))
 
 (defun jmi/startup-screen ()

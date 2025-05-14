@@ -316,9 +316,6 @@ nil if the current buffer contains only completed tasks."
 
   (setq org-agenda-files (jmi/org-project-files))
 
-  ;; Sync DB
-  (org-roam-db-autosync-mode)
-
   :bind ((:map jmi/my-jump-keys-map
                ("r r"   . org-roam-buffer-toggle)
                ("<f8>"  . org-roam-capture)

@@ -10,10 +10,7 @@
 ;;; Code:
 
 (use-package eshell
-  :config
-  (require 'cl-lib)
-  (require 'seq)
-
+  :init
   (defmacro esh-command (alias arglist &rest command-def-alist)
     (let ((command-body (cdr (assoc :command command-def-alist)))
           (pcomplete-body (cdr (assoc :completion command-def-alist)))
@@ -30,6 +27,10 @@
                     ,(intern (concat "eshell/" (symbol-name alias))))
            (quote ,real-fn-name)))))
 
+  :config
+  (require 'cl-lib)
+  (require 'seq)
+
   (defun jmi/list-directories-only (base-path)
     (if (not (file-directory-p base-path))
         '()
@@ -43,7 +44,7 @@
   (defun jmi/all-projects-across-workspaces ()
     (let ((all-ws (jmi/list-directories-only "~/projects/")))
       (mapcan (lambda (ws)
-                (cl-loop for prj-in-ws in (jmi/list-directories-only (concat "~/projects/" ws "/src/"))
+                (cl-loop for prj-in-ws in (jmi/list-directories-only (concat "~/projects/" ws "/"))
                       collect (cons prj-in-ws ws)))
               all-ws)))
 
@@ -52,7 +53,7 @@
 
   (defun jmi/current-workspace ()
     (concat "~/projects/"
-            (first
+            (cl-first
              (seq-filter (lambda (ws-name)
                            (string-prefix-p (file-truename (concat "~/projects/" ws-name))
                                             (file-truename default-directory)))
@@ -62,7 +63,7 @@
     (seq-filter (lambda (project-path)
                   (string-prefix-p (file-truename ws-path)
                                    (file-truename project-path)))
-                projectile-known-projects))
+                (projectile-known-projects)))
 
   (defun jmi/search-workspaces (prj-name)
     (seq-filter (lambda (prj-ws-tup)
@@ -72,6 +73,7 @@
 
 
   (require 'em-smart)
+  (require 'pcomplete)
   (setopt eshell-where-to-jump            'begin
           eshell-review-quick-commands    nil
           eshell-smart-space-goes-to-end  t
@@ -88,13 +90,13 @@
                (:command
                 (let ((candidates (cl-remove-if-not (lambda (p)
                                                       (string-suffix-p (concat "/" prj-name "/") p))
-                                                    projectile-known-projects)))
+                                                    (projectile-known-projects))))
                   (message (format "%s" (length candidates)))
                   (cond ((length= candidates 1)
                          (eshell/cd (car candidates)))
 
                         ((length> candidates 1)
-                         (eshell/cd (completing-read "Multiple candidate ptojects: "
+                         (eshell/cd (completing-read "Multiple candidate projects: "
                                                      candidates)))
 
                         ((and ws-name
@@ -114,7 +116,7 @@
                                  (-> p
                                      file-name-split
                                      reverse
-                                     second))
+                                     cl-second))
                                (jmi/projects-in-workspace current-ws))
                      (mapcar 'car
                              project-ws-map)))

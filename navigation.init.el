@@ -103,7 +103,8 @@
   (setopt vertico-count  25
           vertico-resize t)
 
-  (vertico-mode))
+  (vertico-mode)
+  :demand t)
 
 (use-package counsel
   :defer t)

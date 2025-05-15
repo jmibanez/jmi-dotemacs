@@ -35,6 +35,9 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+(use-package editorconfig
+  :config
+  (editorconfig-mode))
 
 ;; Lisp Modes
 (setq lisp-modes '(lisp-mode

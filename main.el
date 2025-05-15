@@ -74,6 +74,10 @@
 (bind-keys :prefix-map jmi/my-jump-keys-map
            :prefix "<f8>")
 
+;; If we aren't running on at least this version of Emacs, error
+(if (< emacs-major-version 30)
+    (error "This is Emacs version is too old; need to be at least Emacs 30"))
+
 ;; If there are any customizations per-machine, per-user, load them
 ;; first, so that our config can refer to them
 (mapc 'load

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: Liquibase XML direct SQL statement change
+# key: LiquibaseSqlChangeXml
+# --
+<sql>
+<![CDATA[
+    $0
+]]>
+</sql>

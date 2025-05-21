@@ -74,6 +74,9 @@
 (bind-keys :prefix-map jmi/my-jump-keys-map
            :prefix "<f8>")
 
+;; Also bind C-* to my jump keys
+(bind-key "C-*" 'jmi/my-jump-keys-map nil nil)
+
 ;; If we aren't running on at least this version of Emacs, error
 (if (< emacs-major-version 30)
     (error "This is Emacs version is too old; need to be at least Emacs 30"))

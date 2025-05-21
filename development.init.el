@@ -10,6 +10,8 @@
 
 ;; Tree Sitter
 
+(require 'cl-lib)
+
 (use-package treesit
   :config
   (setq treesit-language-source-alist
@@ -72,6 +74,7 @@
 (define-key lisp-power-map [backspace] 'paredit-backward-delete)
 
 (defun abedra/engage-lisp-power ()
+  "Fix keybindings; add power for Lisp-adjacent modes."
   (lisp-power-mode t))
 
 (dolist (mode lisp-modes)
@@ -109,7 +112,7 @@
   :mode "\\.clj$")
 
 (defun jmi/cons-src-path-for-jvm-home (pair)
-  "Return path for src.zip for JVM Home alist entry in PAIR"
+  "Return path for src.zip for JVM Home alist entry in PAIR."
 
   (let ((jvm-version (car pair))
         (jvm-path (cdr pair)))
@@ -118,7 +121,7 @@
       (concat jvm-path "/lib/src.zip"))))
 
 (defun jmi/cons-jdk-src-paths (jvm-alist)
-  "Construct JDK source paths (src.zip) in JVM-ALIST"
+  "Construct JDK source paths (src.zip) in JVM-ALIST."
 
   (mapcar 'jmi/cons-src-path-for-jvm-home jvm-alist))
 
@@ -164,10 +167,11 @@
       (t
        :background bg-blue-intense
        :foreground white))
-    "Customized face for Flymake diagnostic message popup")
+    "Customized face for Flymake diagnostic message popup"
+    :group 'jmi-custom-faces)
 
   (defun jmi/flymake-diagnostic-at-point-via-popup (s)
-    (popup-tip s
+    (popup-tip (concat flymake-diagnostic-at-point-error-prefix s)
                :margin-left 1
                :margin-right 1
                :face :jmi-diagnostic-popup
@@ -262,7 +266,7 @@
     "Only ensure eglot is enabled if we're not opening a buffer in .eglot-java"
     (unless (string=
              ".eglot-java"
-             (first (last (file-name-split
+             (cl-first (last (file-name-split
                            (file-name-directory default-directory)) 2)))
       (jmi/ensure-lombok-jar-exists)
       (eglot-ensure)))
@@ -519,19 +523,20 @@
 ;; (taken from textmate.el -- jmibanez)
 
 (defmacro allow-line-as-region-for-function (orig-function)
-`(defun ,(intern (concat (symbol-name orig-function) "-or-line"))
-   ()
-   ,(format "Like `%s', but acts on the current line if mark is not active."
-            orig-function)
-   (interactive)
-   (if mark-active
-       (call-interactively (function ,orig-function))
-     (save-excursion
-       ;; define a region (temporarily) -- so any C-u prefixes etc. are preserved.
-       (beginning-of-line)
-       (set-mark (point))
-       (end-of-line)
-       (call-interactively (function ,orig-function))))))
+  "Add an `-or-line` version to a ORIG-FUNCTION."
+  `(defun ,(intern (concat (symbol-name orig-function) "-or-line"))
+       ()
+     ,(format "Like `%s', but acts on the current line if mark is not active."
+              orig-function)
+     (interactive)
+     (if mark-active
+         (call-interactively (function ,orig-function))
+       (save-excursion
+         ;; define a region (temporarily) -- so any C-u prefixes etc. are preserved.
+         (beginning-of-line)
+         (set-mark (point))
+         (end-of-line)
+         (call-interactively (function ,orig-function))))))
 
 (unless (fboundp 'comment-or-uncomment-region-or-line)
   (allow-line-as-region-for-function comment-or-uncomment-region))

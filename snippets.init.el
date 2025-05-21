@@ -9,7 +9,7 @@
 (use-package yasnippet
   :config
   (setq yas-snippet-dirs
-        '("~/.emacs.d/snippets")))
+        `(,(concat jmi/my-emacs-init-path "snippets"))))
 
 (use-package consult-yasnippet
   :defer t

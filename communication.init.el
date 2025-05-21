@@ -29,7 +29,8 @@
             ("https://fishbowl.pastiche.org/atom.xml" blog dev)
             ("http://feedpress.me/sixcolors" blog apple)
             ("http://nullprogram.com/feed/" blog dev emacs)
-            ("http://hownow.brownpau.com/feed" blog)))
+            ("http://hownow.brownpau.com/feed" blog)
+            ("https://coredumped.dev/index.xml" blog dev emacs rust)))
 
   (setq jmi/default-elfeed-search-filter "@2-weeks-ago +unread")
 

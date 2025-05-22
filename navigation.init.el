@@ -178,13 +178,6 @@
   (add-to-list 'session-globals-exclude 'org-mark-ring)
   (add-to-list 'session-globals-exclude 'consult--buffer-history))
 
-(use-package fill-column-indicator
-  :defer t
-  :config
-  (define-globalized-minor-mode jmi-global-fci-mode
-    fci-mode
-    turn-on-fci-mode))
-
 ;; Bind F7/S-F7 to bookmark
 (use-package bookmark
   :defer t

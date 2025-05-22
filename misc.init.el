@@ -9,6 +9,9 @@
 ;; Use y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Make kill ring larger
+(setopt kill-ring-max 1000)
+
 ;; Sentences end with a single space.
 (setopt sentence-end-double-space nil)
 

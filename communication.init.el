@@ -211,7 +211,10 @@
 
   :hook ((mbsync-exit       .  jmi/scan-mail-and-news)
          (gnus-startup      .  gnus-demon-init))
-  :after (gnus))
+  :after (gnus)
+
+  :bind ((:map jmi/my-jump-keys-map
+               ("f f"      . jmi/do-mail-sync))))
 
 (use-package alert
   :defer t

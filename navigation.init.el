@@ -154,20 +154,23 @@
   (vertico-posframe-mode)
   :after posframe)
 
-;; Window move via cmd-ctrl-(vim keys)
-;; Changed to be consistent with how we've bound things in our iTerm2 config
-(global-set-key (kbd "C-s-h") 'windmove-left)
-(global-set-key (kbd "C-s-l") 'windmove-right)
-(global-set-key (kbd "C-s-k") 'windmove-up)
-(global-set-key (kbd "C-s-j") 'windmove-down)
-
 (use-package framemove
+  :ensure nil
   :defer t
-  :load-path "~/elisp/framemove"
-
-  :init
+  :config
   (setq framemove-hook-into-windmove t))
 
+(use-package windmove
+  :ensure nil
+  :config
+  (require 'framemove)
+
+  ;; Window move via cmd-ctrl-(vim keys)
+  ;; Changed to be consistent with how we've bound things in our iTerm2 config
+  :bind (("C-s-h"        . windmove-left)
+         ("C-s-l"        . windmove-right)
+         ("C-s-k"        . windmove-up)
+         ("C-s-j"        . windmove-down)))
 
 ;; Use Emacs session management
 (use-package session

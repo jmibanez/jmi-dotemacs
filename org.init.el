@@ -10,7 +10,6 @@
 
 (use-package org
   :config
-
   (defun jmi/org-clock-in-switch-to-in-progress (task-state)
     (if (string= task-state "TODO")
         "INPROGRESS"
@@ -140,8 +139,8 @@
 
   ((org-capture-before-finalize . jmi/tick-gnus-message-if-linked)
    (org-after-todo-statistics   . jmi/org-summary-todo)
-   (org-clock-in-hook           . jmi/org-update-statusbar-clock-in)
-   (org-clock-out-hook          . jmi/org-update-statusbar-clock-out))
+   (org-clock-in                . jmi/org-update-statusbar-clock-in)
+   (org-clock-out               . jmi/org-update-statusbar-clock-out))
 
   ;; Global key bindings
   :bind ((:map jmi/my-jump-keys-map

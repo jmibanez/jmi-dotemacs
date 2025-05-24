@@ -65,8 +65,8 @@
   (load-theme 'modus-vivendi-tinted :no-confirm)
   (setq jmi/selected-theme 'modus-vivendi-tinted)
 
-  (set-face-attribute 'default nil :font "Berkeley Mono-14")
-  (set-frame-font "Berkeley Mono-14" nil t t))
+  (set-face-attribute 'default nil :font "Berkeley Mono-14:weight=thin")
+  (set-frame-font "Berkeley Mono-14:weight=thin" nil t t))
 
 (use-package all-the-icons
   :config

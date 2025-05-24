@@ -1,4 +1,4 @@
-;;; browse.init.el -- Open URL in macOS
+;;; browse.init.el -- Open URL in macOS  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

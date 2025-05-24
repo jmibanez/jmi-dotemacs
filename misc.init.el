@@ -1,4 +1,4 @@
-;;; misc.init.el -- Unsorted, miscellaneous config
+;;; misc.init.el -- Unsorted, miscellaneous config  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

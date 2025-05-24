@@ -1,4 +1,4 @@
-;;; development.init.el -- Various config for programming
+;;; development.init.el -- Various config for programming  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This contains all of the config for various modes I use for

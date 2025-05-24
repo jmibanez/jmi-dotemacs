@@ -1,4 +1,4 @@
-;;; 001-theme.init.el -- Theming-specific functions and config
+;;; 001-theme.init.el -- Theming-specific functions and config  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This configures the modeline (via powerline, spaceline, and mode

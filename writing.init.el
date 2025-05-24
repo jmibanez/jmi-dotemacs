@@ -1,4 +1,4 @@
-;;; writing.init.el -- Stuff to help make it more pleasant to write prose
+;;; writing.init.el -- Stuff to help make it more pleasant to write prose  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; These are a bunch of stuff that I use to help make writing prose

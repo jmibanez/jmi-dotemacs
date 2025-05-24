@@ -1,4 +1,4 @@
-;;; tls.init.el -- enable SNI on tls-program
+;;; tls.init.el -- enable SNI on tls-program  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

@@ -1,4 +1,4 @@
-;;; org.init.el -- Configuration for org-mode tasks and notes
+;;; org.init.el -- Configuration for org-mode tasks and notes  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

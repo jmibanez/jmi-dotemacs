@@ -1,4 +1,4 @@
-;;; 000.init.el -- Early initialization
+;;; 000.init.el -- Early initialization  -*- lexical-binding: t; -*-
 ;;;
 
 ;;; Commentary:

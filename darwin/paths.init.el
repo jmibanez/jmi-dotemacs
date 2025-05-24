@@ -1,4 +1,4 @@
-;;; paths.init.el -- Platform-specific paths
+;;; paths.init.el -- Platform-specific paths  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This sets up various vars that point to environment-specific

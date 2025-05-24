@@ -1,4 +1,4 @@
-;;; 000.init.el -- Darwin-specific (i.e. macOS) config
+;;; 000.init.el -- Darwin-specific (i.e. macOS) config  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This contains macOS-specific configuration

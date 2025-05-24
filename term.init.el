@@ -1,4 +1,4 @@
-;;; term.init.el -- Config for shell/terminal support
+;;; term.init.el -- Config for shell/terminal support  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

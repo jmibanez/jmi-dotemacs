@@ -1,4 +1,4 @@
-;;; keybindings.init.el -- Keybindings and keybinding suport
+;;; keybindings.init.el -- Keybindings and keybinding suport  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

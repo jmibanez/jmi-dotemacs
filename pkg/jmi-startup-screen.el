@@ -1,4 +1,4 @@
-;;; jmi-startup-screen.el -- Startup screen hook
+;;; jmi-startup-screen.el -- Startup screen hook  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

@@ -1,4 +1,4 @@
-;;; snippits.init.el -- YASnippet configuration
+;;; snippits.init.el -- YASnippet configuration  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; Separate YASnippet into a separate config file since I'll be

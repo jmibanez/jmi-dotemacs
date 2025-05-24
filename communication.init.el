@@ -1,4 +1,4 @@
-;;; communication.init.el -- Chat and comms
+;;; communication.init.el -- Chat and comms -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; RSS feed readers, IRC, in-Emacs Twitter support, etcetera.

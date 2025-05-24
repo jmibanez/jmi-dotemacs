@@ -1,4 +1,4 @@
-;;; whitespace.init.el -- Whitespace handling
+;;; whitespace.init.el -- Whitespace handling  -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:

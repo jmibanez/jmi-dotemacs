@@ -1,4 +1,4 @@
-;;; uniquify.init.el -- Unique buffer names
+;;; uniquify.init.el -- Unique buffer names  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

@@ -1,4 +1,4 @@
-;;; navigation.init.el -- Navigation and movement in Emacs
+;;; navigation.init.el -- Navigation and movement in Emacs  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This configures a bunch of stuff I use for getting around my Emacs

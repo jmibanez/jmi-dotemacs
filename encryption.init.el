@@ -1,4 +1,4 @@
-;;; encryption.init.el -- Config for encryption, etcetera
+;;; encryption.init.el -- Config for encryption, etcetera  -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:

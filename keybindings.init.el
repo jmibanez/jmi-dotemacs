@@ -11,7 +11,7 @@
 (use-package bind-key
   :ensure nil
 
-  :config
+  :init
   (defun jmi/in-org-roam-related-buffer-p ()
     (or (and (fboundp 'jmi/org-roam-buffer-p)
              (jmi/org-roam-buffer-p))

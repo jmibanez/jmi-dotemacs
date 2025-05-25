@@ -20,13 +20,13 @@
 
 
 
-;; Primary: Work email
+;; Primary: jmibanez.com
 
 ;; NB: We're using Maildirs + mbsync to decouple ourselves from the
 ;; vagaries of nnimap and the network/VPN.
 (setq gnus-select-method
-      '(nnmaildir "amazon"
-                  (directory             "~/Maildir/amazon")))
+      '(nnmaildir "jmibanez.com"
+                  (directory             "~/Maildir/jmibanez.com")))
 
 ;; Search via mairix
 ;; NB: We need to require nnmairix to load it and have its keybindings active
@@ -34,18 +34,12 @@
 (setq gnus-secondary-select-methods
       '((nnmaildir "mairix"
                    (directory     "~/.nnmairix"))
+        (nnmaildir "gmail"
+                   (directory     "~/Maildir/gmail"))
         (nnml      "archive"
                    (nnml-directory             "~/Mail.archive")
                    ;; Don't expire messages in the archive!
                    (nnml-inhibit-expiry        t))))
-
-;; Secondary: Personal GMail accounts
-;; (setq gnus-secondary-select-methods
-;;       '((nnimap "gmail"
-;;                 (nnimap-address     "imap.gmail.com")
-;;                 (nnimap-stream      ssl)
-;;                 (nnimap-server-port "imaps")
-;;                 (nnmail-expiry-target ))))
 
 (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
 (setq gnus-user-date-format-alist

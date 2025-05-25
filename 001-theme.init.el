@@ -113,6 +113,10 @@
         (propertize icon
                     'help-echo mode-name))))
 
+  (defun jmi/mood-line-segment-mbsync ()
+    (if (and (boundp 'mbsync-last-status)
+             (mbsync-get-proc))
+        mbsync-last-status))
 
   (setopt mood-line-glyph-alist jmi/mood-line-glyphs)
   (setopt mood-line-format
@@ -129,7 +133,8 @@
             ((mood-line-segment-cursor-position)        . " ")
             (mood-line-segment-scroll))
            :right
-           (((mood-line-segment-vc)         . "  ")
+           (((jmi/mood-line-segment-mbsync) . "  ")
+            ((mood-line-segment-vc)         . "  ")
             ((jmi/mood-line-segment-major-mode) . "  ")
             ((mood-line-segment-misc-info)  . "  ")
             ((mood-line-segment-checker)    . "  ")

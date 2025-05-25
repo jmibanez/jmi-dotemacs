@@ -155,6 +155,7 @@
   :ensure nil)
 
 (use-package flymake-diagnostic-at-point
+  :functions jmi/flymake-diagnostic-at-point-via-popup
   :config
   (defface :jmi-diagnostic-popup
     '((((type graphic))
@@ -191,6 +192,10 @@
 
 (use-package eglot
   :defer t
+
+  :functions (jmi/ensure-lombok-jar-exists
+              jmi/jdk-version-to-jdk-name
+              jmi/eglot-jdtls-args)
 
   :init
   ;; Increase read-process size

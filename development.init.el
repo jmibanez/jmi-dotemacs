@@ -90,9 +90,7 @@
       (load-file "~/.quicklisp/slime-helper.el"))
 
   (setopt inferior-lisp-program "sbcl")
-
-  :bind (:map slime-mode-map
-              ("M-TAB"  )))
+  :defer t)
 
 (use-package slime-company
   :defer t)

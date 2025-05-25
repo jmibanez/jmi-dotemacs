@@ -365,9 +365,9 @@ nil if the current buffer contains only completed tasks."
     ;; Show only top-level headlines
     (org-overview)
     ;; Unfold the current entry
-    (org-show-entry)
+    (org-fold-show-entry)
     ;; Show only direct subheadings of the slide, but don't expand them
-    (org-show-children))
+    (org-fold-show-children))
 
   ;; Because Reasons (use-package), we need to explicitly hook it
   ;; here, instead of using the :hook section

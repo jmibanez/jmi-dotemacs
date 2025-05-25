@@ -1,0 +1,28 @@
+# key: mbsyncGmail
+# name: mbsync GMail config clauses
+# --
+IMAPAccount $1-account
+Host imap.gmail.com
+User $2
+PassCmd "`(concat jmi/my-emacs-init-path "scripts/mutt_oauth2.py")` --account $2"
+AuthMechs OAUTHBEARER
+TLSType IMAPS
+Timeout 120
+PipelineDepth 50
+
+IMAPStore $1-remote
+Account $1-account
+
+MaildirStore $1-local
+Path ~/Maildir/$1/
+Inbox ~/Maildir/$1/INBOX
+Subfolders Verbatim
+Flatten .
+
+Channel $1
+Far :$1-remote:
+Near :$1-local:
+Create Both
+Expunge Both
+Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Bin"
+SyncState *

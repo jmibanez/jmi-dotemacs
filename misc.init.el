@@ -77,4 +77,28 @@
   ;; ... specifically check at noon
   (auto-package-update-at-time "12:00"))
 
+(use-package emacs
+  :ensure nil
+  :config
+  (defun jmi/ask-user-about-lock-dwim-with-hostname (orig-ask-user-fn file other-user)
+    (let ((current-hostname-no-suffix (car (split-string (system-name) "\\.")))
+          (other-user-hostname-no-suffix
+           (car (split-string (cadr (split-string other-user
+                                                  "@"))
+                              "\\.")))
+          (current-user (user-login-name))
+          (other-user-user (car (split-string other-user "@")))
+          (current-session-pid (number-to-string (emacs-pid)))
+          (other-user-pid (last (split-string (car (split-string other-user ":"))
+                                              "\\."))))
+      (or (and (string-equal current-hostname-no-suffix other-user-hostname-no-suffix)
+               (string-equal current-user other-user-user)
+               (string-equal current-session-pid other-user-pid))
+          (funcall orig-ask-user-fn file other-user))))
+
+  (advice-add 'ask-user-about-lock :around
+              #'jmi/ask-user-about-lock-dwim-with-hostname)
+
+  :if (eq system-type 'darwin))
+
 ;;; misc.init.el ends here

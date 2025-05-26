@@ -37,7 +37,6 @@
   :bind
   (("s-t"   . jmi/projectile-find-file-or-org-roam-node-find-dwim)
    (:map jmi/my-jump-keys-map
-         ("c c"      . projectile-compile-project)
-         ("f p"      . jmi/toggle-http-proxy))))
+         ("c c"      . projectile-compile-project))))
 
 ;;; keybindings.init.el ends here

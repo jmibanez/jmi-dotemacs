@@ -245,4 +245,23 @@
   (breadcrumb-mode)
   :defer t)
 
+;; Configure dired defaults
+(use-package dired
+  :ensure nil
+  :defer t
+
+  :config
+  ;; Taken from https://emacs.dyerdwelling.family/emacs/20250513085926-emacs--instantly-open-dired-files-with-isearch-and-enter/
+  (defun jmi/dired-isearch-dwim ()
+    "In dired mode, enter directory or open file after isearch."
+    (when (eq major-mode 'dired-mode)
+      (let ((file (dired-get-file-for-visit)))
+        (when file
+          (dired-find-file)))))
+
+  (advice-add 'isearch-exit :after
+              #'jmi/dired-isearch-dwim)
+
+  :hook ((dired-mode . dired-omit-mode)))
+
 ;;; navigation.init.el ends here

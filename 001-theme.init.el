@@ -73,6 +73,23 @@
   (push
    '(groovy-mode  all-the-icons-fileicon "groovy" :face all-the-icons-green)
    all-the-icons-mode-icon-alist)
+
+  (setopt all-the-icons-scale-factor 0.8)
+
+  :if
+  (display-graphic-p))
+
+(use-package all-the-icons-dired
+  :defer t
+  :after (all-the-icons dired)
+  :hook ((dired-mode . all-the-icons-dired-mode))
+
+  :config
+  (setopt all-the-icons-dired-v-adjust 0
+          all-the-icons-dired-monochrome nil)
+
+  :custom-face (all-the-icons-dired-dir-face ((t (:height 0.8))))
+
   :if
   (display-graphic-p))
 
@@ -106,8 +123,7 @@
 
   (defun jmi/mood-line-segment-major-mode ()
     (let ((icon (all-the-icons-icon-for-mode major-mode
-                                             :v-adjust 0
-                                             :height 0.8)))
+                                             :v-adjust 0)))
       (if (eq icon major-mode)
           mode-name
         (propertize icon

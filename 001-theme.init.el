@@ -45,7 +45,8 @@
                                                   (bg-mode-line-active bg-blue-subtle)
                                                   (fg-mode-line-active fg-main))
           modus-themes-headings '((1 . (variable-pitch 1.5))
-                                  (2 . (1.3))
+                                  (2 . (variable-pitch 1.3))
+                                  (3 . (variable-pitch 1.2))
                                   (agenda-date . (1.3))
                                   (agenda-structure . (variable-pitch light 1.8))
                                   (t . (1.1))))
@@ -66,7 +67,9 @@
   (setq jmi/selected-theme 'modus-vivendi-tinted)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14:weight=thin")
-  (set-frame-font "Berkeley Mono-14:weight=thin" nil t t))
+  (set-frame-font "Berkeley Mono-14:weight=thin" nil t t)
+
+  (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 
 (use-package all-the-icons
   :config

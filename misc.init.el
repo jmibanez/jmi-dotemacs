@@ -7,7 +7,7 @@
 ;;; Code:
 
 ;; Use y/n instead of yes/no
-(fset 'yes-or-no-p 'y-or-n-p)
+(setopt use-short-answers t)
 
 ;; Make kill ring larger
 (setopt kill-ring-max 1000)

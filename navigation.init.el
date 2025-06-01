@@ -242,8 +242,7 @@
 ;; Breadcrumbs
 (use-package breadcrumb
   :config
-  (breadcrumb-mode)
-  :defer t)
+  (breadcrumb-mode))
 
 ;; Configure dired defaults
 (use-package dired

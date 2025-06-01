@@ -26,6 +26,12 @@
 
 ;; Ensure that 000.init.el is copied to early-init.el; eval if it's
 ;; newer or non-existent
+(defun jmi/update-early-init ()
+  "Update early-init.el and byte-compile it"
+  (interactive)
+  (copy-file jmi/early-init-file-source jmi/early-init-file t)
+  (byte-compile-file jmi/early-init-file))
+
 (unless (not (file-newer-than-file-p jmi/early-init-file-source
                                      jmi/early-init-file))
   (copy-file jmi/early-init-file-source jmi/early-init-file t)

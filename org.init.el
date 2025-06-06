@@ -329,7 +329,8 @@ nil if the current buffer contains only completed tasks."
 
   :hook
   ((find-file     . jmi/org-project-update-tag)
-   (before-save   . jmi/org-project-update-tag))
+   (before-save   . jmi/org-project-update-tag)
+   (org-roam-mode . auto-revert-mode))
 
   :after (org))
 

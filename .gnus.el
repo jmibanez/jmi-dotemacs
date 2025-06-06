@@ -15,7 +15,7 @@
 
 (setq message-send-mail-function           'sendmail-send-it
       send-mail-function                   'sendmail-send-it
-      sendmail-program                     "~/scripts/sendmail-tunnel.sh"
+      sendmail-program                     "msmtp"
       imap-enable-exchange-bug-workaround  t)
 
 

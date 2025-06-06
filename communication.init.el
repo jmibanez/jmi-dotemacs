@@ -112,14 +112,6 @@
   ;; Point to .gnus.el in this directory
   (setopt gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
 
-  ;; HTML email composition via Markdown
-  (defun jmi/mimedown ()
-    (interactive)
-    (save-excursion
-      (message-goto-body)
-      (shell-command-on-region (point) (point-max)
-                               "/Users/jabz/scripts/mimedown.sh" nil t)))
-
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
     (interactive "p" gnus-summary-mode)
@@ -166,11 +158,18 @@
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
 
-  :hook
-  ((message-send             .  jmi/mimedown))
+  :ensure-system-package (msmtp)
 
   :ensure nil
   :defer t)
+
+(use-package org-mime
+  :defer t
+
+  :config
+  (setopt org-mime-library 'mml)
+
+  :after (org gnus))
 
 (use-package mbsync
   :defer t

@@ -89,8 +89,13 @@
           (current-user (user-login-name))
           (other-user-user (car (split-string other-user "@")))
           (current-session-pid (number-to-string (emacs-pid)))
-          (other-user-pid (last (split-string (car (split-string other-user ":"))
-                                              "\\."))))
+          (other-user-pid   (car
+                             (split-string (car
+                                            (last (split-string
+                                                   (car
+                                                    (last (split-string other-user "(")))
+                                                   " ")))
+                                           ")"))))
       (or (and (string-equal current-hostname-no-suffix other-user-hostname-no-suffix)
                (string-equal current-user other-user-user)
                (string-equal current-session-pid other-user-pid))

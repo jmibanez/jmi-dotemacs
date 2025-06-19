@@ -329,7 +329,9 @@ nil if the current buffer contains only completed tasks."
         :from tags
         :left-join nodes
         :on (= tags:node-id nodes:id)
-        :where (like tag (quote "%\"project\"%"))]))))
+        :where (or
+                (like tag (quote "%\"project\"%"))
+                (like tag (quote "%\"diary\"%")))]))))
 
   (defun jmi/update-agenda-files (&rest _)
     "Keep `org-agenda-files' up to date."

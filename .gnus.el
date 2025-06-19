@@ -148,6 +148,5 @@
 (setq gnus-posting-styles
       '((".*"
          (name            "JM Ibanez")
-         (address         "jm@jmibanez.com")
-         (signature-file  "~/.signature"))))
+         (address         "jm@jmibanez.com"))))
 

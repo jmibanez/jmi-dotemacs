@@ -163,11 +163,32 @@
   :ensure nil
   :defer t)
 
-(use-package org-mime
-  :defer t
+(use-package htmlize
+  :defer t)
 
+(use-package org-msg
   :config
-  (setopt org-mime-library 'mml)
+  (setopt mail-user-agent 'gnus-user-agent)
+  (setopt org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+          org-msg-startup "hidestars indent inlineimages"
+          org-msg-greeting-fmt "\nHi%s,\n\n"
+          org-msg-recipient-names '(("jm@jmibanez.com"  . "JM"))
+          org-msg-default-alternatives '((new             . (text html))
+                                         (reply-to-html   . (text html))
+                                         (reply-to-text   . (text)))
+          org-msg-convert-citation t
+          org-msg-signature "
+
+Regards,
+
+#+begin_signature
+
+JM Ibañez
+
+https://jmibanez.com/
+https://instagram.com/jmibanez
+#+end_signature")
+  (org-msg-mode)
 
   :after (org gnus))
 

@@ -8,6 +8,31 @@
 
 ;;; Code:
 
+(use-package holidays
+  :ensure nil
+  :config
+  ;; Remove holiday sets we don't care about
+  (setopt holiday-bahai-holidays nil)
+  (setopt holiday-islamic-holidays nil)
+  (setopt holiday-hebrew-holidays nil))
+
+(use-package australia-holidays
+  :ensure nil
+  :config
+  (setopt calendar-latitude      -33.8
+          calendar-longitude     151.2
+          calendar-location-name "Sydney, NSW, Australia")
+
+  (setopt australia-holidays-january-26-label "Invasion Day")
+  (setopt calendar-holidays
+          (append australia-holidays-for-nsw
+                  holiday-oriental-holidays
+                  holiday-solar-holidays))
+  :vc (:url "https://github.com/jmibanez/australia-holidays.el"
+       :branch "main"
+       :rev :newest)
+  :after holidays)
+
 (use-package org
   :config
   (defun jmi/org-clock-in-switch-to-in-progress (task-state)

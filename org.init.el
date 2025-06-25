@@ -28,9 +28,6 @@
           (append australia-holidays-for-nsw
                   holiday-oriental-holidays
                   holiday-solar-holidays))
-  :vc (:url "https://github.com/jmibanez/australia-holidays.el"
-       :branch "main"
-       :rev :newest)
   :after holidays)
 
 (use-package org

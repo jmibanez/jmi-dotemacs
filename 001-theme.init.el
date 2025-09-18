@@ -63,8 +63,8 @@
   (add-hook 'enable-theme-functions #'jmi/modus-theme-support-faces)
 
   :config
-  (load-theme 'modus-vivendi-tinted :no-confirm)
-  (setq jmi/selected-theme 'modus-vivendi-tinted)
+  (load-theme 'modus-operandi :no-confirm)
+  (setq jmi/selected-theme 'modus-operandi)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14:weight=thin")
   (set-frame-font "Berkeley Mono-14:weight=thin" nil t t)

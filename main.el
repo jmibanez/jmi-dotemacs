@@ -73,11 +73,11 @@
 
 (require 'bind-key)
 
+;; Bind both F8 and C-* to my jump keys; bind C-* first so that F8 is
+;; what shows up in help text
 (bind-keys :prefix-map jmi/my-jump-keys-map
-           :prefix "<f8>")
-
-;; Also bind C-* to my jump keys
-(bind-key "C-*" 'jmi/my-jump-keys-map nil nil)
+           :prefix "C-*")
+(bind-key "<f8>" 'jmi/my-jump-keys-map nil nil)
 
 ;; If we aren't running on at least this version of Emacs, error
 (if (< emacs-major-version 30)

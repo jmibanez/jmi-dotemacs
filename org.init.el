@@ -341,6 +341,7 @@ nil if the current buffer contains only completed tasks."
 
   :bind ((:map jmi/my-jump-keys-map
                ("r r"   . org-roam-buffer-toggle)
+               ("C-*"   . org-roam-capture)
                ("<f8>"  . org-roam-capture)
                ("r f"   . org-roam-node-find)
                ("r i"   . org-roam-node-insert)

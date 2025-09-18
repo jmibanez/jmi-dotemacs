@@ -56,7 +56,7 @@ just contains:
      doc writing tools, including setting up spell checking and
      providing a custom environment for writing docs in Markdown
 
-My custom YASnippet snippets are all in [yasnippet/](yasnippet/).
+My custom YASnippet snippets are all in [snippets/](snippets/).
 
 Any custom scripts and such that my config depends on (for instance
 for [handling OAuth2 tokens for mail](scripts/mutt_oauth2.py)) are in

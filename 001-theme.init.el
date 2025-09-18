@@ -82,6 +82,15 @@
   :if
   (display-graphic-p))
 
+(use-package all-the-icons-nerd-fonts
+  :config
+  (all-the-icons-nerd-fonts-prefer)
+
+  :if
+  (display-graphic-p)
+
+  :after all-the-icons)
+
 (use-package all-the-icons-dired
   :defer t
   :after (all-the-icons dired)

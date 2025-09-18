@@ -15,10 +15,6 @@
 (defconst jmi/early-init-file-source (concat jmi/my-emacs-init-path "000.init.el")
   "Location of early-init source file.")
 
-(defmacro jmi/dotemacs-do-module (filename)
-  "Load the specified FILENAME from the init directory."
-  `(load-file ,(concat jmi/my-emacs-init-path filename)))
-
 ;; Add pkg for init-only defined packages that we can leverage use-package on
 (add-to-list 'load-path (concat jmi/my-emacs-init-path "/pkg"))
 

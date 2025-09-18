@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: mstmprc GMail config clause
+# key: mstmprcGmail
+# --
+account $2
+host           smtp.gmail.com
+port           465
+tls_starttls   off
+from           $1
+user           $1
+auth           oauthbearer
+passwordeval   "`(concat jmi/my-emacs-init-path "scripts/mutt_oauth2.py")` --account $1"

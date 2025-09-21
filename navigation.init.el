@@ -106,6 +106,15 @@
   (vertico-mode)
   :demand t)
 
+(use-package marginalia
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle))
+
+  :init
+  (marginalia-mode 1)
+
+  :after vertico)
+
 (use-package counsel
   :defer t)
 

@@ -412,7 +412,15 @@
   :mode "\\.coffee$")
 
 (use-package swift-mode
-  :mode "\\.swift$")
+  :config
+  (add-to-list 'eglot-server-programs
+               '(swift-mode   "xcrun" "sourcekit-lsp"))
+
+
+  :hook  (swift-mode       . eglot-ensure)
+  :mode "\\.swift$"
+  :after eglot
+  :ensure-system-package (xcode-build-server))
 
 (use-package thrift
   :mode "\\.thrift$")

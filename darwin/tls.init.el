@@ -16,7 +16,7 @@
                          (directory-files brew-pkg t
                                           "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)" nil))
 
-                       (directory-files jmi/homebrew-location t
+                       (directory-files (concat jmi/homebrew-location "/Cellar") t
                                         "openssl.*" nil)))))
 (setq tls-connection-command (car tls-program))
 

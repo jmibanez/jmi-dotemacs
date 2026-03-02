@@ -16,9 +16,9 @@
   "Location of early-init source file.")
 
 ;; Add pkg for init-only defined packages that we can leverage use-package on
-(add-to-list 'load-path (concat jmi/my-emacs-init-path "/pkg"))
+(add-to-list 'load-path (expand-file-name "pkg" jmi/my-emacs-init-path))
 
-(setq custom-file (concat jmi/my-emacs-init-path "001-custom.init.el"))
+(setq custom-file (expand-file-name "001-custom.init.el" jmi/my-emacs-init-path))
 
 ;; Ensure that 000.init.el is copied to early-init.el; eval if it's
 ;; newer or non-existent

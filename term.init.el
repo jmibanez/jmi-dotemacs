@@ -154,7 +154,9 @@
 
 
   :bind
-  (("C-s-t" .   eshell))
+  (("C-s-t" .   eshell)
+   (:map eshell-mode-map
+         ("s-r" . counsel-esh-history)))
 
   :ensure nil)
 

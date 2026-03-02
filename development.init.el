@@ -293,6 +293,50 @@
 
   :after eglot)
 
+
+(use-package copilot)
+(use-package copilot-chat
+  :init
+  (defun jmi/advice-copilot-chat-create-instance-defaulting-to-project ()
+    "If we're in a project, use project root instead of prompting for a directory; otherwise, fallback to original."
+    (let* ((current-dir
+            (file-name-directory (or (buffer-file-name) default-directory)))
+           (current-project (project-current))
+           (current-project-path (cdr current-project))
+           (directory
+            (if current-project-path
+                current-project-path
+              (expand-file-name
+               (read-directory-name "Choose a directory: " current-dir))))
+           (found (copilot-chat--find-instance directory))
+           (instance
+            (if found
+                found
+              (copilot-chat--create directory))))
+      (unless found
+        (push instance copilot-chat--instances))
+      instance))
+
+  (advice-add 'copilot-chat--create-instance :override
+              #'jmi/advice-copilot-chat-create-instance-defaulting-to-project)
+
+  :config
+  (setq copilot-chat-default-model "gpt-5.3-codex")
+
+
+  :bind
+  ((:map jmi/my-jump-keys-map
+         ("f C"   . copilot-chat))))
+
+(use-package ellama
+  :init
+  (setq ellama-provider
+        (make-llm-ollama
+         :chat-model "llama3.2"
+         :embedding-model "llama3.2"))
+
+  :after llm-ollama)
+
 (use-package kotlin-ts-mode
   :mode "\\.kts$")
 

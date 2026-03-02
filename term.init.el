@@ -247,6 +247,12 @@
         (concat "-o ControlPath=~/ssh-ControlPath-%%r@%%h:%%p "
                 "-o ControlMaster=yes -o ControlPersist=yes"))
 
+  ;; Ignore auth-sources when doing sudo via Tramp
+  (connection-local-set-profile-variables
+   'tramp-sudo-without-auth-sources '((auth-sources . nil)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "sudo") 'tramp-sudo-without-auth-sources)
+
   :after eshell
   :ensure nil)
 

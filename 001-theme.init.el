@@ -146,6 +146,12 @@
              (mbsync-get-proc))
         mbsync-last-status))
 
+  (defun jmi/advice-mood-line-segment-project-ignore-tramp (orig-fn &rest args)
+    (without-remote-files
+      (apply orig-fn args)))
+
+  (advice-add 'mood-line-segment-project :around #'jmi/advice-mood-line-segment-project-ignore-tramp)
+
   (setopt mood-line-glyph-alist jmi/mood-line-glyphs)
   (setopt mood-line-format
           (mood-line-defformat

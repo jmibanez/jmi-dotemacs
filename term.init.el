@@ -31,6 +31,11 @@
   (require 'cl-lib)
   (require 'seq)
 
+  (defun jmi/browse-esh-history ()
+    (interactive)
+    (require 'em-hist)
+    (consult-history eshell-history-ring))
+
   (defun jmi/list-directories-only (base-path)
     (if (not (file-directory-p base-path))
         '()
@@ -156,7 +161,7 @@
   :bind
   (("C-s-t" .   eshell)
    (:map eshell-mode-map
-         ("s-r" . counsel-esh-history)))
+         ("s-r" . jmi/browse-esh-history)))
 
   :ensure nil)
 

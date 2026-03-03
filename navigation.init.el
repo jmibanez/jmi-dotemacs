@@ -115,9 +115,6 @@
 
   :after vertico)
 
-(use-package counsel
-  :defer t)
-
 (use-package consult
   :config
   (setopt consult-preview-key nil)

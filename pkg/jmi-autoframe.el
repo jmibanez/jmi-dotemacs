@@ -37,6 +37,14 @@
   :type '(alist :key-type symbol :value-type sexp)
   :group 'jmi/autoframe)
 
+(defcustom jmi/autoframe-frame-maximize 'maximized
+  "Value to set for the `maximized' frame parameter on managed frames.
+`maximized' (the default) fills the monitor.  Set to nil to skip
+maximizing altogether."
+  :type '(choice (const :tag "Maximized" maximized)
+                 (const :tag "None" nil))
+  :group 'jmi/autoframe)
+
 ;;; --------------------------------------------------------------------------
 ;;; Internal state
 
@@ -78,7 +86,7 @@ subsequent maximize lands on the correct display."
     (let ((x (nth 0 workarea))
           (y (nth 1 workarea)))
       (set-frame-position frame x y)
-      (set-frame-parameter frame 'fullscreen 'maximized))))
+      (set-frame-parameter frame 'maximized jmi/autoframe-frame-maximize))))
 
 (defun jmi/autoframe--make-frame (monitor-attrs)
   "Create a new maximized frame positioned on the monitor described by MONITOR-ATTRS.
@@ -87,9 +95,9 @@ maximizing it lands on the correct display."
   (let* ((workarea (jmi/autoframe--workarea monitor-attrs))
          (params (append jmi/autoframe-extra-frame-parameters
                          (when workarea
-                           `((left       . ,(nth 0 workarea))
-                             (top        . ,(nth 1 workarea))
-                             (fullscreen . maximized))))))
+                           `((left      . ,(nth 0 workarea))
+                             (top       . ,(nth 1 workarea))
+                             (maximized . ,jmi/autoframe-frame-maximize))))))
     (make-frame params)))
 
 ;;; --------------------------------------------------------------------------

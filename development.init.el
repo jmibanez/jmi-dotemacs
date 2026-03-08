@@ -190,6 +190,9 @@
   :config
   (setq rust-format-on-save t))
 
+(setq jmi/java-format-settings-file
+      (expand-file-name "intellijCompatFormatter.xml" (expand-file-name "conf" jmi/my-emacs-init-path)))
+
 (use-package eglot
   :defer t
 
@@ -343,6 +346,103 @@
 (use-package java-ts-mode
   :config
   ;; Define custom java style
+  (defconst jmi/intellij-java-style
+    '("java"  ;; inherit from built-in java style as base
+      (c-basic-offset . 4)              ;; Base indent = 4 spaces
+      (tab-width . 4)
+      (indent-tabs-mode . nil)          ;; Spaces only, no tabs
+
+      ;; Comment indentation: no extra offset for comment-only lines
+      (c-comment-only-line-offset . 0)
+
+      ;; IntelliJ keeps else/catch/finally/while on same line as closing brace
+      (c-cleanup-list . (brace-else-brace
+                         brace-elseif-brace
+                         brace-catch-brace
+                         empty-defun-braces
+                         defun-close-semi))
+
+      ;; Brace placement: opening brace on same line (K&R / "Egyptian brackets")
+      (c-hanging-braces-alist
+       . ((class-open after)
+          (class-close before after)
+          (defun-open after)
+          (defun-close before after)
+          (inline-open after)
+          (inline-close before after)
+          (block-open after)
+          (block-close . c-snug-do-while)
+          (substatement-open after)
+          (statement-case-open after)
+          (brace-list-open after)
+          (brace-list-close before after)
+          (annotation-open after)
+          (annotation-close before after)))
+
+      ;; Semicolons/colons: no newlines inserted after these
+      (c-hanging-semi&comma-criteria . nil)
+
+      (c-offsets-alist
+       . (
+          ;; Top-level constructs
+          (topmost-intro           . 0)
+          (topmost-intro-cont      . +)
+
+          ;; Class/interface body
+          (inclass                 . +)
+          (access-label            . -)   ;; public/private/protected back one level
+          (inline-open             . 0)
+
+          ;; Inheritance: implements/extends continuation
+          (inher-intro             . +)
+          (inher-cont              . c-lineup-java-inher)
+
+          ;; Method body
+          (defun-block-intro       . +)
+          (defun-open              . 0)
+          (defun-close             . 0)
+          (func-decl-cont          . c-lineup-java-throws) ;; throws clause alignment
+
+          ;; Statements
+          (statement               . 0)
+          (statement-cont          . ++)  ;; continuation = 8 spaces (double indent)
+          (statement-block-intro   . +)
+          (statement-case-intro    . +)   ;; code inside case indented
+          (statement-case-open     . +)
+
+          ;; Substatements (bodies of if/for/while etc.)
+          (substatement            . +)
+          (substatement-open       . 0)   ;; opening brace not extra-indented
+          (substatement-label      . 0)
+
+          ;; Labels
+          (label                   . 0)
+          (case-label              . 0)   ;; case label itself at block level
+
+          ;; Brace lists (array initializers etc.)
+          (brace-list-intro        . +)
+          (brace-list-entry        . 0)
+          (brace-list-close        . 0)
+          (brace-list-open         . 0)
+
+          ;; Argument/parameter lists: continuation indent when wrapping
+          (arglist-intro           . ++)  ;; first wrapped arg = 8 spaces
+          (arglist-cont            . ++)  ;; subsequent wrapped args = 8 spaces
+          (arglist-cont-nonempty   . c-lineup-arglist) ;; align to opening paren if practical
+          (arglist-close           . c-lineup-close-paren)
+
+          ;; Annotations
+          (annotation-top-cont     . 0)
+          (annotation-var-cont     . +)
+
+          ;; Lambda/catch/do-while
+          (catch-clause            . 0)
+          (do-while-closure        . 0)
+          (else-clause             . 0)
+          (finally-clause          . 0))))
+    "IntelliJ IDEA default Java formatting style for Emacs CC Mode.")
+  (c-add-style "intellij-java" jmi/intellij-java-style)
+
   (defconst jmi/hercules-java
     '((c-basic-offset . 4)     ; Guessed value
       (c-comment-only-line-offset . (0 . 0))
@@ -375,7 +475,7 @@
     (setq-local c-basic-offset 4))
 
   ;; Shadow java style
-  (add-to-list 'c-default-style '(java-mode . "hercules-java"))
+  (add-to-list 'c-default-style '(java-mode . "intellij-java"))
 
   (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
 

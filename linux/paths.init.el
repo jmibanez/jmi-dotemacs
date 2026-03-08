@@ -37,7 +37,6 @@
 ;;       '(("1.8" . "/usr/lib/jvm/openjdk-8")))
 
 (setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
-(setq jmi/java-format-settings-file (expand-file-name "~/projects/defaultFormatterProfile.xml"))
 
 (setq jmi/git "/usr/bin/git")
 

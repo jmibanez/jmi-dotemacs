@@ -46,7 +46,6 @@
                                                "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)")))))
 
 (setq jmi/lombok-jar (expand-file-name "~/lombok/lombok.jar"))
-(setq jmi/java-format-settings-file (expand-file-name "~/projects/intellijCompatFormatterProfile.xml"))
 
 (setq jmi/git (concat jmi/homebrew-binary-path "git"))
 

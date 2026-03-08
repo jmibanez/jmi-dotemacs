@@ -26,7 +26,9 @@
     (switch-to-buffer (get-buffer buffer-wttr))
     (split-window-vertically)
     (other-window 1)
-    (switch-to-buffer (get-buffer buffer-eshell)))
+    (switch-to-buffer (get-buffer buffer-eshell))
+    (toggle-frame-maximized))
+
   (message (concat "Emacs started in " (emacs-init-time)))
   (org-roam-db-autosync-mode)
   (benchmark-init/deactivate))

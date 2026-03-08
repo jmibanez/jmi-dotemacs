@@ -37,12 +37,12 @@
   :type '(alist :key-type symbol :value-type sexp)
   :group 'jmi/autoframe)
 
-(defcustom jmi/autoframe-frame-maximize 'maximized
-  "Value to set for the `maximized' frame parameter on managed frames.
-`maximized' (the default) fills the monitor.  Set to nil to skip
-maximizing altogether."
-  :type '(choice (const :tag "Maximized" maximized)
-                 (const :tag "None" nil))
+(defcustom jmi/autoframe-frame-parameters '((maximized . maximized))
+  "Alist of frame parameters applied to every managed frame.
+These parameters are set both when a frame is first created and
+whenever its monitor geometry changes.  The default maximizes each
+frame on its monitor.  Set to nil to apply no extra parameters."
+  :type '(alist :key-type symbol :value-type sexp)
   :group 'jmi/autoframe)
 
 ;;; --------------------------------------------------------------------------
@@ -78,26 +78,29 @@ Falls back to `geometry' if `workarea' is absent."
   (> (length (filtered-frame-list #'frame-live-p)) 1))
 
 (defun jmi/autoframe--apply-workarea (frame workarea)
-  "Position FRAME onto the monitor described by WORKAREA and maximize it.
+  "Position FRAME onto the monitor described by WORKAREA and apply frame parameters.
 WORKAREA is a list (X Y WIDTH HEIGHT) in pixels.  The frame is
-first moved to the monitor's top-left corner so that the
-subsequent maximize lands on the correct display."
+first moved to the monitor's top-left corner so that any
+subsequent maximize lands on the correct display.
+`jmi/autoframe-frame-parameters' is then applied to the frame."
   (when (and frame (frame-live-p frame) workarea)
     (let ((x (nth 0 workarea))
           (y (nth 1 workarea)))
       (set-frame-position frame x y)
-      (set-frame-parameter frame 'maximized jmi/autoframe-frame-maximize))))
+      (dolist (param jmi/autoframe-frame-parameters)
+        (set-frame-parameter frame (car param) (cdr param))))))
 
 (defun jmi/autoframe--make-frame (monitor-attrs)
-  "Create a new maximized frame positioned on the monitor described by MONITOR-ATTRS.
-The frame is placed at the monitor's workarea origin so that
-maximizing it lands on the correct display."
+  "Create a new frame positioned on the monitor described by MONITOR-ATTRS.
+The frame is placed at the monitor's workarea origin and
+`jmi/autoframe-frame-parameters' is applied, so that the frame
+lands correctly on the target display."
   (let* ((workarea (jmi/autoframe--workarea monitor-attrs))
-         (params (append jmi/autoframe-extra-frame-parameters
-                         (when workarea
-                           `((left      . ,(nth 0 workarea))
-                             (top       . ,(nth 1 workarea))
-                             (maximized . ,jmi/autoframe-frame-maximize))))))
+         (params (append (when workarea
+                           `((left . ,(nth 0 workarea))
+                             (top  . ,(nth 1 workarea))))
+                         jmi/autoframe-frame-parameters
+                         jmi/autoframe-extra-frame-parameters)))
     (make-frame params)))
 
 ;;; --------------------------------------------------------------------------

@@ -56,6 +56,10 @@
 
   ;; (setq jmi/default-wttrin-location "Sydney, AU")
 
+  ;; Replace wttrin--display-weather so it doesn't switch buffers --
+  ;; specifically so we can use it in our startup screen
+  (jmi/suppress-buffer-switch 'wttrin--display-weather)
+
   :bind
   ((:map jmi/my-jump-keys-map
          ("w"    .   wttrin))))
@@ -105,5 +109,9 @@
               #'jmi/ask-user-about-lock-dwim-with-hostname)
 
   :if (eq system-type 'darwin))
+
+(use-package jmi-suppress-bufferswitch
+  :ensure nil
+  :demand t)
 
 ;;; misc.init.el ends here

@@ -208,18 +208,10 @@ https://instagram.com/jmibanez
 
   ;; Suppress mbsync.el's penchant for switching to the
   ;; mbsync log buffer during errors, which just ruins my frame layout
-  (defun jmi/suppress-switch-to-buffer-other-window (buf)
-    (message "mbsync had errors, see buffer *mbsync* for details"))
-
-  (defun jmi/mbsync-advice-fn (orig &rest args)
-    (cl-letf (((symbol-function 'switch-to-buffer-other-window)
-           #'jmi/suppress-switch-to-buffer-other-window))
-      (apply orig args)))
-
-  (advice-add 'mbsync-process-filter :around
-              #'jmi/mbsync-advice-fn)
-  (advice-add 'mbsync-sentinel :around
-              #'jmi/mbsync-advice-fn)
+  (jmi/suppress-buffer-switch-message-instead 'mbsync-process-filter
+                                              "mbsync had errors, see buffer *mbsync* for details")
+  (jmi/suppress-buffer-switch-message-instead 'mbsync-sentinel
+                                              "mbsync had errors, see buffer *mbsync* for details")
 
   ;; Configure Gnus to poll mbsync periodically (every 5 mins) for
   ;; mail

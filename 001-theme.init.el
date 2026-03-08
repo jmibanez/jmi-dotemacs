@@ -192,7 +192,8 @@
 (use-package jmi-startup-screen
   :ensure nil
   :demand t
-  :hook (emacs-startup . jmi/startup-screen))
+  :hook (emacs-startup . jmi/startup-screen)
+  :after (jmi-suppress-bufferswitch))
 
 
 ;;; 001-theme.init.el ends here

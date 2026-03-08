@@ -69,6 +69,11 @@
   (set-face-attribute 'default nil :font "Berkeley Mono-14:weight=thin")
   (set-frame-font "Berkeley Mono-14:weight=thin" nil t t)
 
+  ;; Because Berkeley Mono doesn't have certain glyphs they get
+  ;; font-substituted by Helvetica; force the use of Liberation Mono
+  ;; instead so we might at least get metrics closer to monospace
+  (set-fontset-font t '#x02015 (font-spec :family "Liberation Mono"))
+
   (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 
 (use-package all-the-icons

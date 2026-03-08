@@ -52,13 +52,19 @@
   :config
   (setopt wttrin-default-locations
           '("Sydney, AU" "Manila, PH" "New York, NY" "San Francisco, CA" "London, UK")
-          wttrin-font-name "Berkeley Mono")
-
-  ;; (setq jmi/default-wttrin-location "Sydney, AU")
+          wttrin-favorite-location "Sydney, AU"
+          wttrin-font-name "Berkeley Mono"
+          wttrin-font-height 140)
 
   ;; Replace wttrin--display-weather so it doesn't switch buffers --
   ;; specifically so we can use it in our startup screen
   (jmi/suppress-buffer-switch 'wttrin--display-weather)
+
+  (defun jmi/disable-ligatures ()
+    (ligature-mode nil))
+
+  ;; Disable ligatures in wttr-in
+  :hook ((wttrin-mode . jmi/disable-ligatures))
 
   :bind
   ((:map jmi/my-jump-keys-map

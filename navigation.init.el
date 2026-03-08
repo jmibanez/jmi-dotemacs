@@ -269,4 +269,13 @@
 
   :hook ((dired-mode . dired-omit-mode)))
 
+;; Autoframe -- create frames per monitor
+(use-package jmi-autoframe
+  :ensure nil
+  :config
+  (setopt jmi/autoframe-frame-parameters '((fullscreen . maximized))
+          jmi/autoframe-delete-frames-on-disconnect t)
+
+  (jmi/autoframe-mode))
+
 ;;; navigation.init.el ends here

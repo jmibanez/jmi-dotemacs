@@ -37,7 +37,7 @@
   :type '(alist :key-type symbol :value-type sexp)
   :group 'jmi/autoframe)
 
-(defcustom jmi/autoframe-frame-parameters '((maximized . maximized))
+(defcustom jmi/autoframe-frame-parameters '((fullscreen . maximized))
   "Alist of frame parameters applied to every managed frame.
 These parameters are set both when a frame is first created and
 whenever its monitor geometry changes.  The default maximizes each
@@ -120,15 +120,25 @@ monitor list; existing tracked frames are deleted first."
                  (jmi/autoframe--has-multiple-frames-p))
         (delete-frame frame))))
   (setq jmi/autoframe--monitor-frame-alist nil)
-  ;; Create a new frame for each monitor
+
+  ;; If there's a single frame that exists, associate it with the
+  ;; "default" monitor (i.e. the first monitor)
+  (if (= 1 (length (frame-list)))
+      (let* ((default-monitor (first (display-monitor-attributes-list)))
+             (singleton-frame (first (frame-list)))
+             (id (jmi/autoframe--monitor-id default-monitor)))
+        (push (cons id singleton-frame) jmi/autoframe--monitor-frame-alist)))
+
+  ;; Create a new frame for each monitor; skip the first monitor in
+  ;; the list
   (let ((monitors (display-monitor-attributes-list)))
-    (dolist (mon monitors)
+    (dolist (mon (rest monitors))
       (let* ((id    (jmi/autoframe--monitor-id mon))
              (frame (jmi/autoframe--make-frame mon)))
         (push (cons id frame) jmi/autoframe--monitor-frame-alist)))))
 
 ;;;###autoload
-(defun jmi/autoframe-sync ()
+(defun jmi/autoframe-sync (&optional terminal)
   "Reconcile the current frame set with the current monitor list.
 - New monitors get a fresh frame.
 - Disappeared monitors cause their frame to be deleted when

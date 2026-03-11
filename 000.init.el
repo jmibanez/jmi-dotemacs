@@ -95,4 +95,7 @@
   (setopt exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize))
 
+;; Ensure initial frame is always maximized
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
 ;;; 000.init.el ends here

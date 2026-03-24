@@ -191,9 +191,13 @@ Idempotent: safe to run on every Gnus startup."
 
             (browse-url (forward-button n)))))))
 
+  (defun jmi/gnus-in-home-dir ()
+    (interactive)
+    (let ((default-directory "~/"))
+      (gnus)))
 
   :bind ((:map jmi/my-jump-keys-map
-               ("m"       . gnus))
+               ("m"       . jmi/gnus-in-home-dir))
          (:map gnus-group-mode-map
                ("/ /"   . jmi/gnus-mairix-search-all-inboxes)
                ("/ j"   . jmi/gnus-mairix-search-jmibanez)

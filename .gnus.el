@@ -9,7 +9,9 @@
       '(("INBOX"                           (nov-cache-size . 5000))
         ("INBOX\\.Notifications\\.*"       (nov-cache-size . 7000))
         ("INBOX\\.Notifications\\.CRs"     (mm-discouraged-alternatives nil))
-        ("INBOX\\.Notifications\\.Tickets" (mm-discouraged-alternatives nil))))
+        ("INBOX\\.Notifications\\.Tickets" (mm-discouraged-alternatives nil))
+        ;; mairix results group -- can be large
+        ("mairixout"                       (nov-cache-size . 10000))))
 
 (setq gnus-nov-is-evil t)
 
@@ -33,13 +35,16 @@
 (require 'nnmairix)
 (setq gnus-secondary-select-methods
       '((nnmaildir "mairix"
-                   (directory     "~/.nnmairix"))
+                   (directory     "~/Maildir/.nnmairix"))
         (nnmaildir "gmail"
                    (directory     "~/Maildir/gmail"))
         (nnml      "archive"
                    (nnml-directory             "~/Mail.archive")
                    ;; Don't expire messages in the archive!
                    (nnml-inhibit-expiry        t))))
+
+;; nnmairix config
+(setq nnmairix-mairix-search-options '("-Q"))
 
 (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
 (setq gnus-user-date-format-alist

@@ -112,6 +112,48 @@
   ;; Point to .gnus.el in this directory
   (setopt gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
 
+  ;; Declaratively set up the nnmairix default search group and Search topic.
+  ;; Mirrors what nnmairix-create-server-and-default-group does interactively,
+  ;; but idempotently, so it is reproducible on a new machine.
+  (defun jmi/gnus-setup-search-topic ()
+    "Ensure the nnmairix default group and Search topic exist and are linked.
+Idempotent: safe to run on every Gnus startup."
+    (unless (gnus-group-entry "nnmairix+search:search")
+      (nnmaildir-open-server "mairix")
+      (gnus-group-make-group
+       "search"
+       (list 'nnmairix "search"
+             (list 'nnmairix-backend        'nnmaildir)
+             (list 'nnmairix-backend-server "mairix")
+             (list 'nnmairix-mairix-command "mairix")
+             (list 'nnmairix-hidden-folders nil)
+             (list 'nnmairix-default-group  "search"))))
+    (unless (gnus-topic-find-topology "Search")
+      (gnus-topic-create-topic "Search" "Gnus" nil nil))
+    (let ((group "nnmairix+search:search"))
+      (when (and (gnus-group-entry group)
+                 (not (equal (gnus-group-topic group) "Search")))
+        (let ((old-entry (assoc (gnus-group-topic group) gnus-topic-alist)))
+          (when old-entry
+            (setcdr old-entry (delete group (cdr old-entry)))))
+        (nconc (assoc "Search" gnus-topic-alist) (list group))
+        (gnus-topic-enter-dribble))))
+
+  (defun jmi/gnus-mairix-search-all-inboxes (query)
+    "Search QUERY across both jmibanez.com and Gmail inboxes via mairix."
+    (interactive "sMairix search (both INBOXes): ")
+    (nnmairix-search query))
+
+  (defun jmi/gnus-mairix-search-jmibanez (query)
+    "Search QUERY in the jmibanez.com inbox only."
+    (interactive "sMairix search (jmibanez.com): ")
+    (nnmairix-search (concat "p:jmibanez.com " query)))
+
+  (defun jmi/gnus-mairix-search-gmail (query)
+    "Search QUERY in the Gmail inbox only."
+    (interactive "sMairix search (Gmail): ")
+    (nnmairix-search (concat "p:gmail " query)))
+
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
     (interactive "p" gnus-summary-mode)
@@ -152,11 +194,17 @@
 
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . gnus))
+         (:map gnus-group-mode-map
+               ("/ /"   . jmi/gnus-mairix-search-all-inboxes)
+               ("/ j"   . jmi/gnus-mairix-search-jmibanez)
+               ("/ g"   . jmi/gnus-mairix-search-gmail))
          (:map gnus-summary-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)
                ("C-<tab>" . jmi/gnus-summary-browse-link-forward))
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
+
+  :hook ((gnus-started      .  jmi/gnus-setup-search-topic))
 
   :ensure-system-package (msmtp)
 

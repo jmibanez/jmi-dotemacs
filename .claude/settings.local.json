@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mairix:*)"
+      "Bash(mairix:*)",
+      "Bash(git diff-tree:*)"
     ]
   }
 }

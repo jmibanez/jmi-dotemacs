@@ -296,8 +296,6 @@
 
   :after eglot)
 
-
-(use-package copilot)
 (use-package copilot-chat
   :init
   (defun jmi/advice-copilot-chat-create-instance-defaulting-to-project ()
@@ -326,10 +324,31 @@
   :config
   (setq copilot-chat-default-model "gpt-5.3-codex")
 
+  :bind ((:map jmi/my-jump-keys-map
+         ("f C"   . copilot-chat-display))))
 
-  :bind
-  ((:map jmi/my-jump-keys-map
-         ("f C"   . copilot-chat))))
+
+
+(use-package monet
+  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest))
+
+(use-package claude-code
+  :config
+  ;; optional IDE integration with Monet
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+  (monet-mode 1)
+
+  (claude-code-mode)
+
+  (setopt claude-code-terminal-backend 'vterm)
+  (define-key jmi/my-jump-keys-map (kbd "f C-c") claude-code-command-map)
+
+  :bind ((:map jmi/my-jump-keys-map
+               ("f c" . claude-code-transient)))
+
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest))
+
+
 
 (use-package ellama
   :init

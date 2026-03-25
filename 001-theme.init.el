@@ -116,28 +116,6 @@
   ;; Berkeley Mono
   (require 'mood-line-segment-vc)
 
-  (defconst jmi/mood-line-glyphs
-    '((:checker-info . ?↳)
-      (:checker-issues . ?→)
-      (:vc-good . ?-)
-      (:checker-checking . ?⟳)
-      (:checker-errored . ?x)
-      (:checker-interrupted . ?=)
-
-      (:vc-added . ?+)
-      (:vc-needs-merge . ?⟷)
-      (:vc-needs-update . ?↓)
-      (:vc-conflict . ?x)
-      (:vc-good . ?-)
-
-      (:buffer-narrowed . ?◢)
-      (:buffer-modified . ?◊)
-      (:buffer-read-only . ?■)
-
-      (:frame-client . ?)
-
-      (:count-separator . ?×)))
-
   (defun jmi/mood-line-segment-major-mode ()
     (let ((icon (all-the-icons-icon-for-mode major-mode
                                              :v-adjust 0)))
@@ -157,7 +135,7 @@
 
   (advice-add 'mood-line-segment-project :around #'jmi/advice-mood-line-segment-project-ignore-tramp)
 
-  (setopt mood-line-glyph-alist jmi/mood-line-glyphs)
+  (setopt mood-line-glyph-alist mood-line-glyphs-fira-code)
   (setopt mood-line-format
           (mood-line-defformat
            :left

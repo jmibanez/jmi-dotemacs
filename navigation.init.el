@@ -93,7 +93,7 @@
 
 ;; Savehist, persist history (so Vertico works better)
 (use-package savehist
-  :defer t
+  :defer 1
   :config
   (savehist-mode))
 
@@ -247,6 +247,7 @@
 
 ;; Breadcrumbs
 (use-package breadcrumb
+  :defer 2
   :config
   (breadcrumb-mode))
 

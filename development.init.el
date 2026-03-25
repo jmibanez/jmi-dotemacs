@@ -48,7 +48,8 @@
                    scheme-mode
                    clojure-mode))
 
-(use-package rainbow-delimiters)
+(use-package rainbow-delimiters
+  :defer t)
 (use-package paredit
   :config
 

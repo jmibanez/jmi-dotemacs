@@ -184,6 +184,7 @@
   :after all-the-icons)
 
 (use-package anzu
+  :defer 2
   :config
   (global-anzu-mode))
 

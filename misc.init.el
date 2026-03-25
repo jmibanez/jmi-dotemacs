@@ -83,9 +83,14 @@
   ;; Hide results
   (setopt auto-package-update-hide-results 't)
   ;; ... at startup
-  (auto-package-update-maybe)
+  (defun jmi/auto-package-update-maybe-at-start ()
+    (run-with-idle-timer 5 nil
+                         #'auto-package-update-maybe))
+
   ;; ... specifically check at noon
-  (auto-package-update-at-time "12:00"))
+  (auto-package-update-at-time "12:00")
+
+  :hook ((emacs-startup . jmi/auto-package-update-maybe-at-start)))
 
 (use-package emacs
   :ensure nil

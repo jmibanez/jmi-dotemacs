@@ -67,6 +67,61 @@
             sanitized-platform-dir)))
 
 
+;; Custom :vc-or-local keyword: acts like :vc, but checks for a local
+;; checkout first.  If the :local-path directory exists, load from
+;; there (equivalent to :load-path); otherwise fall back to :vc.
+;;
+;; Usage:
+;;   :vc-or-local (:url "https://github.com/..." :local-path "~/projects/..." :rev :newest)
+
+(require 'cl-lib)
+
+;; Insert :vc-or-local right after :vc in the processing order.
+(unless (memq :vc-or-local use-package-keywords)
+  (let ((vc-position (cl-position :vc use-package-keywords)))
+    (setq use-package-keywords
+          (append (seq-take use-package-keywords (1+ vc-position))
+                  '(:vc-or-local)
+                  (seq-drop use-package-keywords (1+ vc-position))))))
+
+(defun use-package-normalize/:vc-or-local (name _keyword args)
+  "Normalize arguments to the :vc-or-local keyword.
+Accepts the same plist as :vc plus a :local-path key.  The
+:local-path value is extracted and the remainder is normalized
+as for :vc.  Returns (VC-ARG LOCAL-PATH)."
+  (let* ((arg (car args))
+         (local-path (and (listp arg) (plist-get arg :local-path)))
+         ;; Rebuild the plist without :local-path before handing off
+         ;; to the standard :vc normalizer.
+         (vc-plist (if (and (listp arg) local-path)
+                       (cl-loop for (k v) on arg by #'cddr
+                                unless (eq k :local-path)
+                                nconc (list k v))
+                     arg)))
+    (list (use-package-normalize/:vc name _keyword (list vc-plist))
+          (when local-path (expand-file-name local-path)))))
+
+(defun use-package-handler/:vc-or-local (name _keyword arg rest state)
+  "Install or load NAME, preferring a local checkout when available.
+If the :local-path directory exists, add it to `load-path'.
+Otherwise install via VC as the :vc keyword would."
+  (let* ((body (use-package-process-keywords name rest state))
+         (vc-arg (car arg))
+         (local-path (cadr arg)))
+    (if (bound-and-true-p byte-compile-current-file)
+        ;; Compile time: resolve immediately.
+        (if (and local-path (file-directory-p local-path))
+            (add-to-list 'load-path local-path)
+          (funcall #'use-package-vc-install vc-arg nil))
+      ;; Runtime: emit a conditional so each Emacs session decides.
+      (push (if local-path
+                `(if (file-directory-p ,local-path)
+                     (add-to-list 'load-path ,local-path)
+                   (use-package-vc-install ',vc-arg nil))
+              `(use-package-vc-install ',vc-arg nil))
+            body))
+    body))
+
 (use-package benchmark-init
   :config
   (add-hook 'after-init-hook 'benchmark-init/deactivate))

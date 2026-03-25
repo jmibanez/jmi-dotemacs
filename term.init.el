@@ -189,11 +189,9 @@
 
   :hook (eshell-banner-load . eshell-info-banner-update-banner)
   :after eshell
-
-  :vc (:url "https://github.com/jmibanez/eshell-info-banner.el"
-       :branch "main"
-       :rev :newest))
-
+  :vc-or-local (:url "https://github.com/jmibanez/eshell-info-banner.el"
+                :local-path "~/projects/personal/eshell-info-banner.el/"
+                :branch "main"))
 
 (use-package eshell-prompt-extras
   :config

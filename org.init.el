@@ -28,7 +28,11 @@
           (append australia-holidays-for-nsw
                   holiday-oriental-holidays
                   holiday-solar-holidays))
-  :after holidays)
+
+  :after holidays
+  :vc-or-local (:url "https://github.com/jmibanez/australia-holidays.el"
+                :local-path "~/projects/personal/australia-holidays.el/"
+                :branch "main"))
 
 (use-package org
   :config

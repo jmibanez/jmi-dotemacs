@@ -72,7 +72,7 @@
   ;; Because Berkeley Mono doesn't have certain glyphs they get
   ;; font-substituted by Helvetica; force the use of Liberation Mono
   ;; as the general fallback so we get metrics closer to monospace
-  (set-fontset-font t nil (font-spec :family "Liberation Mono") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "Liberation Mono") nil 'prepend)
 
   (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 

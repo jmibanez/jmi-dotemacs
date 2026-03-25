@@ -323,7 +323,7 @@
               #'jmi/advice-copilot-chat-create-instance-defaulting-to-project)
 
   :config
-  (setq copilot-chat-default-model "gpt-5.3-codex")
+  (setq copilot-chat-default-model "claude-sonnet-4.6")
 
   :bind ((:map jmi/my-jump-keys-map
          ("f C"   . copilot-chat-display))))

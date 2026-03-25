@@ -71,8 +71,8 @@
 
   ;; Because Berkeley Mono doesn't have certain glyphs they get
   ;; font-substituted by Helvetica; force the use of Liberation Mono
-  ;; instead so we might at least get metrics closer to monospace
-  (set-fontset-font t '#x02015 (font-spec :family "Liberation Mono"))
+  ;; as the general fallback so we get metrics closer to monospace
+  (set-fontset-font t nil (font-spec :family "Liberation Mono") nil 'append)
 
   (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 

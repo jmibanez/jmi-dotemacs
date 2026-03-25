@@ -60,11 +60,22 @@
   ;; specifically so we can use it in our startup screen
   (jmi/suppress-buffer-switch 'wttrin--display-weather)
 
-  (defun jmi/disable-ligatures ()
-    (ligature-mode nil))
+  ;; Custom face to define a different background color for wttrin --
+  ;; the service itself uses a bright yellow that isn't readable with
+  ;; the background color for modus-operandi
+  (defface jmi-wttrin-background
+    '((t
+       :foreground "#000000"
+       :background "#bdbdbd"))
+    "Customized face for wttrin to change its background color for readability."
+    :group 'jmi-custom-faces)
 
-  ;; Disable ligatures in wttr-in
-  :hook ((wttrin-mode . jmi/disable-ligatures))
+  ;; Make things readable on modus-operandi
+  (defun jmi/make-wttrin-readable ()
+    (ligature-mode nil)
+    (face-remap-add-relative 'default 'jmi-wttrin-background))
+
+  :hook ((wttrin-mode . jmi/make-wttrin-readable))
 
   :bind
   ((:map jmi/my-jump-keys-map

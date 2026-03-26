@@ -219,6 +219,8 @@ Idempotent: safe to run on every Gnus startup."
   :defer t)
 
 (use-package org-msg
+  :defer t
+
   :config
   (setopt mail-user-agent 'gnus-user-agent)
   (setopt org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
@@ -240,8 +242,8 @@ JM Ibañez
 https://jmibanez.com/
 https://instagram.com/jmibanez
 #+end_signature")
-  (org-msg-mode)
 
+  :hook ((gnus-startup  . org-msg-mode))
   :after (org gnus))
 
 (use-package mbsync

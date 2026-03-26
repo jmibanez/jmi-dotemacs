@@ -13,7 +13,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 
 (defun jmi/no-op-switch-buffer (buf))
 

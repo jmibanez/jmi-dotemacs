@@ -125,15 +125,15 @@ monitor list; existing tracked frames are deleted first."
   ;; If there's a single frame that exists, associate it with the
   ;; "default" monitor (i.e. the first monitor)
   (if (= 1 (length (frame-list)))
-      (let* ((default-monitor (first (display-monitor-attributes-list)))
-             (singleton-frame (first (frame-list)))
+      (let* ((default-monitor (cl-first (display-monitor-attributes-list)))
+             (singleton-frame (cl-first (frame-list)))
              (id (jmi/autoframe--monitor-id default-monitor)))
         (push (cons id singleton-frame) jmi/autoframe--monitor-frame-alist)))
 
   ;; Create a new frame for each monitor; skip the first monitor in
   ;; the list
   (let ((monitors (display-monitor-attributes-list)))
-    (dolist (mon (rest monitors))
+    (dolist (mon (cl-rest monitors))
       (let* ((id    (jmi/autoframe--monitor-id mon))
              (frame (jmi/autoframe--make-frame mon)))
         (push (cons id frame) jmi/autoframe--monitor-frame-alist)))))

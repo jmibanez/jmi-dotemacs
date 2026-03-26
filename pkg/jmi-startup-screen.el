@@ -18,7 +18,7 @@
     (org-roam-list-files)
     (org-todo-list)
     (eshell)
-    (wttrin "Sydney, AU")
+    (wttrin calendar-location-name)
     (switch-to-buffer (get-buffer buffer-agenda))
     (delete-other-windows)
     (split-window-horizontally)

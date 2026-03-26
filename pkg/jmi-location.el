@@ -23,6 +23,12 @@
   :type 'number
   :group 'jmi-location)
 
+(defcustom jmi/location-cache-file
+  (expand-file-name "jmi-location-cache" user-emacs-directory)
+  "File used to persist the last known location across sessions."
+  :type 'file
+  :group 'jmi-location)
+
 (defvar jmi/location-ipinfo-url
   "https://ipinfo.io/json"
   "URL for IP-based geolocation.")
@@ -30,15 +36,41 @@
 (defvar jmi/location--timer nil
   "Timer for periodic location updates; managed by `jmi/location-mode'.")
 
+(defun jmi/location--save-cache ()
+  "Persist current calendar location to `jmi/location-cache-file'."
+  (when (and calendar-latitude calendar-longitude)
+    (with-temp-file jmi/location-cache-file
+      (prin1 (list :latitude  calendar-latitude
+                   :longitude calendar-longitude
+                   :name      calendar-location-name)
+             (current-buffer)))))
+
+;;;###autoload
+(defun jmi/location-load-cache ()
+  "Load cached location from `jmi/location-cache-file'.
+Returns non-nil if the cache was successfully read and applied."
+  (when (file-readable-p jmi/location-cache-file)
+    (condition-case nil
+        (let* ((data (with-temp-buffer
+                       (insert-file-contents jmi/location-cache-file)
+                       (read (current-buffer))))
+               (lat  (plist-get data :latitude))
+               (lon  (plist-get data :longitude))
+               (name (plist-get data :name)))
+          (jmi/location--set lat lon name)
+          t)
+      (error nil))))
+
 (defun jmi/location--set (lat lon name)
-  "Update calendar location vars.
+  "Update calendar location vars and persist to cache.
 LAT and LON are numbers; NAME is a string.  Only non-nil values are
 applied, so existing (fallback) values are preserved on failure."
   (when (and lat lon)
     (setopt calendar-latitude  lat
             calendar-longitude lon))
   (when (and name (not (string-empty-p name)))
-    (setopt calendar-location-name name)))
+    (setopt calendar-location-name name))
+  (jmi/location--save-cache))
 
 (defun jmi/location--ipinfo-callback (status)
   "Handle ipinfo.io response and update calendar location."
@@ -88,6 +120,10 @@ Disable to stop polling."
     (when jmi/location--timer
       (cancel-timer jmi/location--timer)
       (setq jmi/location--timer nil))))
+
+;; Load cached location immediately at require time, before the polling
+;; timer starts.  Falls back to whatever values the caller set beforehand.
+(jmi/location-load-cache)
 
 (provide 'jmi-location)
 

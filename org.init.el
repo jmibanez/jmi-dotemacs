@@ -38,7 +38,7 @@
 
 (use-package jmi-location
   :ensure nil
-  :defer 2
+  :demand t
   :config
   (jmi/location-mode 1))
 

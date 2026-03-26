@@ -43,11 +43,9 @@ applied, so existing (fallback) values are preserved on failure."
 (defun jmi/location--ipinfo-callback (status)
   "Handle ipinfo.io response and update calendar location."
   (when (null (plist-get status :error))
-    (goto-char (point-min))
-    (when (re-search-forward "^$" nil t)
-      (forward-char)
-      (condition-case nil
-          (let* ((json-object-type 'plist)
+    (goto-char url-http-end-of-headers)
+    (condition-case nil
+        (let* ((json-object-type 'plist)
                  (data    (json-read))
                  (loc     (plist-get data :loc))
                  (city    (plist-get data :city))
@@ -62,7 +60,7 @@ applied, so existing (fallback) values are preserved on failure."
                                                     (list city region country))
                                         ", ")))
                 (jmi/location--set lat lon name))))
-        (error nil)))))
+        (error nil))))
 
 ;;;###autoload
 (defun jmi/update-calendar-location ()

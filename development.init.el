@@ -334,14 +334,16 @@
   :vc (:url "https://github.com/stevemolitor/monet" :rev :newest))
 
 (use-package claude-code
+  :init
+  (setopt claude-code-terminal-backend 'vterm)
+  (require 'vterm)
+
   :config
   ;; optional IDE integration with Monet
   (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
   (monet-mode 1)
 
   (claude-code-mode)
-
-  (setopt claude-code-terminal-backend 'vterm)
   (define-key jmi/my-jump-keys-map (kbd "f C-c") claude-code-command-map)
 
   :bind ((:map jmi/my-jump-keys-map

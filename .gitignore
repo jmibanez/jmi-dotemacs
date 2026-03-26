@@ -1,3 +1,4 @@
 001-custom.init.el
 *~
 *.elc
+.claude/settings.local.json

@@ -33,7 +33,7 @@
     (cl-letf (((symbol-function 'switch-to-buffer)
                (jmi/no-op-switch-buffer-message msg))
               ((symbol-function 'switch-to-buffer-other-window)
-               #'jmi/no-op-switch-buffer-message))
+               (jmi/no-op-switch-buffer-message msg)))
       (apply orig-fn args))))
 
 (defun jmi/suppress-buffer-switch (fn-sym-to-suppress)

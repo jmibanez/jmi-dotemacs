@@ -19,6 +19,8 @@
 (use-package australia-holidays
   :ensure nil
   :config
+  ;; Fallback location -- updated dynamically by jmi-location.
+  ;; These remain in effect if the location lookup fails (e.g. offline).
   (setopt calendar-latitude      -33.8
           calendar-longitude     151.2
           calendar-location-name "Sydney, NSW, Australia")
@@ -33,6 +35,12 @@
   :vc-or-local (:url "https://github.com/jmibanez/australia-holidays.el"
                 :local-path "~/projects/personal/australia-holidays.el/"
                 :branch "main"))
+
+(use-package jmi-location
+  :ensure nil
+  :defer 2
+  :config
+  (jmi/location-mode 1))
 
 (use-package org
   :config

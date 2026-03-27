@@ -26,7 +26,8 @@
           (rust          "https://github.com/tree-sitter/tree-sitter-rust")
           (toml          "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx           "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-          (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")))
+          (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+          (swift         "https://github.com/alex-pinkus/tree-sitter-swift")))
 
   :ensure nil
   :defer t)
@@ -539,8 +540,6 @@
   :after go-mode)
 (use-package company-shell
   :defer t)
-(use-package company-sourcekit
-  :defer t)
 (use-package company-web
   :defer t)
 
@@ -577,15 +576,26 @@
 (use-package coffee-mode
   :mode "\\.coffee$")
 
-(use-package swift-mode
+(use-package swift-mode)
+(use-package swift-ts-mode
   :config
   (add-to-list 'eglot-server-programs
-               '(swift-mode   "xcrun" "sourcekit-lsp"))
+               '((swift-mode swift-ts-mode) "xcrun" "sourcekit-lsp"))
 
+  (defun jmi/swift-eglot-format-on-save ()
+    "Format Swift buffer via sourcekit-lsp before saving."
+    (when (eglot-managed-p)
+      (eglot-format-buffer)))
 
-  :hook  (swift-mode       . eglot-ensure)
+  (defun jmi/swift-mode-setup ()
+    (add-hook 'before-save-hook #'jmi/swift-eglot-format-on-save nil t))
+
+  :hook ((swift-mode    . eglot-ensure)
+         (swift-ts-mode . eglot-ensure)
+         (swift-mode    . jmi/swift-mode-setup)
+         (swift-ts-mode . jmi/swift-mode-setup))
   :mode "\\.swift$"
-  :after eglot
+  :after (eglot swift-mode)
   :ensure-system-package (xcode-build-server))
 
 (use-package thrift

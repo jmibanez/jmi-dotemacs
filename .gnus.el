@@ -10,16 +10,30 @@
                                             (expiry-wait   . 90)
                                             (total-expire  . t)
                                             (expire-group  . "nnml+archive:archive.jmibanez"))
+        ("^Archive$"                        (expiry-wait   . 7)
+                                            (total-expire  . t)
+                                            (expire-group  . "nnml+archive:archive.jmibanez"))
+        ("^nnmaildir\\+gmail:"              (expiry-wait   . 90)
+                                            (total-expire  . t)
+                                            (nnmail-expiry-target . delete)
+                                            (expire-group  . nil))
         ("^Misc$"                           (expiry-wait   . 7)
                                             (total-expire  . t)
                                             (expire-group  . "nnml+archive:archive.jmibanez.misc"))
-        ("nnmaildir\\+gmail:INBOX"          (expiry-wait   . 90)
-                                            (total-expire  . t))
+        ("^Monitoring$"                     (expiry-wait   . 365)
+                                            (total-expire  . t)
+                                            (expiry-target . nil)
+                                            (expire-group  . nil))
         ("INBOX\\.Notifications\\.*"        (nov-cache-size . 7000))
         ("INBOX\\.Notifications\\.CRs"      (mm-discouraged-alternatives nil))
         ("INBOX\\.Notifications\\.Tickets"  (mm-discouraged-alternatives nil))
+
         ;; mairix results group -- can be large
-        ("search"                           (nov-cache-size . 10000))))
+        ("search"                           (nov-cache-size . 10000))
+        ;; Default match: Assume not gmail, so expire directly to archive misc
+        (".*"                               (total-expire  . t)
+                                            (expiry-wait   . 7)
+                                            (expire-group  . "nnml+archive:archive.jmibanez.misc"))))
 
 (setq gnus-nov-is-evil nil)
 
@@ -27,7 +41,6 @@
       send-mail-function                   'sendmail-send-it
       sendmail-program                     "msmtp"
       imap-enable-exchange-bug-workaround  t)
-
 
 
 ;; Primary: jmibanez.com
@@ -162,4 +175,3 @@
       '((".*"
          (name            "JM Ibanez")
          (address         "jm@jmibanez.com"))))
-

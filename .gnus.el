@@ -6,14 +6,22 @@
 ;; messages. Also, don't discourage HTML when viewing tickets and
 ;; CRs
 (setq gnus-parameters
-      '(("INBOX"                           (nov-cache-size . 5000))
-        ("INBOX\\.Notifications\\.*"       (nov-cache-size . 7000))
-        ("INBOX\\.Notifications\\.CRs"     (mm-discouraged-alternatives nil))
-        ("INBOX\\.Notifications\\.Tickets" (mm-discouraged-alternatives nil))
+      '(("^INBOX$"                          (nov-cache-size . 5000)
+                                            (expiry-wait   . 90)
+                                            (total-expire  . t)
+                                            (expire-group  . "nnml+archive:archive.jmibanez"))
+        ("^Misc$"                           (expiry-wait   . 7)
+                                            (total-expire  . t)
+                                            (expire-group  . "nnml+archive:archive.jmibanez.misc"))
+        ("nnmaildir\\+gmail:INBOX"          (expiry-wait   . 90)
+                                            (total-expire  . t))
+        ("INBOX\\.Notifications\\.*"        (nov-cache-size . 7000))
+        ("INBOX\\.Notifications\\.CRs"      (mm-discouraged-alternatives nil))
+        ("INBOX\\.Notifications\\.Tickets"  (mm-discouraged-alternatives nil))
         ;; mairix results group -- can be large
-        ("mairixout"                       (nov-cache-size . 10000))))
+        ("search"                           (nov-cache-size . 10000))))
 
-(setq gnus-nov-is-evil t)
+(setq gnus-nov-is-evil nil)
 
 (setq message-send-mail-function           'sendmail-send-it
       send-mail-function                   'sendmail-send-it

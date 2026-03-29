@@ -140,9 +140,9 @@ Idempotent: safe to run on every Gnus startup."
         (gnus-topic-enter-dribble))))
 
   (defun jmi/gnus-mairix-search-all-inboxes (query)
-    "Search QUERY across both jmibanez.com and Gmail inboxes via mairix."
-    (interactive "sMairix search (both INBOXes): ")
-    (nnmairix-search query))
+    "Search QUERY across all active inboxes."
+    (interactive "sMairix search (active): ")
+    (nnmairix-search (concat "p:~../Mail.archive " query)))
 
   (defun jmi/gnus-mairix-search-jmibanez (query)
     "Search QUERY in the jmibanez.com inbox only."
@@ -153,6 +153,16 @@ Idempotent: safe to run on every Gnus startup."
     "Search QUERY in the Gmail inbox only."
     (interactive "sMairix search (Gmail): ")
     (nnmairix-search (concat "p:gmail " query)))
+
+  (defun jmi/gnus-mairix-search-all (query)
+    "Search QUERY, including archive."
+    (interactive "sMairix search (all): ")
+    (nnmairix-search query))
+
+  (defun jmi/gnus-mairix-search-archive-only (query)
+    "Search QUERY in archive only."
+    (interactive "sMairix search (archive only): ")
+    (nnmairix-search (concat "p:../Mail.archive " query)))
 
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
@@ -201,7 +211,9 @@ Idempotent: safe to run on every Gnus startup."
          (:map gnus-group-mode-map
                ("/ /"   . jmi/gnus-mairix-search-all-inboxes)
                ("/ j"   . jmi/gnus-mairix-search-jmibanez)
-               ("/ g"   . jmi/gnus-mairix-search-gmail))
+               ("/ g"   . jmi/gnus-mairix-search-gmail)
+               ("/ a"   . jmi/gnus-mairix-search-archive-only)
+               ("/ A"   . jmi/gnus-mairix-search-all))
          (:map gnus-summary-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)
                ("C-<tab>" . jmi/gnus-summary-browse-link-forward))

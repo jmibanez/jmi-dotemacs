@@ -139,30 +139,63 @@ Idempotent: safe to run on every Gnus startup."
         (nconc (assoc "Search" gnus-topic-alist) (list group))
         (gnus-topic-enter-dribble))))
 
-  (defun jmi/gnus-mairix-search-all-inboxes (query)
-    "Search QUERY across all active inboxes."
-    (interactive "sMairix search (active): ")
-    (nnmairix-search (concat "p:~../Mail.archive " query)))
+  (defun jmi/gnus-mail-search-in (query &rest groups-or-servers)
+    "Search QUERY ephemerally across GROUPS-OR-SERVERS.
+Each element is either a full Gnus group name containing \"+\"
+\(e.g. \"nnmaildir+jmibanez.com:INBOX\") to restrict to that
+group, or a server name in backend:name format without \"+\"
+\(e.g. \"nnmaildir:jmibanez.com\") to search all groups on that
+server."
+    (let ((group-spec
+           (mapcar (lambda (g)
+                     (if (string-search "+" g)
+                         (cons (gnus-method-to-server
+                                (gnus-find-method-for-group g))
+                               (list g))
+                       (list g)))
+                   groups-or-servers)))
+      (gnus-group-read-ephemeral-group
+       (concat "nnselect-" (message-unique-id))
+       '(nnselect "nnselect")
+       nil
+       (cons (current-buffer) gnus-current-window-configuration)
+       nil nil
+       `((nnselect-specs
+          (nnselect-function . gnus-search-run-query)
+          (nnselect-args
+           (search-query-spec (query . ,query))
+           (search-group-spec . ,group-spec)))
+         (nnselect-artlist)))))
 
-  (defun jmi/gnus-mairix-search-jmibanez (query)
-    "Search QUERY in the jmibanez.com inbox only."
-    (interactive "sMairix search (jmibanez.com): ")
-    (nnmairix-search (concat "p:jmibanez.com " query)))
+  (defun jmi/gnus-mail-search-all-inboxes (query)
+    "Search QUERY across all active inboxes (jmibanez.com + Gmail)."
+    (interactive "sSearch (active inboxes): ")
+    (jmi/gnus-mail-search-in query
+                             "nnmaildir+jmibanez.com:INBOX"
+                             "nnmaildir+gmail:INBOX"))
 
-  (defun jmi/gnus-mairix-search-gmail (query)
-    "Search QUERY in the Gmail inbox only."
-    (interactive "sMairix search (Gmail): ")
-    (nnmairix-search (concat "p:gmail " query)))
+  (defun jmi/gnus-mail-search-jmibanez (query)
+    "Search QUERY across all jmibanez.com groups."
+    (interactive "sSearch (jmibanez.com): ")
+    (jmi/gnus-mail-search-in query "nnmaildir:jmibanez.com"))
 
-  (defun jmi/gnus-mairix-search-all (query)
-    "Search QUERY, including archive."
-    (interactive "sMairix search (all): ")
-    (nnmairix-search query))
+  (defun jmi/gnus-mail-search-gmail (query)
+    "Search QUERY across all Gmail groups."
+    (interactive "sSearch (Gmail): ")
+    (jmi/gnus-mail-search-in query "nnmaildir:gmail"))
 
-  (defun jmi/gnus-mairix-search-archive-only (query)
-    "Search QUERY in archive only."
-    (interactive "sMairix search (archive only): ")
-    (nnmairix-search (concat "p:../Mail.archive " query)))
+  (defun jmi/gnus-mail-search-archive-only (query)
+    "Search QUERY in the nnml archive."
+    (interactive "sSearch (archive only): ")
+    (jmi/gnus-mail-search-in query "nnml:archive"))
+
+  (defun jmi/gnus-mail-search-all (query)
+    "Search QUERY across all mail, including archive."
+    (interactive "sSearch (all): ")
+    (jmi/gnus-mail-search-in query
+                             "nnmaildir:jmibanez.com"
+                             "nnmaildir:gmail"
+                             "nnml:archive"))
 
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
@@ -209,18 +242,16 @@ Idempotent: safe to run on every Gnus startup."
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . jmi/gnus-in-home-dir))
          (:map gnus-group-mode-map
-               ("/ /"   . jmi/gnus-mairix-search-all-inboxes)
-               ("/ j"   . jmi/gnus-mairix-search-jmibanez)
-               ("/ g"   . jmi/gnus-mairix-search-gmail)
-               ("/ a"   . jmi/gnus-mairix-search-archive-only)
-               ("/ A"   . jmi/gnus-mairix-search-all))
+               ("/ /"   . jmi/gnus-mail-search-all-inboxes)
+               ("/ j"   . jmi/gnus-mail-search-jmibanez)
+               ("/ g"   . jmi/gnus-mail-search-gmail)
+               ("/ a"   . jmi/gnus-mail-search-archive-only)
+               ("/ A"   . jmi/gnus-mail-search-all))
          (:map gnus-summary-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)
                ("C-<tab>" . jmi/gnus-summary-browse-link-forward))
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
-
-  :hook ((gnus-started      .  jmi/gnus-setup-search-topic))
 
   :ensure-system-package (msmtp)
 
@@ -261,9 +292,20 @@ https://instagram.com/jmibanez
 (use-package mbsync
   :defer t
   :config
+  (defun jmi/get-notmuch-proc ()
+    (let ((b (get-buffer "*notmuch new*")))
+      (and (buffer-live-p b)
+           (get-buffer-process b))))
+
+  (defun jmi/update-notmuch ()
+    (if (not (jmi/get-notmuch-proc))
+        (let ((dummy (when (get-buffer "*notmuch new*")
+                       (kill-buffer "*notmuch new*"))))
+          (start-process "notmuch" "*notmuch new*" "notmuch" "new" "-q"))))
+
   (defun jmi/scan-mail-and-news ()
     ;; Update mairix groups -- mairix must have been configured already...
-    (nnmairix-update-database)
+    (jmi/update-notmuch)
     (gnus-demon-scan-mail)
     (gnus-demon-scan-news))
 

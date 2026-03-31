@@ -28,8 +28,6 @@
         ("INBOX\\.Notifications\\.CRs"      (mm-discouraged-alternatives nil))
         ("INBOX\\.Notifications\\.Tickets"  (mm-discouraged-alternatives nil))
 
-        ;; mairix results group -- can be large
-        ("search"                           (nov-cache-size . 10000))
         ;; Default match: Assume not gmail, so expire directly to archive misc
         (".*"                               (total-expire  . t)
                                             (expiry-wait   . 7)
@@ -49,23 +47,29 @@
 ;; vagaries of nnimap and the network/VPN.
 (setq gnus-select-method
       '(nnmaildir "jmibanez.com"
-                  (directory             "~/Maildir/jmibanez.com")))
+                  (directory             "~/Maildir/jmibanez.com")
+                  (gnus-search-engine    gnus-search-notmuch
+                                         (remove-prefix "~/.notmuch/jmibanez.com/"))))
 
-;; Search via mairix
-;; NB: We need to require nnmairix to load it and have its keybindings active
-(require 'nnmairix)
+;; Search via notmuch
+(require 'gnus-search)
 (setq gnus-secondary-select-methods
-      '((nnmaildir "mairix"
-                   (directory     "~/Maildir/.nnmairix"))
-        (nnmaildir "gmail"
-                   (directory     "~/Maildir/gmail"))
+      '((nnmaildir "gmail"
+                   (directory             "~/Maildir/gmail")
+                   (gnus-search-engine    gnus-search-notmuch
+                                          (remove-prefix "~/.notmuch/gmail/")))
         (nnml      "archive"
                    (nnml-directory             "~/Mail.archive")
                    ;; Don't expire messages in the archive!
                    (nnml-inhibit-expiry        t))))
 
-;; nnmairix config
-(setq nnmairix-mairix-search-options '("-Q"))
+
+(setq gnus-search-default-engines '((nnmaildir . gnus-search-notmuch)
+                                    (nnml      . gnus-search-notmuch)
+                                    (nnvirtual . gnus-search-notmuch)))
+
+(setq gnus-search-notmuch-remove-prefix "~/.notmuch")
+
 
 (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
 (setq gnus-user-date-format-alist

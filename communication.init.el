@@ -197,6 +197,45 @@ server."
                              "nnmaildir:gmail"
                              "nnml:archive"))
 
+  (defun jmi/get-notmuch-proc ()
+    (let ((b (get-buffer "*notmuch new*")))
+      (and (buffer-live-p b)
+           (get-buffer-process b))))
+
+  (defun jmi/callback-on-notmuch-update (proc change)
+    ;; Rescan mail
+    (gnus-group-get-new-news)
+    (gnus-demon-scan-mail)
+    (gnus-demon-scan-news))
+
+  (defun jmi/update-notmuch ()
+    (if (not (jmi/get-notmuch-proc))
+        (let ((dummy (when (get-buffer "*notmuch new*")
+                       (kill-buffer "*notmuch new*")))
+              (proc  (start-process "notmuch"
+                                    "*notmuch new*"
+                                    "notmuch" "new" "-q")))
+          (set-process-sentinel proc 'jmi/callback-on-notmuch-update))))
+
+  (defun jmi/gnus-setup-inbox-all ()
+    "Create persistent inbox.all nnselect group if it doesn't exist.
+Idempotent: safe to run on every Gnus startup."
+    (unless (gnus-group-entry "nnselect+nnselect:inbox.all")
+      (gnus-group-make-group
+       "inbox.all"
+       '(nnselect "nnselect")
+       nil
+       (list
+        (cons 'nnselect-specs
+              (list
+               (cons 'nnselect-function 'gnus-search-run-query)
+               (cons 'nnselect-args
+                     (list (cons 'search-query-spec '((query . "tag:unread folder:/\\/INBOX$/")))
+                           (cons 'search-group-spec
+                                 '(("nnmaildir:jmibanez.com" "nnmaildir+jmibanez.com:INBOX")
+                                   ("nnmaildir:gmail" "nnmaildir+gmail:INBOX")))))))
+        (cons 'nnselect-artlist nil)))))
+
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)
     (interactive "p" gnus-summary-mode)
@@ -239,6 +278,11 @@ server."
     (let ((default-directory "~/"))
       (gnus)))
 
+  (defun jmi/gnus-sync-notmuch-on-inbox-all-exit ()
+    "Sync notmuch after exiting inbox.all so read state is updated."
+    (when (string= gnus-newsgroup-name "nnselect:inbox.all")
+      (jmi/update-notmuch)))
+
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . jmi/gnus-in-home-dir))
          (:map gnus-group-mode-map
@@ -252,6 +296,9 @@ server."
                ("C-<tab>" . jmi/gnus-summary-browse-link-forward))
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
+
+  :hook ((gnus-started       . jmi/gnus-setup-inbox-all)
+         (gnus-summary-exit  . jmi/gnus-sync-notmuch-on-inbox-all-exit))
 
   :ensure-system-package (msmtp)
 
@@ -292,23 +339,6 @@ https://instagram.com/jmibanez
 (use-package mbsync
   :defer t
   :config
-  (defun jmi/get-notmuch-proc ()
-    (let ((b (get-buffer "*notmuch new*")))
-      (and (buffer-live-p b)
-           (get-buffer-process b))))
-
-  (defun jmi/update-notmuch ()
-    (if (not (jmi/get-notmuch-proc))
-        (let ((dummy (when (get-buffer "*notmuch new*")
-                       (kill-buffer "*notmuch new*"))))
-          (start-process "notmuch" "*notmuch new*" "notmuch" "new" "-q"))))
-
-  (defun jmi/scan-mail-and-news ()
-    ;; Update mairix groups -- mairix must have been configured already...
-    (jmi/update-notmuch)
-    (gnus-demon-scan-mail)
-    (gnus-demon-scan-news))
-
   (defun jmi/do-mail-sync ()
     (interactive)
     (message "Syncing mail...")
@@ -329,7 +359,7 @@ https://instagram.com/jmibanez
 
   :autoload (jmi/do-mail-sync jmi-scan-mail-and-news)
 
-  :hook ((mbsync-exit       .  jmi/scan-mail-and-news)
+  :hook ((mbsync-exit       .  jmi/update-notmuch)
          (gnus-startup      .  gnus-demon-init))
   :after (gnus)
 

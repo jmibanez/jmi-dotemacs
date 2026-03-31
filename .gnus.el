@@ -32,10 +32,15 @@
         ("^Spam$"                           (total-expire  . t)
                                             (expiry-wait   . 30)
                                             (expire-group  . nil))
+        ;; DO NOT EXPIRE inbox.all
+        ("inbox.all"                        (total-expire  . nil))
         ;; Default match: Assume not gmail, so expire directly to archive misc
         (".*"                               (total-expire  . t)
                                             (expiry-wait   . 7)
                                             (expire-group  . "nnml+archive:archive.jmibanez.misc"))))
+
+;; Ensure inbox.all is always visible
+(setq gnus-permanently-visible-groups "nnselect:inbox\\.all")
 
 (setq gnus-nov-is-evil nil)
 

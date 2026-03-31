@@ -28,6 +28,10 @@
         ("INBOX\\.Notifications\\.CRs"      (mm-discouraged-alternatives nil))
         ("INBOX\\.Notifications\\.Tickets"  (mm-discouraged-alternatives nil))
 
+        ;; Ensure Spam folder _doesn't_ get archived -- after 30 days delete
+        ("^Spam$"                           (total-expire  . t)
+                                            (expiry-wait   . 30)
+                                            (expire-group  . nil))
         ;; Default match: Assume not gmail, so expire directly to archive misc
         (".*"                               (total-expire  . t)
                                             (expiry-wait   . 7)

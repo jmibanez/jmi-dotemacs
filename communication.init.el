@@ -234,7 +234,8 @@ Idempotent: safe to run on every Gnus startup."
                            (cons 'search-group-spec
                                  '(("nnmaildir:jmibanez.com" "nnmaildir+jmibanez.com:INBOX")
                                    ("nnmaildir:gmail" "nnmaildir+gmail:INBOX")))))))
-        (cons 'nnselect-artlist nil)))))
+        (cons 'nnselect-artlist nil)
+        (cons 'nnselect-always-regenerate t)))))
 
   ;; Jump to first link in w3m-washed article
   (defun jmi/gnus-summary-forward-link (n)

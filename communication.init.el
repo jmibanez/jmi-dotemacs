@@ -220,7 +220,7 @@ server."
   (defun jmi/gnus-setup-inbox-all ()
     "Create persistent inbox.all nnselect group if it doesn't exist.
 Idempotent: safe to run on every Gnus startup."
-    (unless (gnus-group-entry "nnselect+nnselect:inbox.all")
+    (unless (gnus-group-entry "nnselect:inbox.all")
       (gnus-group-make-group
        "inbox.all"
        '(nnselect "nnselect")

@@ -70,7 +70,7 @@
   (set-frame-font "Berkeley Mono-14:weight=thin" nil t t)
 
   ;; Because Berkeley Mono doesn't have certain glyphs they get
-  ;; font-substituted by Helvetica; force the use of Liberation Mono
+  ;; font-substituted by Helvetica; force the use of Andale Mono
   ;; as the general fallback so we get metrics closer to monospace
   (set-fontset-font t 'unicode (font-spec :family "Andale Mono") nil 'prepend)
 

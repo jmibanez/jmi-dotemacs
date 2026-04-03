@@ -22,6 +22,10 @@ just contains:
      I like Emacs to look, including setting the theme, and
      configuring the modeline
 
+   - [`.gnus.el`](.gnus.el) is the Gnus runtime config: per-group
+     parameters, search engine setup, mail sending configuration, and
+     nov cache settings
+
    - [`communication.init.el`](communication.init.el) contains
      config for stuff like IRC, Slack, RSS, etcetera
 
@@ -29,9 +33,9 @@ just contains:
      configuration for doing software development from within Emacs
 
    - [`encryption.init.el`](encryption.init.el) configures encryption
-     ([PGG](https://www.gnu.org/software/emacs/manual/html_mono/pgg.html))
+     via EPA/GPG
 
-   - [`keybindings.init.el`](keybindings.init.el) sets up some global 
+   - [`keybindings.init.el`](keybindings.init.el) sets up some global
      keybindings
 
    - [`misc.init.el`](misc.init.el) is a catch-all for all other odd
@@ -42,7 +46,9 @@ just contains:
 
    - [`org.init.el`](org.init.el) contains my Org mode config
 
-   - [`term.init.el`](term.init.el) configures all my terminal-in-Emacs 
+   - [`snippets.init.el`](snippets.init.el) configures YASnippet
+
+   - [`term.init.el`](term.init.el) configures all my terminal-in-Emacs
      stuff, such as Eshell and VTerm
 
    - [`uniquify.init.el`](uniquify.init.el) is where I set up how I
@@ -67,6 +73,23 @@ are in [pkg/](pkg/).
 
 EShell-specific aliases and scripts are in [eshell/](eshell/).
 
-Finally, there are also various plaform-specific files that get
-loaded, if a directory for that plaform exists. Currently, I have
-config for macOS ([`darwin`](darwin/)) and [Linux](linux/).
+Finally, there are also various platform-specific files that get
+loaded, if a directory for that platform exists. Currently, I have
+config for macOS ([`darwin/`](darwin/)) and [Linux](linux/):
+
+   - `000.init.el` has any platform-specific early config: key modifiers,
+     clipboard, and system-level settings ([macOS](darwin/000.init.el),
+     [linux](linux/000.init.el))
+
+   - `paths.init.el` contains toolchain paths: JVM homes, Eclipse dir,
+     Lombok jar, and other environment-specific locations
+     ([macOS](darwin/paths.init.el), [linux](linux/paths.init.el))
+
+   - [`darwin/browse.init.el`](darwin/browse.init.el) is where I set up
+     any macOS-specific URL/browser handling knobs; currently, this only
+     sets things up so browse-url opens using the platform browser
+     (Safari in my case)
+
+   - [`darwin/tls.init.el`](darwin/tls.init.el) configures TLS/SNI on
+     macOS to use Homebrew-installed openssl binaries -- on macOS I want
+     to avoid Emacs using gnutls, even if it's a required dependency

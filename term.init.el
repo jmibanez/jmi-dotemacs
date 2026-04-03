@@ -9,6 +9,10 @@
 
 ;;; Code:
 
+(use-package xterm-color
+  :config
+  (setopt xterm-color-use-bold-for-bright t))
+
 (use-package eshell
   :init
   (defmacro esh-command (alias arglist &rest command-def-alist)
@@ -75,6 +79,15 @@
                   (string-equal (car prj-ws-tup)
                                 prj-name))
                 (jmi/all-projects-across-workspaces)))
+
+  ;; Utilize xterm-color for color rendition
+  (defun jmi/eshell-xterm-color-filter (string)
+    (let ((xterm-color-preserve-properties t))
+      (xterm-color-filter string)))
+
+  (add-to-list 'eshell-preoutput-filter-functions #'jmi/eshell-xterm-color-filter)
+  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+  (setenv "TERM" "xterm-256color")
 
 
   (require 'em-smart)
@@ -163,6 +176,7 @@
    (:map eshell-mode-map
          ("s-r" . jmi/browse-esh-history)))
 
+  :after xterm-color
   :ensure nil)
 
 (use-package eshell-info-banner

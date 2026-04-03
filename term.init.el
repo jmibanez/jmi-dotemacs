@@ -80,15 +80,6 @@
                                 prj-name))
                 (jmi/all-projects-across-workspaces)))
 
-  ;; Utilize xterm-color for color rendition
-  (defun jmi/eshell-xterm-color-filter (string)
-    (let ((xterm-color-preserve-properties t))
-      (xterm-color-filter string)))
-
-  (add-to-list 'eshell-preoutput-filter-functions #'jmi/eshell-xterm-color-filter)
-  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
-  (setenv "TERM" "xterm-256color")
-
 
   (require 'em-smart)
   (require 'pcomplete)
@@ -176,7 +167,6 @@
    (:map eshell-mode-map
          ("s-r" . jmi/browse-esh-history)))
 
-  :after xterm-color
   :ensure nil)
 
 (use-package eshell-info-banner

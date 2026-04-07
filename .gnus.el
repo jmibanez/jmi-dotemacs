@@ -6,17 +6,21 @@
 ;; messages. Also, don't discourage HTML when viewing tickets and
 ;; CRs
 (setq gnus-parameters
-      '(("^INBOX$"                          (nov-cache-size . 5000)
+      '(;; Default match: Assume not gmail, so expire directly to archive misc
+        (".*"                               (total-expire  . t)
+                                            (expiry-wait   . 7)
+                                            (expire-group  . "nnml+archive:archive.jmibanez.misc"))
+        ("^nnmaildir\\+gmail:"              (expiry-wait   . 90)
+                                            (total-expire  . t)
+                                            (nnmail-expiry-target . delete)
+                                            (expire-group  . nil))
+        ("^INBOX$"                          (nov-cache-size . 5000)
                                             (expiry-wait   . 90)
                                             (total-expire  . t)
                                             (expire-group  . "nnml+archive:archive.jmibanez"))
         ("^Archive$"                        (expiry-wait   . 7)
                                             (total-expire  . t)
                                             (expire-group  . "nnml+archive:archive.jmibanez"))
-        ("^nnmaildir\\+gmail:"              (expiry-wait   . 90)
-                                            (total-expire  . t)
-                                            (nnmail-expiry-target . delete)
-                                            (expire-group  . nil))
         ("^Misc$"                           (expiry-wait   . 7)
                                             (total-expire  . t)
                                             (expire-group  . "nnml+archive:archive.jmibanez.misc"))
@@ -32,12 +36,12 @@
         ("^Spam$"                           (total-expire  . t)
                                             (expiry-wait   . 30)
                                             (expire-group  . nil))
+        ;; Ensure Gmail Junk folder also _doesn't_ get archived -- after 30 days delete
+        ("\\[Gmail\\].Spam$"                (total-expire  . t)
+                                            (expiry-wait   . 30)
+                                            (expire-group  . nil))
         ;; DO NOT EXPIRE inbox.all
-        ("inbox.all"                        (total-expire  . nil))
-        ;; Default match: Assume not gmail, so expire directly to archive misc
-        (".*"                               (total-expire  . t)
-                                            (expiry-wait   . 7)
-                                            (expire-group  . "nnml+archive:archive.jmibanez.misc"))))
+        ("inbox.all"                        (total-expire  . nil))))
 
 ;; Ensure inbox.all is always visible
 (setq gnus-permanently-visible-groups "nnselect:inbox\\.all")

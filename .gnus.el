@@ -41,7 +41,14 @@
                                             (expiry-wait   . 30)
                                             (expire-group  . nil))
         ;; DO NOT EXPIRE inbox.all
-        ("inbox.all"                        (total-expire  . nil))))
+        ("inbox.all"                        (total-expire  . nil))
+
+        ;; Archive groups: Make all messages visible by default, don't expire, sort by date, disable scoring
+        ("^archive\\..*"                    (total-expire  . nil)
+                                            (gnus-article-sort-functions '(gnus-article-sort-by-date))
+                                            (gnus-use-adaptive-scoring   . nil)
+                                            (gnus-use-scoring            . nil)
+                                            (display       . all))))
 
 ;; Ensure inbox.all is always visible
 (setq gnus-permanently-visible-groups "nnselect:inbox\\.all")

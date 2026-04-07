@@ -64,9 +64,13 @@ just contains:
 
 My custom YASnippet snippets are all in [snippets/](snippets/).
 
-Any custom scripts and such that my config depends on (for instance
-for [handling OAuth2 tokens for mail](scripts/mutt_oauth2.py)) are in
-[scripts/](scripts/).
+Custom scripts that the config depends on are in [`scripts/`](scripts/):
+
+   - [`scripts/mutt_oauth2.py`](scripts/mutt_oauth2.py) — OAuth2 token
+     management for mbsync and msmtp
+
+   - [`scripts/bootstrap_notmuch.sh`](scripts/bootstrap_notmuch.sh) —
+     initialises the notmuch mail index from scratch
 
 Custom ELisp packages that I use that aren't available in ELPA/MELPA
 are in [pkg/](pkg/).

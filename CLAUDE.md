@@ -56,6 +56,13 @@ A personal Emacs configuration written in Emacs Lisp. There is no build system, 
 | `jmi-startup-screen.el` | Startup screen showing org agenda, eshell, and weather |
 | `jmi-suppress-bufferswitch.el` | Prevents specific functions from switching the visible buffer |
 
+## Scripts (`scripts/`)
+
+| Script | Purpose |
+|--------|---------|
+| `mutt_oauth2.py` | OAuth2 token management for mbsync and msmtp |
+| `bootstrap_notmuch.sh` | Initialises the notmuch mail index from scratch |
+
 ## Key conventions
 
 - All packages are managed with `use-package`. Add new packages using that macro.

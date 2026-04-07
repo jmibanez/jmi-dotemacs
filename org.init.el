@@ -115,6 +115,48 @@
             (gnus-summary-tick-article)))
       (message "Not a gnus link")))
 
+  (defun jmi/gnus-message-in-inbox-p (message-id)
+    "Return non-nil if MESSAGE-ID can be found in INBOX.
+MESSAGE-ID may be with or without angle brackets.
+Requires Gnus to be running (`gnus-alive-p')."
+    (and (gnus-alive-p)
+         (ignore-errors
+           (let ((bracketed (if (string-prefix-p "<" message-id)
+                                message-id
+                              (format "<%s>" message-id))))
+             (gnus-request-head bracketed "INBOX")))))
+
+  (defun jmi/org-repoint-gnus-link-to-archive-if-necessary ()
+    "If point is on a Gnus link to INBOX and the message is no longer
+there, rewrite the link to point to archive.jmibanez instead."
+    (interactive)
+    (when-let* ((link       (org-element-lineage (org-element-context) '(link) t))
+                (_ (string= "gnus" (org-element-property :type link)))
+                (path       (org-element-property :path link))
+                (_ (string-match "^\\(.*\\)#\\(.*\\)$" path))
+                (group      (match-string 1 path))
+                (message-id (match-string 2 path))
+                (_ (string= "INBOX" group))
+                (_ (not (jmi/gnus-message-in-inbox-p message-id))))
+      (let* ((contents-begin (org-element-property :contents-begin link))
+             (contents-end   (org-element-property :contents-end link))
+             (description    (when (and contents-begin contents-end)
+                               (buffer-substring-no-properties
+                                contents-begin contents-end)))
+             (new-link       (org-link-make-string
+                              (format "gnus:nnml+archive:archive.jmibanez#%s" message-id)
+                              description))
+             (begin          (org-element-property :begin link))
+             (end            (org-element-property :end link)))
+        (goto-char begin)
+        (delete-region begin end)
+        (insert new-link)
+        (goto-char begin)
+        (message "Repointed link from INBOX to archive.jmibanez"))))
+
+  (advice-add 'org-open-at-point :before
+              #'jmi/org-repoint-gnus-link-to-archive-if-necessary)
+
   ;; Custom link: projects
   (declare-function projectile-switch-project-by-name "projectile")
   (defun jmi/org-project-open (path _)

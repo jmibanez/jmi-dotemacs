@@ -379,8 +379,8 @@ https://instagram.com/jmibanez
           gnus-desktop-notify-uncollapsed-levels  nil
           gnus-desktop-notify-behavior            'gnus-desktop-notify-multi)
 
-  (gnus-desktop-notify-mode)
-
+  :hook ((gnus-started   . gnus-desktop-notify-mode)
+         (gnus-exit-gnus . gnus-desktop-notify-mode))
   :after gnus)
 
 (use-package gnus-topic

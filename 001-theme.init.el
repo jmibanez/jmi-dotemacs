@@ -74,6 +74,9 @@
   ;; as the general fallback so we get metrics closer to monospace
   (set-fontset-font t 'unicode (font-spec :family "Andale Mono") nil 'prepend)
 
+  ;; Andale Mono doesn't have a definition for these, so use Zapf Dingbats
+  (set-fontset-font t '(#x2700 . #x27bf) (font-spec :name "Zapf Dingbats") nil 'prepend)
+
   (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 
 (use-package all-the-icons

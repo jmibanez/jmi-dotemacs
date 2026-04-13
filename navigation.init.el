@@ -279,4 +279,8 @@
 
   (jmi/autoframe-mode))
 
+(use-package fullframe
+  :config
+  (fullframe magit-status magit-mode-quit-window nil))
+
 ;;; navigation.init.el ends here

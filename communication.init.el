@@ -112,33 +112,6 @@
   ;; Point to .gnus.el in this directory
   (setopt gnus-init-file (concat jmi/my-emacs-init-path ".gnus.el"))
 
-  ;; Declaratively set up the nnmairix default search group and Search topic.
-  ;; Mirrors what nnmairix-create-server-and-default-group does interactively,
-  ;; but idempotently, so it is reproducible on a new machine.
-  (defun jmi/gnus-setup-search-topic ()
-    "Ensure the nnmairix default group and Search topic exist and are linked.
-Idempotent: safe to run on every Gnus startup."
-    (unless (gnus-group-entry "nnmairix+search:search")
-      (nnmaildir-open-server "mairix")
-      (gnus-group-make-group
-       "search"
-       (list 'nnmairix "search"
-             (list 'nnmairix-backend        'nnmaildir)
-             (list 'nnmairix-backend-server "mairix")
-             (list 'nnmairix-mairix-command "mairix")
-             (list 'nnmairix-hidden-folders nil)
-             (list 'nnmairix-default-group  "search"))))
-    (unless (gnus-topic-find-topology "Search")
-      (gnus-topic-create-topic "Search" "Gnus" nil nil))
-    (let ((group "nnmairix+search:search"))
-      (when (and (gnus-group-entry group)
-                 (not (equal (gnus-group-topic group) "Search")))
-        (let ((old-entry (assoc (gnus-group-topic group) gnus-topic-alist)))
-          (when old-entry
-            (setcdr old-entry (delete group (cdr old-entry)))))
-        (nconc (assoc "Search" gnus-topic-alist) (list group))
-        (gnus-topic-enter-dribble))))
-
   (defun jmi/gnus-mail-search-in (query &rest groups-or-servers)
     "Search QUERY ephemerally across GROUPS-OR-SERVERS.
 Each element is either a full Gnus group name containing \"+\"
@@ -358,7 +331,7 @@ https://instagram.com/jmibanez
 
   :ensure-system-package (mbsync . isync)
 
-  :autoload (jmi/do-mail-sync jmi-scan-mail-and-news)
+  :autoload (jmi/do-mail-sync)
 
   :hook ((mbsync-exit       .  jmi/update-notmuch)
          (gnus-startup      .  gnus-demon-init))

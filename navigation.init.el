@@ -281,6 +281,7 @@
 
 (use-package fullframe
   :config
-  (fullframe magit-status magit-mode-quit-window nil))
+  (fullframe magit-status magit-mode-quit-window)
+  (fullframe gnus gnus-group-exit))
 
 ;;; navigation.init.el ends here

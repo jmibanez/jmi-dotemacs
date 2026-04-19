@@ -650,6 +650,8 @@
   :ensure nil)
 
 (use-package bug-reference-github
+  :hook
+  ((prog-mode   . bug-reference-github-set-url-format))
   :after (bug-reference))
 
 (use-package git-gutter-fringe

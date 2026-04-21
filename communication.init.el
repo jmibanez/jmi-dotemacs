@@ -223,30 +223,6 @@ Idempotent: safe to run on every Gnus startup."
           (w3m-next-anchor n)
         (forward-button n))))
 
-  (defun jmi/gnus-summary-browse-link-forward (n)
-    (interactive "p" gnus-summary-mode)
-    (gnus-summary-select-article)
-    (gnus-configure-windows 'article)
-    (let* ((message-id (mail-header-id (gnus-summary-article-header)))
-           (synthetic-message-id (string-match "<\\(\\w+\\)/\\(\\w+\\)/pull/\\(\\w+\\)\\(/.*\\)?@github.com>"
-                                               message-id)))
-      (if synthetic-message-id
-          (let ((pr-org (match-string 1 message-id))
-                (pr-repo (match-string 2 message-id))
-                (pr-id   (match-string 3 message-id)))
-            (browse-url (format "https://github.com/%s/%s/pull/%s" pr-org pr-repo pr-id)))
-
-        (let ((win (or (gnus-get-buffer-window gnus-article-buffer t)
-                       (error "No article window found"))))
-          (select-window win)
-          (select-frame-set-input-focus (window-frame win))
-          (if (fboundp 'w3m-minor-mode)
-              (progn
-                (w3m-next-anchor n)
-                (browse-url (w3m-anchor)))
-
-            (browse-url (forward-button n)))))))
-
   (defun jmi/gnus-in-home-dir ()
     (interactive)
     (let ((default-directory "~/"))
@@ -266,8 +242,7 @@ Idempotent: safe to run on every Gnus startup."
                ("/ a"   . jmi/gnus-mail-search-archive-only)
                ("/ A"   . jmi/gnus-mail-search-all))
          (:map gnus-summary-mode-map
-               ("TAB"     . jmi/gnus-summary-forward-link)
-               ("C-<tab>" . jmi/gnus-summary-browse-link-forward))
+               ("TAB"     . jmi/gnus-summary-forward-link))
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
 
@@ -278,6 +253,15 @@ Idempotent: safe to run on every Gnus startup."
 
   :ensure nil
   :defer t)
+
+(use-package gnus-browse-url-in-article
+  :ensure nil
+  :bind (:map gnus-summary-mode-map
+              ("C-<tab>" . gnus-browse-url-in-article))
+  :after gnus
+  :vc-or-local (:url "https://github.com/jmibanez/gnus-browse-url-in-article"
+                :local-path "~/projects/personal/gnus-browse-url-in-article"
+                :branch "main"))
 
 (use-package htmlize
   :defer t)

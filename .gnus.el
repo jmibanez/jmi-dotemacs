@@ -58,6 +58,8 @@
 (setq message-send-mail-function           'sendmail-send-it
       send-mail-function                   'sendmail-send-it
       sendmail-program                     "msmtp"
+      mail-specify-envelope-from           t
+      mail-envelope-from                   'header
       imap-enable-exchange-bug-workaround  t)
 
 
@@ -198,4 +200,7 @@
 (setq gnus-posting-styles
       '((".*"
          (name            "JM Ibanez")
-         (address         "jm@jmibanez.com"))))
+         (address         "jm@jmibanez.com"))
+        ("^nnmaildir\\+gmail:"
+         (From (with-current-buffer gnus-article-buffer
+                 (message-fetch-field "to"))))))

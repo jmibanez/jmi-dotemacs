@@ -29,6 +29,86 @@
           (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
           (swift         "https://github.com/alex-pinkus/tree-sitter-swift")))
 
+  (defun jmi/treesit-install-language-grammar--swift-advice (orig-fn lang &optional out-dir)
+    "Intercept swift grammar installation to pre-generate parser.c.
+
+tree-sitter-swift does not commit parser.c to the repository; it
+must be generated from grammar.js via the tree-sitter CLI.  This
+advice handles the full build pipeline for swift (clone → npm install
+→ npx tree-sitter generate → compile → link) in a temporary
+directory, then installs the resulting library to OUT-DIR.  All other
+languages are delegated to ORIG-FN unchanged."
+    (if (not (eq lang 'swift))
+        (funcall orig-fn lang out-dir)
+      (let* ((source   (alist-get 'swift treesit-language-source-alist))
+             (url      (car source))
+             (work-dir (make-temp-file "ts-swift-build-" t))
+             (src-dir  (expand-file-name "src" work-dir))
+             (out-dir  (or out-dir
+                           (car treesit-extra-load-path)
+                           (locate-user-emacs-file "tree-sitter")))
+             (lib-name (if (eq system-type 'darwin)
+                           "libtree-sitter-swift.dylib"
+                         "libtree-sitter-swift.so"))
+             (out-file (expand-file-name lib-name out-dir))
+             (buf      (get-buffer-create "*swift-grammar-build*"))
+             (npm      (or (executable-find "npm")
+                           (error "npm not found in PATH; ensure node is installed")))
+             (npx      (or (executable-find "npx")
+                           (error "npx not found in PATH; ensure node is installed")))
+             (cc       (or (executable-find "cc") "cc"))
+             (c++      (or (executable-find "c++") "c++")))
+        (make-directory out-dir t)
+        (with-current-buffer buf
+          (erase-buffer)
+          (display-buffer buf))
+        (unwind-protect
+            (progn
+              ;; 1. Clone
+              (message "swift grammar [1/4]: cloning %s..." url)
+              (unless (zerop (call-process "git" nil buf t
+                                           "clone" "--depth=1" "--quiet"
+                                           url work-dir))
+                (error "swift grammar: git clone failed; see *swift-grammar-build*"))
+              ;; 2. npm install (fetches tree-sitter CLI as a devDependency)
+              (message "swift grammar [2/4]: npm install...")
+              (let ((default-directory work-dir))
+                (unless (zerop (call-process npm nil buf t "install"))
+                  (error "swift grammar: npm install failed; see *swift-grammar-build*")))
+              ;; 3. Generate parser.c via locally installed tree-sitter CLI
+              (message "swift grammar [3/4]: npx tree-sitter generate...")
+              (let ((default-directory work-dir))
+                (unless (zerop (call-process npx nil buf t "tree-sitter" "generate"))
+                  (error "swift grammar: tree-sitter generate failed; see *swift-grammar-build*")))
+              ;; 4. Compile and link — mirrors treesit--install-language-grammar-1
+              (message "swift grammar [4/4]: compiling and linking...")
+              (let ((default-directory src-dir))
+                (unless (zerop (call-process cc nil buf t "-fPIC" "-c" "-I." "parser.c"))
+                  (error "swift grammar: parser.c compilation failed; see *swift-grammar-build*"))
+                (when (file-exists-p (expand-file-name "scanner.c" src-dir))
+                  (unless (zerop (call-process cc nil buf t "-fPIC" "-c" "-I." "scanner.c"))
+                    (error "swift grammar: scanner.c compilation failed; see *swift-grammar-build*")))
+                (when (file-exists-p (expand-file-name "scanner.cc" src-dir))
+                  (unless (zerop (call-process c++ nil buf t "-fPIC" "-c" "-I." "scanner.cc"))
+                    (error "swift grammar: scanner.cc compilation failed; see *swift-grammar-build*")))
+                (let* ((obj-files  (directory-files src-dir t "\\.o\\'"))
+                       (link-flags (if (eq system-type 'darwin)
+                                       '("-dynamiclib")
+                                     '("-shared"))))
+                  (unless (zerop (apply #'call-process cc nil buf t
+                                        "-fPIC"
+                                        (append link-flags obj-files (list "-o" out-file))))
+                    (error "swift grammar: linking failed; see *swift-grammar-build*"))))
+              (message "Swift tree-sitter grammar installed: %s" out-file))
+          ;; unwind: always delete the temp build directory
+          (when (file-directory-p work-dir)
+            (delete-directory work-dir t))))))
+
+  (advice-add 'treesit-install-language-grammar
+              :around
+              #'jmi/treesit-install-language-grammar--swift-advice)
+
+  :ensure-system-package ((npm . node))
   :ensure nil
   :defer t)
 

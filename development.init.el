@@ -32,6 +32,73 @@
   :ensure nil
   :defer t)
 
+(defun jmi/treesit-install-swift-grammar ()
+  "Install tree-sitter grammar for Swift.
+
+tree-sitter-swift does not commit parser.c to the repository (it is
+gitignored and must be generated via `tree-sitter generate').  This
+function handles the full build pipeline:
+  1. Clone the repo into a temp directory
+  2. Run npm install + npx tree-sitter generate to produce src/parser.c
+  3. Compile and link into the treesit load path"
+  (interactive)
+  (let* ((url "https://github.com/alex-pinkus/tree-sitter-swift")
+         (work-dir (make-temp-file "treesit-swift-" t))
+         (out-dir (or (car treesit-extra-load-path)
+                      (expand-file-name "tree-sitter"
+                                        user-emacs-directory)))
+         (lib-name (pcase system-type
+                     ('darwin "swift.dylib")
+                     (_ "swift.so")))
+         (lib-path (expand-file-name lib-name out-dir)))
+    (make-directory out-dir t)
+    (unwind-protect
+        (progn
+          (message "jmi/treesit: Cloning tree-sitter-swift to %s..." work-dir)
+          (unless (zerop (call-process "git" nil nil nil
+                                       "clone" "--depth" "1" url work-dir))
+            (error "jmi/treesit: Failed to clone tree-sitter-swift"))
+          (let ((default-directory work-dir))
+            (message "jmi/treesit: Installing npm dependencies (needed for tree-sitter generate)...")
+            (unless (zerop (call-process "npm" nil nil nil "install"))
+              (error "jmi/treesit: npm install failed; ensure npm is on PATH"))
+            (message "jmi/treesit: Generating parser.c via tree-sitter generate...")
+            (unless (zerop (call-process "npx" nil nil nil "tree-sitter" "generate"))
+              (error "jmi/treesit: tree-sitter generate failed"))
+            (let ((default-directory (expand-file-name "src" work-dir)))
+              (message "jmi/treesit: Compiling parser.c...")
+              (unless (zerop (call-process "cc" nil nil nil
+                                           "-fPIC" "-c" "-I." "parser.c"))
+                (error "jmi/treesit: Compilation of parser.c failed"))
+              (message "jmi/treesit: Compiling scanner.c...")
+              (unless (zerop (call-process "cc" nil nil nil
+                                           "-fPIC" "-c" "-I." "scanner.c"))
+                (error "jmi/treesit: Compilation of scanner.c failed"))
+              (message "jmi/treesit: Linking %s..." lib-path)
+              (let ((link-flag (pcase system-type
+                                 ('darwin "-dynamiclib")
+                                 (_ "-shared"))))
+                (unless (zerop (call-process "cc" nil nil nil
+                                             link-flag
+                                             "-o" lib-path
+                                             "parser.o" "scanner.o"))
+                  (error "jmi/treesit: Linking failed"))))))
+      (delete-directory work-dir t))
+    (message "jmi/treesit: Swift grammar successfully installed to %s" lib-path)))
+
+(defun jmi/treesit-install-language-grammar--swift-advice (orig-fun lang &rest args)
+  "Intercept `treesit-install-language-grammar' for swift.
+
+tree-sitter-swift does not ship parser.c, so the standard install
+path fails.  Redirect swift installs to `jmi/treesit-install-swift-grammar'
+and let everything else go through normally."
+  (if (eq lang 'swift)
+      (jmi/treesit-install-swift-grammar)
+    (apply orig-fun lang args)))
+
+(advice-add 'treesit-install-language-grammar :around
+            #'jmi/treesit-install-language-grammar--swift-advice)
+
 (use-package treesit-auto
   :config
   (setopt treesit-auto-install 'prompt)

@@ -74,8 +74,17 @@
   ;; as the general fallback so we get metrics closer to monospace
   (set-fontset-font t 'unicode (font-spec :family "Andale Mono") nil 'prepend)
 
-  ;; Andale Mono doesn't have a definition for these, so use Zapf Dingbats
+  ;; Broad symbol script fallback — use Noto Sans Symbols 2 for most other symbols
+  (set-fontset-font t 'symbol (font-spec :family "Noto Sans Symbols 2") nil 'append)
+
+  ;; However, use Zapf Dingbats for this range
   (set-fontset-font t '(#x2700 . #x27bf) (font-spec :name "Zapf Dingbats") nil 'prepend)
+
+  ;; Scale Noto Sans Symbols 2 to match Berkeley Mono's line metrics
+  ;; BM Thin: line height 1.2× UPM; Noto: 1.699× UPM → factor = 1.2 / 1.699 ≈ 0.70
+  ;; Use a much smaller scale (0.50) to ensure glyphs fit
+  (add-to-list 'face-font-rescale-alist
+               (cons (font-spec :family "Noto Sans Symbols 2") 0.50))
 
   (set-face-attribute 'variable-pitch nil :family "Helvetica Neue"))
 

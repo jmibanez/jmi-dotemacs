@@ -122,14 +122,15 @@
 (gnus-add-configuration
  '(article
    (vertical 1.0
-             (group 0.12)
-             (summary 0.25 point)
+             (horizontal 0.25
+                         (summary 1.0 point)
+                         (group 0.25))
              (article 1.0))))
 (gnus-add-configuration
  '(summary
-   (vertical 1.0
-             (group 0.12)
-             (summary 1.0 point))))
+   (horizontal 1.0
+               (summary 1.0 point)
+               (group 0.25))))
 
 ;; Scoring
 ;; Adaptive scoring

@@ -95,14 +95,31 @@
 
 (setq gnus-group-line-format "%M%S%p%5y:%B%(%G%)%O\n")
 (setq gnus-user-date-format-alist
-      '(((gnus-seconds-today) . "Today, %H:%M")
-        ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
-        (604800 . "%a %H:%M")
-        ((gnus-seconds-month) . "%a %d")
-        ((gnus-seconds-year) . "%b %d")
-        (t . "%b %d %Y")))
+      (list (cons '(gnus-seconds-today) (concat (propertize
+                                                 (all-the-icons-nerd-fa "calendar-day"))
+                                                " Today, %H:%M"))
+            (cons '(+ 86400 (gnus-seconds-today)) (concat (propertize
+                                                           (all-the-icons-nerd-fa "calendar-minus"))
+                                                          " Yesterday, %H:%M"))
+            (cons 604800  (concat (propertize
+                                   (all-the-icons-nerd-fa "calendar-days"))
+                                  " %a %H:%M"))
+            (cons '(gnus-seconds-month) (concat (propertize
+                                                 (all-the-icons-nerd-fa "calendar-days"))
+                                                " %a %d"))
+            (cons '(gnus-seconds-year)  (concat (propertize
+                                                 (all-the-icons-nerd-fa "calendar-days"))
+                                                " %b %d"))
+            (cons t (concat (propertize
+                             (all-the-icons-nerd-fa "history"))
+                            " %b %d %Y"))))
 
-(setq gnus-summary-line-format "%~(pad-right 20)&user-date; %U%R%z%(%[%4L: %-23,23f% ]%)%B %s\n")
+(setq gnus-topic-line-format (concat "%i[ "
+                                     (propertize
+                                      (all-the-icons-nerd-fa "folder-minus")
+                                      'display '(raise 0.0))
+                                     " %(%{%n -- %A%}%) ]%v\n"))
+(setq gnus-summary-line-format "%~(pad-right 20)&user-date; %U%R%z%(%[ %4i: %-23,23f% ]%)%B %s\n")
 
 ;; Enable Gnus agent
 (setq gnus-agent t)

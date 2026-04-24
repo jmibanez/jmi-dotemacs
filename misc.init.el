@@ -16,7 +16,6 @@
 (setopt sentence-end-double-space nil)
 
 (use-package page-ext
-  :defer t
   :init
   (put 'narrow-to-page 'disabled nil)
   :ensure nil)

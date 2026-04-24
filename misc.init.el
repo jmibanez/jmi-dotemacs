@@ -91,6 +91,17 @@
 ;; Automatically update packages
 (use-package auto-package-update
   :config
+
+  ;; DO NOT UPDATE THESE PACKAGES.
+  ;;
+  ;; Because claude-code also exists as a different package in MELPA
+  ;; with the same name, auto-package-update pulls it and clobbers the
+  ;; claude-code I have installed.
+  (setopt auto-package-update-excluded-packages
+          '(claude-code
+            eshell-info-banner
+            australia-holidays))
+
   ;; Hide results
   (setopt auto-package-update-hide-results 't)
   ;; ... at startup

@@ -182,6 +182,7 @@ server."
     (gnus-demon-scan-news))
 
   (defun jmi/update-notmuch ()
+    (interactive)
     (if (not (jmi/get-notmuch-proc))
         (let ((dummy (when (get-buffer "*notmuch new*")
                        (kill-buffer "*notmuch new*")))

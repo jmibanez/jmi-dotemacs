@@ -77,9 +77,6 @@
   ;; Broad symbol script fallback — use Noto Sans Symbols 2 for most other symbols
   (set-fontset-font t 'symbol (font-spec :family "Noto Sans Symbols 2") nil 'append)
 
-  ;; However, use Zapf Dingbats for this range
-  (set-fontset-font t '(#x2700 . #x27bf) (font-spec :name "Zapf Dingbats") nil 'prepend)
-
   ;; Scale Noto Sans Symbols 2 to match Berkeley Mono's line metrics
   ;; BM Thin: line height 1.2× UPM; Noto: 1.699× UPM → factor = 1.2 / 1.699 ≈ 0.70
   ;; Use a much smaller scale (0.50) to ensure glyphs fit

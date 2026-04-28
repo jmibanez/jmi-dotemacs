@@ -17,18 +17,18 @@
              (jmi/org-roam-buffer-p))
         (eq major-mode 'org-agenda-mode)))
 
-  (defun jmi/projectile-find-file-or-org-roam-node-find-dwim ()
+  (defun jmi/projectile-find-file-or-org-roam-node-find-dwim (prefix-arg)
     "Either do projectile-find-file or or do org-roam-find; DWIM."
-    (interactive)
+    (interactive "P")
 
     (if (not (fboundp 'projectile-find-file))
         (error "Projectile is not loaded.")
 
       (if (jmi/in-org-roam-related-buffer-p)
-          (org-roam-node-find)
+          (org-roam-node-find prefix-arg)
 
         ;; Else, default to projectile-find-file
-        (projectile-find-file-dwim))))
+        (projectile-find-file-dwim prefix-arg))))
 
   ;; On keyboards which don't have Super (e.g. my Model M) bind C-& to
   ;; event-apply-super-modifier so I can reach my bindings that use Super

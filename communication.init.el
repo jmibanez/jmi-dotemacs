@@ -234,6 +234,16 @@ Idempotent: safe to run on every Gnus startup."
     (when (string= gnus-newsgroup-name "nnselect:inbox.all")
       (jmi/update-notmuch)))
 
+  (defun jmi/gnus-summary-setup-mark-font ()
+    "Apply FontAwesome face to article mark icon codepoints."
+    (font-lock-add-keywords
+     nil
+     `((,(rx (any ?\xf0e0 ?\xf2b6 ?\xf024 ?\xf017
+                  ?\xf1f8 ?\xf187 ?\xf112 ?\xf064
+                  ?\xf06e ?\xf078))
+        0 '(:family "FontAwesome") t))
+     t))
+
   :bind ((:map jmi/my-jump-keys-map
                ("m"       . jmi/gnus-in-home-dir))
          (:map gnus-group-mode-map
@@ -247,7 +257,8 @@ Idempotent: safe to run on every Gnus startup."
          (:map gnus-article-mode-map
                ("TAB"     . jmi/gnus-summary-forward-link)))
 
-  :hook ((gnus-started       . jmi/gnus-setup-inbox-all)
+  :hook ((gnus-summary-mode  . jmi/gnus-summary-setup-mark-font)
+         (gnus-started       . jmi/gnus-setup-inbox-all)
          (gnus-summary-exit  . jmi/gnus-sync-notmuch-on-inbox-all-exit))
 
   :ensure-system-package (msmtp)

@@ -149,6 +149,20 @@
                (summary 1.0 point)
                (group 0.25))))
 
+;; Article marks as nerd-font icon codepoints.
+;; Kept as characters so Gnus equality checks (eq mark gnus-*-mark) work;
+;; jmi/gnus-summary-setup-mark-font in communication.init.el applies the
+;; correct font face so they render as icons in the summary buffer.
+(setq gnus-unread-mark    ?\xf003   ; nf-fa-envelope
+      gnus-read-mark      ?\xf2b7   ; nf-fa-envelope-open
+      gnus-ticked-mark    ?\xf024   ; nf-fa-flag
+      gnus-dormant-mark   ?\xf017   ; nf-fa-clock
+      gnus-del-mark       ?\xf1f8   ; nf-fa-trash
+      gnus-ancient-mark   ?\xf187   ; nf-fa-archive
+      gnus-replied-mark   ?\xf112   ; nf-fa-reply
+      gnus-forwarded-mark ?\xf064   ; nf-fa-share
+      gnus-low-score-mark ?\xf078)  ; nf-fa-chevron-down 
+
 ;; Scoring
 ;; Adaptive scoring
 (setq gnus-use-adaptive-scoring '(word line))

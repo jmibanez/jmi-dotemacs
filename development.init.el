@@ -416,7 +416,7 @@ languages are delegated to ORIG-FN unchanged."
 
 (use-package claude-code
   :init
-  (setopt claude-code-terminal-backend 'vterm)
+  (setopt claude-code-terminal-backend 'ghostel)
   (require 'vterm)
 
   :config

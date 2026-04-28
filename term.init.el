@@ -206,6 +206,29 @@
   :after esh-opt)
 
 
+(use-package ghostel
+  :config
+  (defun jmi/ghostel-in-dir (dir &optional buf-name)
+    (let ((default-directory dir)
+          (ghostel-buffer-name (format "*ghostel %s*" dir)))
+      (with-existing-directory
+        (ghostel t))))
+
+  (defun jmi/ghostel-in-home ()
+    (interactive)
+    (jmi/ghostel-in-dir "~/"))
+
+  (define-key ghostel-mode-map (kbd "S-<prior>") #'scroll-down-command)
+  (define-key ghostel-mode-map (kbd "S-<next>") #'scroll-up-command)
+  (define-key ghostel-mode-map (kbd "<f8>") nil)
+
+  :bind
+  ((:map jmi/my-jump-keys-map
+         ("t 0"   . jmi/ghostel-in-home)))
+
+  ;; :vc (:url "https://github.com/dakra/ghostel" :rev :newest)
+  :ensure-system-package (zig))
+
 (use-package vterm
   :config
 

@@ -28,10 +28,6 @@
                                             (total-expire  . t)
                                             (expiry-target . nil)
                                             (expire-group  . nil))
-        ("INBOX\\.Notifications\\.*"        (nov-cache-size . 7000))
-        ("INBOX\\.Notifications\\.CRs"      (mm-discouraged-alternatives nil))
-        ("INBOX\\.Notifications\\.Tickets"  (mm-discouraged-alternatives nil))
-
         ;; Ensure Spam folder _doesn't_ get archived -- after 30 days delete
         ("^Spam$"                           (total-expire  . t)
                                             (expiry-wait   . 30)

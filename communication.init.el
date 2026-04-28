@@ -268,6 +268,93 @@ Idempotent: safe to run on every Gnus startup."
 
 (use-package gnus-browse-url-in-article
   :ensure nil
+  :config
+  (defclass jmi/gnus-quora-digest-handler (gnus-browse-url-in-article-html-handler)
+    ()
+    "URL handler for Quora Digest emails.
+Extracts question titles from 19px bold heading divs, returning
+a (question . url) alist for `completing-read'.")
+
+  (cl-defmethod gnus-browse-url-in-article-handler-matches-p ((_h jmi/gnus-quora-digest-handler))
+    (when-let* ((from (mail-header-from (gnus-summary-article-header))))
+      (string-match-p "quora\\.com" from)))
+
+  (cl-defmethod gnus-browse-url-in-article-handler-get-html-urls ((_h jmi/gnus-quora-digest-handler)
+                                                                  html-handle dom)
+    (let (result seen-urls)
+      (dolist (div (dom-search dom
+                               (lambda (node)
+                                 (and (listp node)
+                                      (eq (car node) 'div)
+                                      (when-let* ((style (dom-attr node 'style)))
+                                        (and (string-match-p "font-size:19px" style)
+                                             (string-match-p "font-weight:700" style)))))))
+        (when-let* ((link (dom-child-by-tag div 'a))
+                    (href (dom-attr link 'href))
+                    (text (string-trim (dom-texts link ""))))
+          (unless (or (string-empty-p text) (member href seen-urls))
+            (push href seen-urls)
+            (push (cons text href) result))))
+      (nreverse result)))
+
+  (gnus-browse-url-in-article-add-handler
+   (make-instance 'jmi/gnus-quora-digest-handler))
+
+  (defclass jmi/gnus-medium-digest-handler (gnus-browse-url-in-article-html-handler)
+    ()
+    "URL handler for Medium Digest emails.
+Extracts article titles paired with author names, returning
+a (\"Title - Author\" . url) alist for `completing-read'.")
+
+  (cl-defmethod gnus-browse-url-in-article-handler-matches-p ((_h jmi/gnus-medium-digest-handler))
+    (when-let* ((from (mail-header-from (gnus-summary-article-header))))
+      (string-match-p "noreply@medium\\.com" from)))
+
+  (cl-defmethod gnus-browse-url-in-article-handler-get-html-urls ((_h jmi/gnus-medium-digest-handler)
+                                                                  html-handle dom)
+    (let (flat-nodes result seen-urls)
+      (cl-labels ((walk (node)
+                    (when (and (listp node) (symbolp (car node)))
+                      (let* ((tag  (car node))
+                             (href (dom-attr node 'href)))
+                        (cond
+                         ;; Article link: <a> with a direct <h2> child
+                         ((and (eq tag 'a)
+                               (dom-child-by-tag node 'h2))
+                          (push (cons 'article node) flat-nodes))
+                         ;; Author link: <a href="...medium.com/@..."> with non-empty text
+                         ((and (eq tag 'a)
+                               href
+                               (string-match-p "medium\\.com/@" href)
+                               (not (string-empty-p
+                                     (string-trim (dom-texts node "")))))
+                          (push (cons 'author node) flat-nodes))
+                         (t
+                          (mapc #'walk (cddr node))))))))
+        (walk dom))
+      (setq flat-nodes (nreverse flat-nodes))
+      (let (last-author)
+        (dolist (entry flat-nodes)
+          (if (eq (car entry) 'author)
+              (setq last-author (cdr entry))
+            (let* ((link    (cdr entry))
+                   (href    (dom-attr link 'href))
+                   (url     (replace-regexp-in-string "\\?.*" "" href))
+                   (h2      (dom-child-by-tag link 'h2))
+                   (title   (string-trim (dom-texts h2 "")))
+                   (author  (and last-author
+                                 (string-trim (dom-texts last-author ""))))
+                   (display (if (and author (not (string-empty-p author)))
+                                (format "%s - %s" title author)
+                              title)))
+              (unless (or (string-empty-p title) (member url seen-urls))
+                (push url seen-urls)
+                (push (cons display url) result))))))
+      (nreverse result)))
+
+  (gnus-browse-url-in-article-add-handler
+   (make-instance 'jmi/gnus-medium-digest-handler))
+
   :bind (:map gnus-summary-mode-map
               ("C-<tab>" . gnus-browse-url-in-article))
   :after gnus

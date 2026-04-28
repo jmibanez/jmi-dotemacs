@@ -190,6 +190,7 @@
               "private")))
 
   :ensure-system-package duf
+  :ensure nil
 
   :hook (eshell-banner-load . eshell-info-banner-update-banner)
   :after eshell

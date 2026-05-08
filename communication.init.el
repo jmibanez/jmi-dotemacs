@@ -433,6 +433,7 @@ https://instagram.com/jmibanez
   :config
   (setopt gnus-desktop-notify-format              "%n: %G"
           gnus-desktop-notify-uncollapsed-levels  nil
+          gnus-desktop-notify-function            'gnus-desktop-notify-alert
           gnus-desktop-notify-behavior            'gnus-desktop-notify-multi)
 
   :hook ((gnus-started   . gnus-desktop-notify-mode)

@@ -28,8 +28,19 @@
   :type 'directory
   :group 'jmi-maildir-watch)
 
+(defcustom jmi/maildir-watch-debounce 1.5
+  "Seconds of quiet before a coalesced Gnus rescan fires.
+Each filesystem event reschedules a single pending rescan, so a
+burst of events (e.g. mbsync dropping many messages) collapses
+into one rescan after delivery settles."
+  :type 'number
+  :group 'jmi-maildir-watch)
+
 (defvar jmi/maildir-watch--handles nil
   "Active file-notify descriptors for Maildir `new/' subdirectories.")
+
+(defvar jmi/maildir-watch--timer nil
+  "Pending debounced rescan timer; rescheduled on each event.")
 
 (defun jmi/maildir-watch--find-new-dirs (root)
   "Return every `new/' subdirectory under ROOT.
@@ -47,16 +58,28 @@ Skips Maildir leaf directories (cur, new, tmp) when recursing."
           (setq results (nconc (jmi/maildir-watch--find-new-dirs entry) results)))))
     results))
 
+(defun jmi/maildir-watch--rescan ()
+  "Run the coalesced Gnus rescan."
+  (setq jmi/maildir-watch--timer nil)
+  (gnus-group-get-new-news)
+  (gnus-demon-scan-mail)
+  (gnus-demon-scan-news))
+
 (defun jmi/maildir-watch--callback (event)
-  "Trigger a Gnus rescan on a creation/deletion/rename EVENT."
+  "Schedule a debounced Gnus rescan on a creation/deletion/rename EVENT."
   (let ((action (nth 1 event)))
     (when (memq action '(created deleted renamed))
-      (gnus-group-get-new-news)
-      (gnus-demon-scan-mail)
-      (gnus-demon-scan-news))))
+      (when jmi/maildir-watch--timer
+        (cancel-timer jmi/maildir-watch--timer))
+      (setq jmi/maildir-watch--timer
+            (run-with-timer jmi/maildir-watch-debounce nil
+                            #'jmi/maildir-watch--rescan)))))
 
 (defun jmi/maildir-watch--unregister ()
-  "Remove all active Maildir watchers."
+  "Remove all active Maildir watchers and cancel any pending rescan."
+  (when jmi/maildir-watch--timer
+    (cancel-timer jmi/maildir-watch--timer)
+    (setq jmi/maildir-watch--timer nil))
   (dolist (handle jmi/maildir-watch--handles)
     (file-notify-rm-watch handle))
   (setq jmi/maildir-watch--handles nil))
@@ -73,9 +96,10 @@ Skips Maildir leaf directories (cur, new, tmp) when recursing."
 (define-minor-mode jmi/maildir-watch-mode
   "Watch Maildir `new/' subdirectories and rescan Gnus on changes.
 When enabled, registers file-notify watchers on every `new/' directory
-under `jmi/maildir-watch-root'.  Mail creation, deletion, or rename in
-any watched directory triggers `gnus-group-get-new-news',
-`gnus-demon-scan-mail', and `gnus-demon-scan-news'."
+under `jmi/maildir-watch-root'.  Bursts of mail creation, deletion, or
+rename are coalesced over `jmi/maildir-watch-debounce' seconds before a
+single rescan (`gnus-group-get-new-news', `gnus-demon-scan-mail',
+`gnus-demon-scan-news') fires."
   :global t
   :lighter nil
   :group 'jmi-maildir-watch

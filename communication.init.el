@@ -428,6 +428,12 @@ https://instagram.com/jmibanez
   :config
   (setq alert-default-style 'osx-notifier))
 
+(use-package jmi-maildir-watch
+  :ensure nil
+  :after gnus
+  :hook ((gnus-started   . jmi/maildir-watch-mode)
+         (gnus-exit-gnus . jmi/maildir-watch-mode)))
+
 (use-package gnus-desktop-notify
   :defer t
   :config

@@ -17,8 +17,8 @@ primary_email=jm@jmibanez.com
 other_email=jmibanez@gmail.com
 
 [new]
-tags=unread;inbox;
-ignore=.nnmairix;.nnmairix.all;.nnmaildir;.nnmaildir.bork;.DS_Store;.mbsyncstate;.uidvalidity
+tags=unread;
+ignore=.nnmairix;.nnmairix.all;.nnmaildir;.nnmaildir.bork;.DS_Store;.mbsyncstate;.mbsyncstate.lock;.uidvalidity;.jma.db;.jma.db-wal;.jma.db-shm;.jma.db.lock;.jma.lock
 
 [search]
 exclude_tags=deleted;spam;trash

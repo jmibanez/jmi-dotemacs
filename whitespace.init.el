@@ -19,6 +19,7 @@
                 org-issues-sprint-mode
                 org-issues-search-mode
                 org-mode
+                magit-mode
                 gnus-mode))
 
   (global-whitespace-mode)

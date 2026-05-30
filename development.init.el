@@ -420,6 +420,16 @@ languages are delegated to ORIG-FN unchanged."
   (setopt claude-code-optimize-window-resize nil)
   (require 'ghostel)
 
+  (defun jmi/claude-send-shipit (&optional arg)
+    "Stamp commit sigil and send LGTM to allow commits to go through."
+    (interactive "P")
+    (let* ((current-prj-root     (project-root (project-current nil default-directory)))
+           (claude-commit-sigil  (expand-file-name ".claude/commit-authorized" current-prj-root))
+           (touched-sigil        (or (file-exists-p claude-commit-sigil)
+                                     (make-empty-file claude-commit-sigil)))
+           (selected-buffer      (claude-code--do-send-command "LGTM.")))
+      (when (and arg selected-buffer)
+        (pop-to-buffer selected-buffer))))
 
   :config
   ;; optional IDE integration with Monet
@@ -450,7 +460,8 @@ languages are delegated to ORIG-FN unchanged."
   (define-key jmi/my-jump-keys-map (kbd "f C-c") claude-code-command-map)
 
   :bind ((:map jmi/my-jump-keys-map
-               ("f c" . claude-code-transient)))
+               ("f C-M-c"  . jmi/claude-send-shipit)
+               ("f c"      . claude-code-transient)))
 
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest))
 

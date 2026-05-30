@@ -417,12 +417,34 @@ languages are delegated to ORIG-FN unchanged."
 (use-package claude-code
   :init
   (setopt claude-code-terminal-backend 'ghostel)
-  (require 'vterm)
+  (setopt claude-code-optimize-window-resize nil)
+  (require 'ghostel)
+
 
   :config
   ;; optional IDE integration with Monet
   (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
   (monet-mode 1)
+
+
+  ;; After
+  ;; https://github.com/dakra/ghostel/commit/bdd2b854c55e4e6e15590d12f899cb7261e07973,
+  ;; ghostel moved to using ghostel--input-mode as its single source
+  ;; of truth for which input mode it is, which means having to bind
+  ;; ghostel--copy-mode-active here and then unbinding it
+  (defun jmi/ghostel-copy-mode-var-wrapper (orig-fn &rest args)
+    (let ((is-ghostel-copy-mode (eq ghostel--input-mode
+                                    'copy)))
+      (setq ghostel--copy-mode-active is-ghostel-copy-mode)
+      (apply orig-fn args)
+      (makunbound 'ghostel--copy-mode-active)))
+
+  ;; Hook some functions that depend on ghostel--copy-mode-active
+  (dolist (fn-to-advice
+           '(claude-code--term-read-only-mode
+             claude-code--term-interactive-mode
+             claude-code--term-in-read-only-p))
+    (advice-add fn-to-advice :around #'jmi/ghostel-copy-mode-var-wrapper))
 
   (claude-code-mode)
   (define-key jmi/my-jump-keys-map (kbd "f C-c") claude-code-command-map)

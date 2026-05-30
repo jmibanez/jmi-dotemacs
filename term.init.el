@@ -227,7 +227,10 @@
   ((:map jmi/my-jump-keys-map
          ("t 0"   . jmi/ghostel-in-home)))
 
-  ;; :vc (:url "https://github.com/dakra/ghostel" :rev :newest)
+  :vc (:url "https://github.com/dakra/ghostel"
+            :lisp-dir "lisp"
+            :rev
+            :newest)
   :ensure-system-package (zig))
 
 (use-package vterm

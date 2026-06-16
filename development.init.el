@@ -410,61 +410,32 @@ languages are delegated to ORIG-FN unchanged."
          ("f C"   . copilot-chat-display))))
 
 
-
-(use-package monet
-  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest))
-
-(use-package claude-code
+(use-package agent-shell
   :init
-  (setopt claude-code-terminal-backend 'ghostel)
-  (setopt claude-code-optimize-window-resize nil)
-  (require 'ghostel)
-
-  (defun jmi/claude-send-shipit (&optional arg)
+  (defun jmi/agent-shell-send-shipit (&optional arg)
     "Stamp commit sigil and send LGTM to allow commits to go through."
     (interactive "P")
     (let* ((current-prj-root     (project-root (project-current nil default-directory)))
            (claude-commit-sigil  (expand-file-name ".claude/commit-authorized" current-prj-root))
            (touched-sigil        (or (file-exists-p claude-commit-sigil)
                                      (make-empty-file claude-commit-sigil)))
-           (selected-buffer      (claude-code--do-send-command "LGTM.")))
-      (when (and arg selected-buffer)
-        (pop-to-buffer selected-buffer))))
+           (shell-buffer         (agent-shell-shell-buffer :no-create t)))
+      (agent-shell-insert :text "LGTM." :submit t :shell-buffer shell-buffer)
+      (when arg
+        (pop-to-buffer shell-buffer))))
 
   :config
-  ;; optional IDE integration with Monet
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
-  (monet-mode 1)
+  (setopt agent-shell-opencode-default-model-id "ollama/qwen2.5-coder:32b")
+  (setopt agent-shell-anthropic-default-session-mode-id "auto")
+  (setopt agent-shell-session-restore-verbosity 'full)
 
-
-  ;; After
-  ;; https://github.com/dakra/ghostel/commit/bdd2b854c55e4e6e15590d12f899cb7261e07973,
-  ;; ghostel moved to using ghostel--input-mode as its single source
-  ;; of truth for which input mode it is, which means having to bind
-  ;; ghostel--copy-mode-active here and then unbinding it
-  (defun jmi/ghostel-copy-mode-var-wrapper (orig-fn &rest args)
-    (let ((is-ghostel-copy-mode (eq ghostel--input-mode
-                                    'copy)))
-      (setq ghostel--copy-mode-active is-ghostel-copy-mode)
-      (apply orig-fn args)
-      (makunbound 'ghostel--copy-mode-active)))
-
-  ;; Hook some functions that depend on ghostel--copy-mode-active
-  (dolist (fn-to-advice
-           '(claude-code--term-read-only-mode
-             claude-code--term-interactive-mode
-             claude-code--term-in-read-only-p))
-    (advice-add fn-to-advice :around #'jmi/ghostel-copy-mode-var-wrapper))
-
-  (claude-code-mode)
-  (define-key jmi/my-jump-keys-map (kbd "f C-c") claude-code-command-map)
+  (setopt agent-shell-confirm-interrupt nil)
 
   :bind ((:map jmi/my-jump-keys-map
-               ("f C-M-c"  . jmi/claude-send-shipit)
-               ("f c"      . claude-code-transient)))
-
-  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest))
-
+               ("f C-M-c"  . jmi/agent-shell-send-shipit)
+               ("f c"      . agent-shell))
+         (:map agent-shell-mode-map
+               ("C-c s-c"  . jmi/agent-shell-send-shipit))))
 
 
 (use-package ellama

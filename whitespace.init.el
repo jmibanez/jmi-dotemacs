@@ -20,6 +20,7 @@
                 org-issues-search-mode
                 org-mode
                 magit-mode
+                agent-shell-mode
                 gnus-mode))
 
   (global-whitespace-mode)

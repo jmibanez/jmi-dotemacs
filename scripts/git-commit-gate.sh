@@ -26,6 +26,13 @@ fi
 
 PROJECT_DIR="$(git rev-parse --show-toplevel)"
 SIGIL="$PROJECT_DIR/.claude/commit-authorized"
+PREAUTH_SEQUENCE_SIGIL="$PROJECT_DIR/.claude/commit-authorized.sequence"
+
+# Existence of pre-auth sequence sigil means all commits are
+# authorized until the pre-auth sequence sigil is manually removed
+if [[ -f "$PREAUTH_SEQUENCE_SIGIL" ]]; then
+  touch "$SIGIL"
+fi
 
 if [[ -f "$SIGIL" ]]; then
   rm -f "$SIGIL"
@@ -33,8 +40,8 @@ if [[ -f "$SIGIL" ]]; then
 fi
 
 reason="Refusing git commit: no commit-authorization sigil present. \
-To authorize, run from your shell: touch ~/.claude/commit-authorized -- \
-then re-issue the commit. The sigil is one-shot: consumed on successful commit."
+You must ask permission from the user, then re-issue the commit. The \
+sigil is one-shot: consumed on hook execution."
 
 jq -n --arg r "$reason" '{
   hookSpecificOutput: {

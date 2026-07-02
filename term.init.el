@@ -167,6 +167,7 @@
    (:map eshell-mode-map
          ("s-r" . jmi/browse-esh-history)))
 
+  :hook ((kill-emacs . eshell-save-some-history))
   :ensure nil)
 
 (use-package eshell-info-banner

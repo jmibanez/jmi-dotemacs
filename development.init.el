@@ -27,7 +27,8 @@
           (toml          "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx           "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
           (typescript    "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-          (swift         "https://github.com/alex-pinkus/tree-sitter-swift")))
+          (swift         "https://github.com/alex-pinkus/tree-sitter-swift")
+          (groovy        "https://github.com/murtaza64/tree-sitter-groovy")))
 
   (defun jmi/treesit-install-language-grammar--swift-advice (orig-fn lang &optional out-dir)
     "Intercept swift grammar installation to pre-generate parser.c.

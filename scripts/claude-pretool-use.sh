@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # PreToolUse(bash) guard: run all my pretool use guards
 
-SCRIPT_PATH=$(dirname "$BASH_SOURCE")
+ACTUAL_SCRIPT=$(realpath "$BASH_SOURCE")
+SCRIPT_PATH=$(dirname "$ACTUAL_SCRIPT")
 PRETOOL_HOOKSDIR=$SCRIPT_PATH/claude-pretooluse/
 
+input=$(cat)
 for hook in $PRETOOL_HOOKSDIR/*.sh; do
-    # if ! bash "$f"; then break; fi
-    if ! bash "$hook"; then
-        exit $?
+    if ! printf '%s' "$input" | bash "$hook"; then
+        exit 2
     fi
 done

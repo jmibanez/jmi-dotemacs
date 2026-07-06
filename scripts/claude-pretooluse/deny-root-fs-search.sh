@@ -13,6 +13,6 @@ root='(^|[[:space:]])/([[:space:];|&)]|$)'
 if printf '%s' "$cmd" | grep -Eq "$risky" && printf '%s' "$cmd" | grep -Eq "$root"; then
     jq -n --arg r "Blocked by no-root-search guardrail: filesystem walk rooted at '/'. Narrow to a specific directory (project dir, ~/.cargo/registry/src, the nearest known parent)." \
        '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
-    exit 1
+    exit 2
 fi
 exit 0

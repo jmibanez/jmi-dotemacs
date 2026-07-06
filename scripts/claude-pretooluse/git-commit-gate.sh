@@ -50,4 +50,4 @@ jq -n --arg r "$reason" '{
     permissionDecisionReason: $r
   }
 }'
-exit 1
+exit 2

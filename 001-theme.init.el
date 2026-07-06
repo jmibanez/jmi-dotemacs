@@ -51,6 +51,21 @@
                                   (agenda-structure . (variable-pitch light 1.8))
                                   (t . (1.1))))
 
+  (setq modus-operandi-deuteranopia-palette-overrides
+        '((bg-changed         "#ffdfa9")
+          (bg-changed-faint   "#ffefbf")
+          (bg-changed-refine  "#fac090")
+          (bg-changed-fringe  "#d7c20a")
+          (fg-changed         "#553d00")
+          (fg-changed-intense "#655000")
+
+          (bg-removed         "#ffd8d5")
+          (bg-removed-faint   "#ffe9e9")
+          (bg-removed-refine  "#f3b5af")
+          (bg-removed-fringe  "#d84a4f")
+          (fg-removed         "#8f1313")
+          (fg-removed-intense "#aa2222")))
+
   (defun jmi/modus-theme-support-faces (_)
     (modus-themes-with-colors
       (custom-set-faces
@@ -63,8 +78,8 @@
   (add-hook 'enable-theme-functions #'jmi/modus-theme-support-faces)
 
   :config
-  (load-theme 'modus-operandi :no-confirm)
-  (setq jmi/selected-theme 'modus-operandi)
+  (load-theme 'modus-operandi-deuteranopia :no-confirm)
+  (setq jmi/selected-theme 'modus-operandi-deuteranopia)
 
   (set-face-attribute 'default nil :font "Berkeley Mono-14:weight=thin")
   (set-frame-font "Berkeley Mono-14:weight=thin" nil t t)

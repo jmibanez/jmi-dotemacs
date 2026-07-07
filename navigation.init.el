@@ -35,9 +35,6 @@
 
 ;; Projectile
 (use-package projectile
-  :init
-  (setopt projectile-completion-system 'auto)
-
   :config
   (setopt projectile-indexing-method 'hybrid
           projectile-project-root-functions

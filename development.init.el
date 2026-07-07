@@ -406,16 +406,6 @@ languages are delegated to ORIG-FN unchanged."
          (:map agent-shell-mode-map
                ("C-c s-c"  . jmi/agent-shell-send-shipit))))
 
-
-(use-package ellama
-  :init
-  (setq ellama-provider
-        (make-llm-ollama
-         :chat-model "llama3.2"
-         :embedding-model "llama3.2"))
-
-  :after llm-ollama)
-
 (use-package kotlin-ts-mode
   :mode "\\.kts$")
 

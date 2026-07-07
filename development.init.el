@@ -379,38 +379,6 @@ languages are delegated to ORIG-FN unchanged."
 
   :after eglot)
 
-(use-package copilot-chat
-  :init
-  (defun jmi/advice-copilot-chat-create-instance-defaulting-to-project ()
-    "If we're in a project, use project root instead of prompting for a directory; otherwise, fallback to original."
-    (let* ((current-dir
-            (file-name-directory (or (buffer-file-name) default-directory)))
-           (current-project (project-current))
-           (current-project-path (cdr current-project))
-           (directory
-            (if current-project-path
-                current-project-path
-              (expand-file-name
-               (read-directory-name "Choose a directory: " current-dir))))
-           (found (copilot-chat--find-instance directory))
-           (instance
-            (if found
-                found
-              (copilot-chat--create directory))))
-      (unless found
-        (push instance copilot-chat--instances))
-      instance))
-
-  (advice-add 'copilot-chat--create-instance :override
-              #'jmi/advice-copilot-chat-create-instance-defaulting-to-project)
-
-  :config
-  (setq copilot-chat-default-model "claude-sonnet-4.6")
-
-  :bind ((:map jmi/my-jump-keys-map
-         ("f C"   . copilot-chat-display))))
-
-
 (use-package agent-shell
   :init
   (defun jmi/agent-shell-send-shipit (&optional arg)

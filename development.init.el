@@ -394,6 +394,20 @@ languages are delegated to ORIG-FN unchanged."
         (pop-to-buffer shell-buffer))))
 
   :config
+  (defun jmi/agent-shell-default-claude-or-choose (&optional arg)
+    "Start agent-shell defaulting to Claude. With a single
+\\[universal-argument] prefix ARG, open a new shell. With two
+prefix (\\[universal-argument] \\[universal-argument]) ARG, trigger the
+agent shell chooser."
+    (interactive "P")
+    (let )
+    (cond
+     ((equal arg '(4))   (agent-shell--dwim :config (agent-shell-anthropic-make-claude-code-config)
+                                            :new-shell t))
+     ((equal arg '(16))  (agent-shell))
+     (t  (let ((agent-shell-preferred-agent-config 'claude-code))
+           (agent-shell)))))
+
   (setopt agent-shell-opencode-default-model-id "ollama/qwen2.5-coder:32b")
   (setopt agent-shell-anthropic-default-session-mode-id "auto")
   (setopt agent-shell-session-restore-verbosity 'full)
@@ -402,7 +416,7 @@ languages are delegated to ORIG-FN unchanged."
 
   :bind ((:map jmi/my-jump-keys-map
                ("f C-M-c"  . jmi/agent-shell-send-shipit)
-               ("f c"      . agent-shell))
+               ("f c"      . jmi/agent-shell-default-claude-or-choose))
          (:map agent-shell-mode-map
                ("C-c s-c"  . jmi/agent-shell-send-shipit))))
 

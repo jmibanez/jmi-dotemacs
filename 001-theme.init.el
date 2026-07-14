@@ -87,7 +87,7 @@
   ;; Because Berkeley Mono doesn't have certain glyphs they get
   ;; font-substituted by Helvetica; force the use of Andale Mono
   ;; as the general fallback so we get metrics closer to monospace
-  (set-fontset-font t 'unicode (font-spec :family "Andale Mono") nil 'prepend)
+  (set-fontset-font t 'unicode (font-spec :family "Menlo") nil 'prepend)
 
   ;; Broad symbol script fallback — use Noto Sans Symbols 2 for most other symbols
   (set-fontset-font t 'symbol (font-spec :family "Noto Sans Symbols 2") nil 'append)

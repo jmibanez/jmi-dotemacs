@@ -1,0 +1,43 @@
+diff --git a/src/dired.c b/src/dired.c
+index 96547785218..9172875df1d 100644
+--- a/src/dired.c
++++ b/src/dired.c
+@@ -35,6 +35,12 @@ along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.  */
+ #include <filemode.h>
+ #include <stat-time.h>
+ 
++#ifdef DARWIN_OS
++/* For getattrlistat and ATTR_FILE_LINKCOUNT, used to recover the true
++   hard-link count when stat's 16-bit st_nlink saturates.  */
++#include <sys/attr.h>
++#endif
++
+ #include "lisp.h"
+ #include "systime.h"
+ #include "buffer.h"
+@@ -1107,9 +1113,24 @@ file_attributes (int fd, char const *name,
+ 
+   filemodestring (&s, modes);
+ 
++  /* On macOS st_nlink is a 16-bit nlink_t that saturates at UINT16_MAX;
++     when it has, recover the true count via getattrlist.  */
++  EMACS_INT nlink = s.st_nlink;
++#ifdef DARWIN_OS
++  if (S_ISREG (s.st_mode) && s.st_nlink == (nlink_t) UINT16_MAX)
++    {
++      struct attrlist al = { .bitmapcount = ATTR_BIT_MAP_COUNT,
++			     .fileattr = ATTR_FILE_LINKCOUNT };
++      struct { uint32_t len; uint32_t nlink; } ab;
++      if (getattrlistat (fd, name, &al, &ab, sizeof ab, FSOPT_NOFOLLOW) == 0
++	  && ab.len >= sizeof ab)
++	nlink = ab.nlink;
++    }
++#endif
++
+   return CALLN (Flist,
+ 		file_type,
+-		make_fixnum (s.st_nlink),
++		make_fixnum (nlink),
+ 		(uname
+ 		 ? DECODE_SYSTEM (build_unibyte_string (uname))
+ 		 : INT_TO_INTEGER (s.st_uid)),

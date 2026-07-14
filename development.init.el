@@ -192,29 +192,12 @@ languages are delegated to ORIG-FN unchanged."
     (context 2))
   :mode "\\.clj$")
 
-(defun jmi/cons-src-path-for-jvm-home (pair)
-  "Return path for src.zip for JVM Home alist entry in PAIR."
-
-  (let ((jvm-version (car pair))
-        (jvm-path (cdr pair)))
-    (if (equal jvm-version "1.8")
-        (concat jvm-path "/src.zip")
-      (concat jvm-path "/lib/src.zip"))))
-
-(defun jmi/cons-jdk-src-paths (jvm-alist)
-  "Construct JDK source paths (src.zip) in JVM-ALIST."
-
-  (mapcar 'jmi/cons-src-path-for-jvm-home jvm-alist))
-
 (use-package cider
   :init
-  ;; (add-hook 'cider-mode-hook
-  ;;           #'cider-turn-on-eldoc-mode)
   (setopt nrepl-hide-special-buffers      t
           cider-popup-stacktraces         nil
           cider-repl-popup-stacktraces    t
-          cider-auto-select-error-buffer  t
-          cider-jdk-src-paths             (jmi/cons-jdk-src-paths jmi/jvm-homes-alist)
+          cider-auto-select-buffer        '(error)
           cider-jack-in-cljs-dependencies '(("cider/piggieback" "0.5.3")))
 
   :defer t

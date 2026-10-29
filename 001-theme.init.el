@@ -105,6 +105,9 @@
   (push
    '(groovy-mode  all-the-icons-fileicon "groovy" :face all-the-icons-green)
    all-the-icons-mode-icon-alist)
+  (push
+   '(ghostel-mode all-the-icons-nerd-fa "ghost" :face all-the-icons-nerd-fa)
+   all-the-icons-mode-icon-alist)
 
   (setopt all-the-icons-nerd-fonts-family "Symbols Nerd Font Mono")
   (setopt all-the-icons-scale-factor 0.8)

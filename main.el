@@ -1,4 +1,4 @@
-;;; main.el -- Entry point for all my start files
+;;; main.el -- Entry point for all my start files -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;;; This drives loading of all .init.el files in ~/.emacs.init

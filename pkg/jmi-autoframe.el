@@ -4,8 +4,13 @@
 
 ;;; Provides a global minor mode that automatically creates and manages
 ;;; one Emacs frame per connected monitor.  When monitors are added or
-;;; removed (hotplug), the frame set is reconciled automatically via
-;;; `display-monitors-changed-functions'.
+;;; removed (hotplug, sleep/wake), the frame set is reconciled (after a
+;;; short debounce) via `display-monitors-changed-functions'.
+;;;
+;;; Frames are associated with monitors through the
+;;; `jmi/autoframe-monitor' frame parameter, so `frame-list' is the
+;;; single source of truth.  When a monitor disappears its frame's window
+;;; layout is saved, and restored when the same monitor returns.
 ;;;
 ;;; Usage:
 ;;;   (require 'jmi-autoframe)
@@ -18,6 +23,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'seq)
 
 ;;; --------------------------------------------------------------------------
 ;;; Customization
@@ -28,7 +34,9 @@
   :prefix "jmi/autoframe-")
 
 (defcustom jmi/autoframe-delete-frames-on-disconnect t
-  "When non-nil, delete frames whose monitor has disappeared."
+  "When non-nil, delete frames whose monitor has disappeared.
+The window layout of a deleted frame is saved and restored when the
+same monitor is reconnected."
   :type 'boolean
   :group 'jmi/autoframe)
 
@@ -45,20 +53,28 @@ frame on its monitor.  Set to nil to apply no extra parameters."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'jmi/autoframe)
 
+(defcustom jmi/autoframe-debounce-delay 1.0
+  "Seconds to wait after a monitor change before reconciling frames.
+Monitor change notifications arrive in bursts (and can report transient
+states, e.g. while resuming from sleep), so reconciliation is delayed
+until they settle."
+  :type 'number
+  :group 'jmi/autoframe)
+
 ;;; --------------------------------------------------------------------------
 ;;; Internal state
 
-(defvar jmi/autoframe--monitor-frame-alist nil
-  "Alist mapping monitor identity strings to their corresponding frames.
-Each entry is (MONITOR-ID . FRAME) where MONITOR-ID is a stable
-string derived from the monitor's name attribute (or geometry if
-no name is available).")
+(defvar jmi/autoframe--saved-layouts (make-hash-table :test #'equal)
+  "Hash table mapping monitor IDs to window states of deleted frames.")
+
+(defvar jmi/autoframe--timer nil
+  "Pending debounce timer for `jmi/autoframe--reconcile', if any.")
 
 ;;; --------------------------------------------------------------------------
 ;;; Internal helpers
 
 (defun jmi/autoframe--monitor-id (monitor-attrs)
-  "Return a stable identity string for MONITOR-ATTRS.
+  "Return a base identity string for MONITOR-ATTRS.
 Uses the `name' attribute when present, otherwise falls back to
 the `geometry' attribute formatted as a string."
   (let ((name (cdr (assq 'name monitor-attrs)))
@@ -66,6 +82,17 @@ the `geometry' attribute formatted as a string."
     (if (and name (not (string-empty-p name)))
         name
       (format "%S" geometry))))
+
+(defun jmi/autoframe--identify-monitors ()
+  "Return an alist (ID . ATTRS) for all current monitors.
+Monitors sharing a base ID get a \"#N\" suffix (N >= 2) so that
+identical displays remain distinguishable."
+  (let ((counts (make-hash-table :test #'equal)))
+    (mapcar (lambda (mon)
+              (let* ((base (jmi/autoframe--monitor-id mon))
+                     (n (puthash base (1+ (gethash base counts 0)) counts)))
+                (cons (if (= n 1) base (format "%s#%d" base n)) mon)))
+            (display-monitor-attributes-list))))
 
 (defun jmi/autoframe--workarea (monitor-attrs)
   "Return the workarea list (X Y WIDTH HEIGHT) from MONITOR-ATTRS.
@@ -76,6 +103,31 @@ Falls back to `geometry' if `workarea' is absent."
 (defun jmi/autoframe--has-multiple-frames-p ()
   "Return non-nil if more than one live frame currently exists."
   (> (length (filtered-frame-list #'frame-live-p)) 1))
+
+(defun jmi/autoframe--frame-monitor (frame)
+  "Return the monitor ID that FRAME is tagged with, or nil."
+  (frame-parameter frame 'jmi/autoframe-monitor))
+
+(defun jmi/autoframe--frame-for (id)
+  "Return the live frame tagged with monitor ID, or nil."
+  (seq-find (lambda (f) (equal (jmi/autoframe--frame-monitor f) id))
+            (frame-list)))
+
+(defun jmi/autoframe--untagged-frames ()
+  "Return graphical top-level frames not associated with any monitor."
+  (seq-filter (lambda (f)
+                (and (display-graphic-p f)
+                     (null (frame-parent f))
+                     (null (jmi/autoframe--frame-monitor f))))
+              (frame-list)))
+
+(defun jmi/autoframe--adopt (candidates monitor-attrs)
+  "Return the frame in CANDIDATES that sits on MONITOR-ATTRS, or nil."
+  (let ((geometry (cdr (assq 'geometry monitor-attrs))))
+    (seq-find (lambda (f)
+                (equal (cdr (assq 'geometry (frame-monitor-attributes f)))
+                       geometry))
+              candidates)))
 
 (defun jmi/autoframe--apply-workarea (frame workarea)
   "Position FRAME onto the monitor described by WORKAREA and apply frame parameters.
@@ -90,95 +142,99 @@ subsequent maximize lands on the correct display.
       (dolist (param jmi/autoframe-frame-parameters)
         (set-frame-parameter frame (car param) (cdr param))))))
 
-(defun jmi/autoframe--make-frame (monitor-attrs)
-  "Create a new frame positioned on the monitor described by MONITOR-ATTRS.
-The frame is placed at the monitor's workarea origin and
-`jmi/autoframe-frame-parameters' is applied, so that the frame
-lands correctly on the target display."
+(defun jmi/autoframe--save-layout (frame id)
+  "Save the window layout of FRAME under monitor ID.
+The state keeps live buffer objects, so it only survives within the
+current Emacs session."
+  (puthash id (window-state-get (frame-root-window frame))
+           jmi/autoframe--saved-layouts))
+
+(defun jmi/autoframe--restore-layout (frame id)
+  "Restore the layout saved for monitor ID into FRAME.
+Return non-nil if a saved layout existed and was restored."
+  (when-let* ((state (gethash id jmi/autoframe--saved-layouts)))
+    (remhash id jmi/autoframe--saved-layouts)
+    (window-state-put state (frame-root-window frame) 'safe)
+    t))
+
+(defun jmi/autoframe--make-frame (id monitor-attrs)
+  "Create a new frame for monitor ID described by MONITOR-ATTRS.
+The frame is tagged with ID at creation, so any re-entrant
+reconciliation sees it, and is placed at the monitor's workarea
+origin.  A previously saved layout is restored if available;
+otherwise the startup screen is shown.  Return the frame."
   (let* ((workarea (jmi/autoframe--workarea monitor-attrs))
-         (params (append (when workarea
+         (params (append `((jmi/autoframe-monitor . ,id))
+                         (when workarea
                            `((left . ,(nth 0 workarea))
                              (top  . ,(nth 1 workarea))))
                          jmi/autoframe-frame-parameters
-                         jmi/autoframe-extra-frame-parameters)))
-    (let ((new-frame (make-frame params)))
-      (with-selected-frame new-frame
-        (jmi/startup-screen))
-      new-frame)))
+                         jmi/autoframe-extra-frame-parameters))
+         (new-frame (make-frame params)))
+    (with-selected-frame new-frame
+      (unless (jmi/autoframe--restore-layout new-frame id)
+        (jmi/startup-screen)))
+    new-frame))
+
+(defun jmi/autoframe--reconcile ()
+  "Make the frame set match the current monitors.
+- Each monitor gets a frame: the one already tagged for it, else an
+  untagged frame already sitting on it, else a newly created one.
+- Frames tagged with vanished monitors have their layout saved and are
+  deleted when `jmi/autoframe-delete-frames-on-disconnect' is non-nil.
+This is idempotent."
+  (setq jmi/autoframe--timer nil)
+  (when (display-graphic-p)
+    (let* ((monitors (jmi/autoframe--identify-monitors))
+           (ids (mapcar #'car monitors))
+           (candidates (jmi/autoframe--untagged-frames)))
+      (pcase-dolist (`(,id . ,mon) monitors)
+        (let ((frame (jmi/autoframe--frame-for id)))
+          (unless frame
+            (setq frame (jmi/autoframe--adopt candidates mon))
+            (if frame
+                (progn
+                  (setq candidates (delq frame candidates))
+                  (set-frame-parameter frame 'jmi/autoframe-monitor id))
+              (setq frame (jmi/autoframe--make-frame id mon))))
+          (jmi/autoframe--apply-workarea frame (jmi/autoframe--workarea mon))))
+      (when jmi/autoframe-delete-frames-on-disconnect
+        (dolist (frame (frame-list))
+          (let ((id (jmi/autoframe--frame-monitor frame)))
+            (when (and id
+                       (not (member id ids))
+                       (jmi/autoframe--has-multiple-frames-p))
+              (jmi/autoframe--save-layout frame id)
+              (delete-frame frame))))))))
 
 ;;; --------------------------------------------------------------------------
 ;;; Public commands
 
 ;;;###autoload
 (defun jmi/autoframe-setup ()
-  "Create one frame per current monitor, replacing any prior tracked frames.
-This unconditionally rebuilds the frame set from the current
-monitor list; existing tracked frames are deleted first."
+  "Reset monitor tracking and reconcile frames immediately.
+All frames are untagged first, so existing frames are re-adopted by the
+monitor they sit on instead of being deleted and recreated."
   (interactive)
-  ;; Delete all previously tracked frames (but keep at least one frame alive)
-  (let ((tracked-frames (mapcar #'cdr jmi/autoframe--monitor-frame-alist)))
-    (dolist (frame tracked-frames)
-      (when (and (frame-live-p frame)
-                 ;; Never delete the sole remaining frame
-                 (jmi/autoframe--has-multiple-frames-p))
-        (delete-frame frame))))
-  (setq jmi/autoframe--monitor-frame-alist nil)
-
-  ;; If there's a single frame that exists, associate it with the
-  ;; "default" monitor (i.e. the first monitor)
-  (if (= 1 (length (frame-list)))
-      (let* ((default-monitor (cl-first (display-monitor-attributes-list)))
-             (singleton-frame (cl-first (frame-list)))
-             (id (jmi/autoframe--monitor-id default-monitor)))
-        (push (cons id singleton-frame) jmi/autoframe--monitor-frame-alist)))
-
-  ;; Create a new frame for each monitor; skip the first monitor in
-  ;; the list
-  (let ((monitors (display-monitor-attributes-list)))
-    (dolist (mon (cl-rest monitors))
-      (let* ((id    (jmi/autoframe--monitor-id mon))
-             (frame (jmi/autoframe--make-frame mon)))
-        (push (cons id frame) jmi/autoframe--monitor-frame-alist)))))
+  (when (timerp jmi/autoframe--timer)
+    (cancel-timer jmi/autoframe--timer)
+    (setq jmi/autoframe--timer nil))
+  (dolist (frame (frame-list))
+    (set-frame-parameter frame 'jmi/autoframe-monitor nil))
+  (clrhash jmi/autoframe--saved-layouts)
+  (jmi/autoframe--reconcile))
 
 ;;;###autoload
-(defun jmi/autoframe-sync (&optional terminal)
-  "Reconcile the current frame set with the current monitor list.
-- New monitors get a fresh frame.
-- Disappeared monitors cause their frame to be deleted when
-  `jmi/autoframe-delete-frames-on-disconnect' is non-nil.
-- Existing monitors have their frame repositioned/resized if the
-  workarea has changed.
-
+(defun jmi/autoframe-sync (&optional _terminal)
+  "Schedule a debounced reconciliation of frames with monitors.
 This function is added to `display-monitors-changed-functions'
 when `jmi/autoframe-mode' is enabled."
   (interactive)
-  (let ((current-monitors (display-monitor-attributes-list))
-        (seen-ids '()))
-    ;; Handle new and existing monitors
-    (dolist (mon current-monitors)
-      (let* ((id       (jmi/autoframe--monitor-id mon))
-             (workarea (jmi/autoframe--workarea mon))
-             (entry    (assoc id jmi/autoframe--monitor-frame-alist)))
-        (push id seen-ids)
-        (if entry
-            ;; Existing monitor: reposition/resize its frame
-            (jmi/autoframe--apply-workarea (cdr entry) workarea)
-          ;; New monitor: create a frame and track it
-          (let ((frame (jmi/autoframe--make-frame mon)))
-            (push (cons id frame) jmi/autoframe--monitor-frame-alist)))))
-    ;; Handle disappeared monitors
-    (let ((gone-entries
-           (cl-remove-if (lambda (entry)
-                           (member (car entry) seen-ids))
-                         jmi/autoframe--monitor-frame-alist)))
-      (dolist (entry gone-entries)
-        (when jmi/autoframe-delete-frames-on-disconnect
-          (let ((frame (cdr entry)))
-            (when (and (frame-live-p frame)
-                       (jmi/autoframe--has-multiple-frames-p))
-              (delete-frame frame))))
-        (setq jmi/autoframe--monitor-frame-alist
-              (delq entry jmi/autoframe--monitor-frame-alist))))))
+  (when (timerp jmi/autoframe--timer)
+    (cancel-timer jmi/autoframe--timer))
+  (setq jmi/autoframe--timer
+        (run-with-timer jmi/autoframe-debounce-delay nil
+                        #'jmi/autoframe--reconcile)))
 
 ;;; --------------------------------------------------------------------------
 ;;; Minor mode
@@ -191,7 +247,12 @@ when `jmi/autoframe-mode' is enabled."
 (defun jmi/autoframe--disable ()
   "Disable `jmi/autoframe-mode': remove hook and clear tracked state."
   (remove-hook 'display-monitors-changed-functions #'jmi/autoframe-sync)
-  (setq jmi/autoframe--monitor-frame-alist nil))
+  (when (timerp jmi/autoframe--timer)
+    (cancel-timer jmi/autoframe--timer)
+    (setq jmi/autoframe--timer nil))
+  (dolist (frame (frame-list))
+    (set-frame-parameter frame 'jmi/autoframe-monitor nil))
+  (clrhash jmi/autoframe--saved-layouts))
 
 ;;;###autoload
 (define-minor-mode jmi/autoframe-mode

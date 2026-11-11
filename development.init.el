@@ -314,9 +314,9 @@ languages are delegated to ORIG-FN unchanged."
                                        `(:name ,(jmi/jdk-version-to-jdk-name (car jvm-home-tuple))
                                                :path ,(cdr jvm-home-tuple)))
                                      jmi/jvm-homes-alist)))
-        :updateBuildConfiguration t)
-       :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)
-                                           :profile "NetDeps")))
+        :updateBuildConfiguration t
+        :format (:enabled t :settings (:url ,(concat "file://" jmi/java-format-settings-file)
+                                            :profile "IntelliJStyle"))))
       :extendedClientCapabilities (:classFileContentsSupport t)))
 
   (defun jmi/eglot-jdtls-args (interactive-p project)
@@ -535,7 +535,22 @@ agent shell chooser."
     ;; Truncate lines, instead of wrapping
     (toggle-truncate-lines 1)
     (setq-local tab-width 4)
-    (setq-local c-basic-offset 4))
+    ;; Use the Emacs 30 name, which remains an alias in Emacs 31.
+    (setq-local java-ts-mode-indent-offset 4)
+    (setq-local indent-tabs-mode nil)
+
+    ;; Match the JDT profile's continuation indent for wrapped arguments
+    ;; and parameters. Leave other syntax to the built-in rules and use
+    ;; JDT for full-buffer formatting.
+    (setq-local treesit-simple-indent-rules
+                (cons
+                 `(java
+                   ((match ")" "\\`\\(?:argument_list\\|formal_parameters\\|annotation_argument_list\\)\\'")
+                    parent-bol 0)
+                   ((parent-is "\\`\\(?:argument_list\\|formal_parameters\\|annotation_argument_list\\)\\'")
+                    parent-bol 8)
+                   ,@(alist-get 'java treesit-simple-indent-rules))
+                 (assq-delete-all 'java (copy-tree treesit-simple-indent-rules)))))
 
   ;; Shadow java style
   (add-to-list 'c-default-style '(java-mode . "intellij-java"))

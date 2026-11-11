@@ -101,8 +101,10 @@ lands correctly on the target display."
                              (top  . ,(nth 1 workarea))))
                          jmi/autoframe-frame-parameters
                          jmi/autoframe-extra-frame-parameters)))
-    (with-selected-frame (make-frame params)
-      (jmi/startup-screen))))
+    (let ((new-frame (make-frame params)))
+      (with-selected-frame new-frame
+        (jmi/startup-screen))
+      new-frame)))
 
 ;;; --------------------------------------------------------------------------
 ;;; Public commands

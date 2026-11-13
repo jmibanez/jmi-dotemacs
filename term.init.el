@@ -4,7 +4,7 @@
 
 ;;; Customizations for running my terminal sessions in Emacs,
 ;;; including some eshell customizations. After more than a year of
-;;; using eshell, I'm sold and only keep vterm around for the
+;;; using eshell, I'm sold and only keep ghostel around for the
 ;;; occasional tool that needs a full terminal emulator.
 
 ;;; Code:
@@ -209,10 +209,16 @@
 
 
 (use-package ghostel
+  :init
+  ;; Keep the native module outside the package dir, so package
+  ;; upgrades don't wipe it out from under us
+  (setopt ghostel-module-directory    (locate-user-emacs-file "ghostel/")
+          ghostel-module-auto-install 'compile)
+
   :config
   (defun jmi/ghostel-in-dir (dir &optional buf-name)
     (let ((default-directory dir)
-          (ghostel-buffer-name (format "*ghostel %s*" dir)))
+          (ghostel-buffer-name (or buf-name (format "*ghostel %s*" dir))))
       (with-existing-directory
         (ghostel t))))
 
@@ -220,9 +226,17 @@
     (interactive)
     (jmi/ghostel-in-dir "~/"))
 
+  ;; ~5MB per 7k rows; roughly the 100k lines I had with vterm
+  (setopt ghostel-max-scrollback (* 64 1024 1024))
+
+  ;; The semi-char map sends these to the terminal, shadowing
+  ;; ghostel-mode-map and my global <f8> prefix; let them fall through
+  (setopt ghostel-keymap-exceptions
+          (seq-union ghostel-keymap-exceptions
+                     '("<f8>" "S-<prior>" "S-<next>")))
+
   (define-key ghostel-mode-map (kbd "S-<prior>") #'scroll-down-command)
   (define-key ghostel-mode-map (kbd "S-<next>") #'scroll-up-command)
-  (define-key ghostel-mode-map (kbd "<f8>") nil)
 
   :bind
   ((:map jmi/my-jump-keys-map
@@ -234,47 +248,19 @@
             :newest)
   :ensure-system-package (zig))
 
-(use-package vterm
+(use-package ghostel-eshell
   :config
+  (ghostel-eshell-visual-command-mode 1)
 
-  (defun jmi/vterm-customizations ()
-    (hi-lock-mode)
-    (goto-address-mode)
-    (highlight-regexp "Tests run: .*, Failures: [1-9].*" 'hi-yellow)
-    (highlight-regexp "Tests run: .*, Failures: .*, Errors: [1-9].*" 'hi-red-b))
-
-  (defun jmi/vterm-in-dir (dir &optional buf-name)
-    (let ((default-directory dir))
-      (with-existing-directory
-        (vterm buf-name))))
-
-  (defun jmi/vterm-in-home ()
-    (interactive)
-    (jmi/vterm-in-dir "~/"))
-
-  (setopt vterm-max-scrollback 100000)
-
-  (define-key vterm-mode-map (kbd "C-q") #'vterm-send-next-key)
-  (define-key vterm-mode-map (kbd "S-<prior>") #'scroll-down-command)
-  (define-key vterm-mode-map (kbd "S-<next>") #'scroll-up-command)
-  (define-key vterm-mode-map (kbd "<f8>") nil)
-
-  :bind
-  ((:map jmi/my-jump-keys-map
-         ("t 0"   . jmi/vterm-in-home)))
-
-  :hook (vterm-mode  . jmi/vterm-customizations)
-
-  :ensure-system-package cmake)
-
-(use-package eshell-vterm
-  :config
-  (eshell-vterm-mode)
-
-  (defalias 'eshell/v 'eshell-exec-visual)
+  ;; Like eshell-vterm, a bare `v' opens a fresh terminal here
+  (defun eshell/v (&rest args)
+    (if args
+        (apply #'eshell/ghostel args)
+      (ghostel t)
+      nil))
 
   :after eshell
-  :requires vterm)
+  :ensure nil)
 
 (use-package tramp
   :config

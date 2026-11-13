@@ -265,10 +265,7 @@
 (use-package tramp
   :config
   (add-to-list 'eshell-modules-list 'eshell-tramp)
-
-  (setq tramp-ssh-controlmaster-options
-        (concat "-o ControlPath=~/.ssh/ssh-ControlPath-%%r@%%h:%%p "
-                "-o ControlMaster=yes -o ControlPersist=yes"))
+  (setq tramp-use-connection-share t)
 
   ;; Ignore auth-sources when doing sudo via Tramp
   (connection-local-set-profile-variables

@@ -383,7 +383,6 @@ languages are delegated to ORIG-FN unchanged."
 prefix (\\[universal-argument] \\[universal-argument]) ARG, trigger the
 agent shell chooser."
     (interactive "P")
-    (let )
     (cond
      ((equal arg '(4))   (agent-shell--dwim :config (agent-shell-anthropic-make-claude-code-config)
                                             :new-shell t))

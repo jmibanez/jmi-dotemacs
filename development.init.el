@@ -343,12 +343,13 @@ languages are delegated to ORIG-FN unchanged."
       (jmi/ensure-lombok-jar-exists)
       (eglot-ensure)))
 
-  :ensure-system-package (jdtls pyright solargraph)
+  :ensure-system-package (jdtls pyright solargraph gopls)
 
   :hook
   ((java-ts-mode     . jmi/eglot-ensure-if-not-decompiled)
    (python-ts-mode   . eglot-ensure)
    (rust-ts-mode     . eglot-ensure)
+   (go-ts-mode       . eglot-ensure)
    (ruby-ts-mode     . eglot-ensure)))
 
 (use-package eglot-java
@@ -590,8 +591,6 @@ agent shell chooser."
 ;; Company backends
 (use-package company-dict
   :defer t)
-(use-package company-go
-  :after go-mode)
 (use-package company-shell
   :defer t)
 (use-package company-web
@@ -605,6 +604,33 @@ agent shell chooser."
 ;; Go
 (use-package go-mode
   :defer t)
+
+(use-package go-ts-mode
+  :config
+
+  (defun jmi/go-eglot-organize-imports-and-format ()
+    "Organize imports and format the buffer via gopls before saving."
+    (when (and (fboundp 'eglot-managed-p) (eglot-managed-p))
+      ;; gopls offers no organize-imports action when the imports are
+      ;; already in order, and Eglot signals an error for that
+      (ignore-errors
+        (eglot-code-action-organize-imports (point-min) (point-max)))
+      (eglot-format-buffer)))
+
+  (defun jmi/go-mode-setup ()
+    (add-hook 'before-save-hook #'jmi/go-eglot-organize-imports-and-format nil t))
+
+  :hook (go-ts-mode . jmi/go-mode-setup)
+  :ensure-system-package (dlv . delve)
+  :ensure nil)
+
+(use-package gotest
+  :bind (:map go-ts-mode-map
+              ("C-c C-t t" . go-test-current-test)
+              ("C-c C-t f" . go-test-current-file)
+              ("C-c C-t p" . go-test-current-project)
+              ("C-c C-t l" . go-test-current-test-cache))
+  :after go-ts-mode)
 
 ;; Python
 (use-package python-django

@@ -95,6 +95,8 @@
           eshell-aliases-file             (concat jmi/my-emacs-init-path "eshell/aliases")
           eshell-rc-script                (concat jmi/my-emacs-init-path "eshell/rc"))
 
+  (add-to-list 'eshell-modules-list 'eshell-tramp)
+
   (esh-command prj (prj-name ws-name)
                (:command
                 (let ((candidates (cl-remove-if-not (lambda (p)
@@ -264,8 +266,11 @@
 
 (use-package tramp
   :config
-  (add-to-list 'eshell-modules-list 'eshell-tramp)
   (setq tramp-use-connection-share t)
+
+  ;; Honor .dir-locals.el on remote hosts too, so per-project config
+  ;; works the same on a remote checkout as on a local one
+  (setopt enable-remote-dir-locals t)
 
   ;; Ignore auth-sources when doing sudo via Tramp
   (connection-local-set-profile-variables
@@ -273,7 +278,7 @@
   (connection-local-set-profiles
    '(:application tramp :protocol "sudo") 'tramp-sudo-without-auth-sources)
 
-  :after eshell
+  :defer t
   :ensure nil)
 
 (use-package eshell-toggle

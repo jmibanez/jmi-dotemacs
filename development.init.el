@@ -220,34 +220,74 @@ languages are delegated to ORIG-FN unchanged."
   :defer t
   :ensure nil)
 
-(use-package flymake-diagnostic-at-point
-  :functions jmi/flymake-diagnostic-at-point-via-popup
+(use-package flymake-popon
+  :functions (jmi/flymake-popon-diagnostic-severity
+              jmi/flymake-popon-severity-face
+              jmi/flymake-popon-format-diagnostic
+              jmi/flymake-popon-match-severity-background)
   :config
-  (defface :jmi-diagnostic-popup
-    '((((type graphic))
-       :background "#1640b0"
-       :foreground "white"
-       :slant italic
-       :family "Berkeley Mono")
-      (t
-       :background bg-blue-intense
-       :foreground white))
-    "Customized face for Flymake diagnostic message popup"
-    :group 'jmi-custom-faces)
+  ;; Per-severity popup faces: inherit flymake's fringe faces, which
+  ;; modus styles with its bg-prominent-*/fg-prominent-* colors
+  (defface jmi/flymake-popon-info
+    '((t :inherit flymake-note-fringe))
+    "Flymake popon face for notes/info diagnostics.")
 
-  (defun jmi/flymake-diagnostic-at-point-via-popup (s)
-    (popup-tip (concat flymake-diagnostic-at-point-error-prefix s)
-               :margin-left 1
-               :margin-right 1
-               :face :jmi-diagnostic-popup
-               :width 80
-               :truncate t))
+  (defface jmi/flymake-popon-warning
+    '((t :inherit flymake-warning-fringe))
+    "Flymake popon face for warning diagnostics.")
 
-  (setq flymake-diagnostic-at-point-display-diagnostic-function
-        #'jmi/flymake-diagnostic-at-point-via-popup)
+  (defface jmi/flymake-popon-error
+    '((t :inherit flymake-error-fringe))
+    "Flymake popon face for error diagnostics.")
+
+  (defun jmi/flymake-popon-diagnostic-severity (diagnostic)
+    "Return the numeric severity of DIAGNOSTIC, per `warning-numeric-level'."
+    (flymake--severity (flymake-diagnostic-type diagnostic)))
+
+  (defun jmi/flymake-popon-severity-face (severity)
+    "Return the popon face for numeric SEVERITY."
+    (cond ((>= severity (warning-numeric-level :error)) 'jmi/flymake-popon-error)
+          ((>= severity (warning-numeric-level :warning)) 'jmi/flymake-popon-warning)
+          (t 'jmi/flymake-popon-info)))
+
+  (defun jmi/flymake-popon-format-diagnostic (diagnostic)
+    "Format DIAGNOSTIC for flymake-popon, tinted by severity."
+    (let* ((face (jmi/flymake-popon-severity-face
+                  (jmi/flymake-popon-diagnostic-severity diagnostic)))
+           ;; Both the "➤ " prefix and the continuation indent are 2 columns
+           (text (car (split-string (flymake-diagnostic-text diagnostic)
+                                    "[\n\r]")))
+           (lines (split-string
+                   (string-fill text (- flymake-popon-width 2)) "\n")))
+      (propertize (concat "➤ " (string-join lines "\n  "))
+                  'face face)))
+
+  ;; Make the popup's own background (padding past the end of each
+  ;; line) match the most severe diagnostic at point; the posframe
+  ;; border is colored the same, so it acts as padding
+  (defun jmi/flymake-popon-match-severity-background (&rest _)
+    "Make `flymake-popon' inherit the face of the most severe diagnostic at point."
+    (when-let* ((diagnostics (flymake-diagnostics (point)))
+                (face (jmi/flymake-popon-severity-face
+                       (apply #'max (mapcar #'jmi/flymake-popon-diagnostic-severity
+                                            diagnostics)))))
+      (set-face-attribute 'flymake-popon nil :inherit face)
+      (set-face-foreground 'flymake-popon-posframe-border
+                           (face-background face nil t))))
+  (advice-add 'flymake-popon--show :before #'jmi/flymake-popon-match-severity-background)
+
+  (setopt flymake-popon-width 80
+          flymake-popon-delay 0.5
+          flymake-popon-posframe-border-width 6
+          flymake-popon-diagnostic-formatter #'jmi/flymake-popon-format-diagnostic)
+
+  :custom-face
+  (flymake-popon ((((type graphic))
+                   :slant italic
+                   :family "Berkeley Mono")))
 
   :hook
-  ((flymake-mode . flymake-diagnostic-at-point-mode))
+  ((flymake-mode . flymake-popon-mode))
   :after flymake)
 
 

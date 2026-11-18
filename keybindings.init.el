@@ -21,14 +21,12 @@
     "Either do projectile-find-file or or do org-roam-find; DWIM."
     (interactive "P")
 
-    (if (not (fboundp 'projectile-find-file))
-        (error "Projectile is not loaded.")
+    (if (jmi/in-org-roam-related-buffer-p)
+        (org-roam-node-find prefix-arg)
 
-      (if (jmi/in-org-roam-related-buffer-p)
-          (org-roam-node-find prefix-arg)
-
-        ;; Else, default to projectile-find-file
-        (projectile-find-file-dwim prefix-arg))))
+      ;; Else, default to projectile-find-file (subproject-aware; autoloaded
+      ;; from jmi-projectile-subprojects)
+      (jmi/projectile-find-file-in-project-or-subproject-dwim prefix-arg)))
 
   ;; On keyboards which don't have Super (e.g. my Model M) bind C-& to
   ;; event-apply-super-modifier so I can reach my bindings that use Super

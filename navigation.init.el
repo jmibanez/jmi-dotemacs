@@ -53,8 +53,28 @@
             ".python-version"
             ".project")
 
+          ;; Use fd instead of git-list-files
+          projectile-git-use-fd t
+
           projectile-globally-ignored-file-suffixes
-          '(".bak"))
+          '(".bak")
+
+          ;; For monorepos, use BUILD.bazel as a subproject marker:
+          ;; the existence of a BUILD.bazel implies a subproject
+          ;; boundary. Ensure BUILD.bazel is in
+          ;; projectile-subproject-markers.
+          ;;
+          ;; NB: Form cribbed from projectile--subproject-markers
+          projectile-subproject-markers
+          (let ((markers '("BUILD.bazel")))
+            (dolist (record projectile-project-types)
+              (dolist (file (ensure-list (plist-get (cdr record) 'project-file)))
+                (when (and (stringp file)
+                           (not (projectile--wildcard-p file))
+                           (not (string-search "/" file))
+                           (not (member file markers)))
+                  (push file markers))))
+            markers))
 
 
   (defun jmi/is-outside-project-dir-p (project-root)
@@ -82,11 +102,17 @@
   (projectile-mode)
 
   :bind
-  (("s-o"    . projectile-switch-project)
-   ("s-T"    . projectile-toggle-between-implementation-and-test))
+  (("s-T"    . projectile-toggle-between-implementation-and-test))
 
   :after (vertico)
+  :ensure-system-package (fd)
   :defer t)
+
+(use-package jmi-projectile-subprojects
+  :ensure nil
+  :commands (jmi/projectile-find-file-in-project-or-subproject-dwim)
+  :bind
+  (("s-o"    . jmi/switch-project-or-subproject)))
 
 ;; Savehist, persist history (so Vertico works better)
 (use-package savehist

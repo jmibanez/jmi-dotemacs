@@ -53,6 +53,7 @@ A personal Emacs configuration written in Emacs Lisp. There is no build system, 
 |---------|---------|
 | `jmi-autoframe.el` | Creates one Emacs frame per connected display; handles monitor hotplug |
 | `jmi-location.el` | Fetches calendar lat/lon/location-name from ipinfo.io; `jmi/location-mode` polls on an interval |
+| `jmi-projectile-subprojects.el` | Subproject-aware projectile commands: `s-t` finds files in the current subproject, `s-o` picks from projects and their subprojects |
 | `jmi-startup-screen.el` | Startup screen showing org agenda, eshell, and weather |
 | `jmi-suppress-bufferswitch.el` | Prevents specific functions from switching the visible buffer |
 

@@ -767,6 +767,39 @@ EVENT is the payload from `session-title-changed'."
   ;; Point Magit to locally installed git (not system)
   (setopt magit-git-executable jmi/git)
 
+  :config
+  (defun jmi/magit-clean-stale-branches ()
+    "Delete local branches whose configured push branch no longer exists.
+Fetches all remotes with --prune first, so remote-tracking refs reflect
+the remotes.  Skips the current branch and any branch checked out in
+another worktree."
+    (interactive)
+    (magit-with-toplevel
+      (magit-call-git "fetch" "--all" "--prune")
+      (let* ((current (magit-get-current-branch))
+             (worktree-branches (delq nil (mapcar (lambda (wt) (nth 2 wt))
+                                                  (magit-list-worktrees))))
+             (stale (seq-filter
+                     (lambda (branch)
+                       (let ((push (magit-get-push-branch branch)))
+                         (and push
+                              (not (equal branch current))
+                              (not (member branch worktree-branches))
+                              (not (magit-rev-verify
+                                    (concat "refs/remotes/" push))))))
+                     (magit-list-local-branch-names))))
+        (when (and stale
+                   (magit-confirm t "Delete stale branch %s"
+                     "Delete %d stale branches" nil stale))
+          (mapc #'magit-branch-maybe-delete-pr-remote stale)
+          (magit-run-git "branch" "-D" stale))
+        (unless stale
+          (message "No stale branches")))))
+
+  (transient-append-suffix 'magit-branch "k"
+    '("K" "delete stale" jmi/magit-clean-stale-branches))
+
+  :commands (jmi/magit-clean-stale-branches)
   :defer t
   :after
   'jmi-init-platform-paths)

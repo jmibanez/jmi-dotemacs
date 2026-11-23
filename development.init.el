@@ -431,12 +431,27 @@ agent shell chooser."
      (t  (let ((agent-shell-preferred-agent-config 'claude-code))
            (agent-shell)))))
 
+  (defun jmi/agent-shell-sync-buffer-name (event)
+    "Hook on to session-title-changed events to update the buffer with an agent-derived title.
+EVENT is the payload from `session-title-changed'."
+    (when-let* ((title (map-nested-elt event '(:data :title)))
+                (agent (map-nested-elt agent-shell--state
+                                       '(:agent-config :buffer-name))))
+      (shell-maker-set-buffer-name (current-buffer) (concat agent ": " title))))
+
+  (defun jmi/register-agent-shell-hook-session-title ()
+    (agent-shell-subscribe-to
+     :shell-buffer (current-buffer)
+     :event 'session-title-changed
+     :on-event #'jmi/agent-shell-sync-buffer-name))
+
   (setopt agent-shell-opencode-default-model-id "ollama/qwen2.5-coder:32b")
   (setopt agent-shell-anthropic-default-session-mode-id "auto")
   (setopt agent-shell-session-restore-verbosity 'full)
 
   (setopt agent-shell-confirm-interrupt nil)
 
+  :hook ((agent-shell-mode . jmi/register-agent-shell-hook-session-title))
   :bind ((:map jmi/my-jump-keys-map
                ("f C-M-c"  . jmi/agent-shell-send-shipit)
                ("f c"      . jmi/agent-shell-default-claude-or-choose))

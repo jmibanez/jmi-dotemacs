@@ -437,7 +437,11 @@ EVENT is the payload from `session-title-changed'."
     (when-let* ((title (map-nested-elt event '(:data :title)))
                 (agent (map-nested-elt agent-shell--state
                                        '(:agent-config :buffer-name))))
-      (shell-maker-set-buffer-name (current-buffer) (concat agent ": " title))))
+      (shell-maker-set-buffer-name (current-buffer)
+                                   (format "%s @ %s: %s"
+                                           agent
+                                           (agent-shell--project-name)
+                                           (truncate-string-to-width title 100 nil nil t)))))
 
   (defun jmi/register-agent-shell-hook-session-title ()
     (agent-shell-subscribe-to

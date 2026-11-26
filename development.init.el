@@ -431,17 +431,42 @@ agent shell chooser."
      (t  (let ((agent-shell-preferred-agent-config 'claude-code))
            (agent-shell)))))
 
+  (defun jmi/agent-shell-set-buffer-title (title)
+    "Set the agent shell buffer's TITLE in its buffer name.
+TITLE is truncated to 100 characters. This function sets the buffer name
+to the pattern \"AGENT @ PROJECT: TITLE\", however if TITLE is nil it
+sets the buffer name to the pattern \"AGENT @ PROJECT\"."
+    (let ((agent (map-nested-elt agent-shell--state
+                                 '(:agent-config :buffer-name))))
+      (if title
+          (shell-maker-set-buffer-name (current-buffer)
+                                       (format "%s @ %s: %s"
+                                               agent
+                                               (agent-shell--project-name)
+                                               (truncate-string-to-width title 100 nil nil t)))
+        (shell-maker-set-buffer-name (current-buffer)
+                                     (format "%s @ %s"
+                                             agent
+                                             (agent-shell--project-name))))))
+
   (defun jmi/agent-shell-sync-buffer-name (event)
     "Hook on to session-title-changed events to update the buffer with an agent-derived title.
 EVENT is the payload from `session-title-changed'."
-    (when-let* ((title (map-nested-elt event '(:data :title)))
-                (agent (map-nested-elt agent-shell--state
-                                       '(:agent-config :buffer-name))))
-      (shell-maker-set-buffer-name (current-buffer)
-                                   (format "%s @ %s: %s"
-                                           agent
-                                           (agent-shell--project-name)
-                                           (truncate-string-to-width title 100 nil nil t)))))
+    (when-let* ((title (map-nested-elt event '(:data :title))))
+      (jmi/agent-shell-set-buffer-title title)))
+
+  (defun jmi/agent-shell-resync-buffer-name ()
+    "Re-apply the title of the current agent-shell buffer to its buffer name."
+    (interactive nil agent-shell-mode)
+    (jmi/agent-shell-set-buffer-title (map-nested-elt agent-shell--state '(:session :title))))
+
+  (defun jmi/agent-shell-resync-buffer-names ()
+    "Re-apply the titles of all agent-shell buffers to their respective buffer names."
+    (interactive)
+    (dolist (buf (agent-shell-buffers))
+      (with-current-buffer buf
+        (jmi/agent-shell-resync-buffer-name))))
+
 
   (defun jmi/register-agent-shell-hook-session-title ()
     (agent-shell-subscribe-to
@@ -460,7 +485,8 @@ EVENT is the payload from `session-title-changed'."
                ("f C-M-c"  . jmi/agent-shell-send-shipit)
                ("f c"      . jmi/agent-shell-default-claude-or-choose))
          (:map agent-shell-mode-map
-               ("C-c s-c"  . jmi/agent-shell-send-shipit))))
+               ("C-c s-c"  . jmi/agent-shell-send-shipit)
+               ("C-c s-r"  . jmi/agent-shell-resync-buffer-name))))
 
 (use-package kotlin-ts-mode
   :mode "\\.kts$")

@@ -488,6 +488,11 @@ EVENT is the payload from `session-title-changed'."
                ("C-c s-c"  . jmi/agent-shell-send-shipit)
                ("C-c s-r"  . jmi/agent-shell-resync-buffer-name))))
 
+(use-package agent-shell-dashboard
+  :vc (:url "https://github.com/wandersoncferreira/agent-shell-dashboard"
+            :rev :newest)
+  :after agent-shell)
+
 (use-package kotlin-ts-mode
   :mode "\\.kts$")
 

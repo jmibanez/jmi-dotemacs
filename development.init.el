@@ -486,6 +486,7 @@ EVENT is the payload from `session-title-changed'."
                ("f c"      . jmi/agent-shell-default-claude-or-choose))
          (:map agent-shell-mode-map
                ("C-c s-c"  . jmi/agent-shell-send-shipit)
+               ("C-c C-b"  . agent-shell-switch-buffer)
                ("C-c s-r"  . jmi/agent-shell-resync-buffer-name))))
 
 (use-package agent-shell-dashboard
